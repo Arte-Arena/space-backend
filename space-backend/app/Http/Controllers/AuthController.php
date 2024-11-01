@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
+
     public function register(Request $request)
     {
         $validatedData = $request->validate([
@@ -32,7 +33,9 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        if (!auth()->attempt($request->only('email', 'password'))) {
+        $credentials = $request->only('email', 'password');
+
+        if (!auth()->guard()->attempt($credentials)) {
             return response()->json([
                 'message' => 'Invalid login details'
             ], 401);
