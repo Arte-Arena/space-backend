@@ -4,6 +4,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ContaController;
+use App\Http\Controllers\BandeiraController;
+
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -15,6 +17,9 @@ Route::middleware('auth:sanctum')->group(function () {
     // Outras rotas protegidas aqui
 
     Route::post('/conta', [ContaController::class, 'store']);
+
+    // Rota para salvar o cálculo de bandeiras
+    Route::post('/calculo-bandeiras', [BandeiraController::class, 'salvarCalculo']);
 });
 
 Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
