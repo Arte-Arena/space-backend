@@ -15,6 +15,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Outras rotas protegidas aqui
 
     Route::post('/conta', [ContaController::class, 'store']);
+    Route::get('/conta', [ContaController::class, 'index']);
 });
 
 Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
