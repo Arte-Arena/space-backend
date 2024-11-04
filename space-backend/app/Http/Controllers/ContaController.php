@@ -4,9 +4,16 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Conta;
+use App\Http\Resources\ContaResource;
 
 class ContaController extends Controller
 {
+
+    public function index()
+    {
+        $contas = Conta::all();
+        return ContaResource::collection($contas);
+    }
 
     public function store(Request $request)
     {
@@ -24,4 +31,6 @@ class ContaController extends Controller
 
         return response()->json($conta, 201);
     }
+
+
 }

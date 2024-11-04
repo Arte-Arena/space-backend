@@ -17,9 +17,10 @@ Route::middleware('auth:sanctum')->group(function () {
     // Outras rotas protegidas aqui
 
     Route::post('/conta', [ContaController::class, 'store']);
-
+    Route::get('/conta', [ContaController::class, 'index']);
     // Rota para salvar o cálculo de bandeiras
     Route::post('/calculo-bandeiras', [BandeiraController::class, 'salvarCalculo']);
+
 });
 
 Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {

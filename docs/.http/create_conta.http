@@ -1,0 +1,15 @@
+### Create a new account
+POST http://localhost:8000/api/conta
+Content-Type: application/json
+Authorization: Bearer 1|1kzSFsZLFJ4KtS3G2AaRvhaqvDMnLYGqD8jK0rL3150e1cc9
+
+{
+    "titulo": "Pagamento da Internet",
+    "descricao": "NET Claro",
+    "valor": 300.50,
+    "data_vencimento": "2025-12-31",
+    "status": "pendente",
+    "tipo": "a pagar",
+    "user_id": 1
+}
+
