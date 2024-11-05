@@ -8,13 +8,13 @@ class Conta extends Model
 {
 
     protected $fillable = [
+        'user_id',
         'titulo',
         'descricao',
         'valor',
         'data_vencimento',
         'status',
         'tipo',
-        'user_id',
     ];
 
     public function user()

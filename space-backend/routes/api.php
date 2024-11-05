@@ -4,7 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ContaController;
-use App\Http\Controllers\BandeiraController;
+use App\Http\Controllers\CustoBandeiraController;
 
 
 Route::post('/register', [AuthController::class, 'register']);
@@ -19,7 +19,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/conta', [ContaController::class, 'store']);
     Route::get('/conta', [ContaController::class, 'index']);
     // Rota para salvar o cálculo de bandeiras
-    Route::post('/calculo-bandeira', [BandeiraController::class, 'store']);
+    Route::post('/custo-bandeira', [CustoBandeiraController::class, 'store']);
 
 });
 

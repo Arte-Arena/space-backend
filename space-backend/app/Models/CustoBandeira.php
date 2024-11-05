@@ -5,13 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class CalculoBandeira extends Model
+class CustoBandeira extends Model
 {
     use HasFactory;
 
-        protected $table = 'calculo_bandeira';
+        protected $table = 'custo_bandeiras';
 
         protected $fillable = [
+        'user_id',
         'altura',
         'largura',
         'custo_tecido',
@@ -19,7 +20,6 @@ class CalculoBandeira extends Model
         'custo_papel',
         'custo_imposto',
         'custo_final',
-        'user_id',
     ];
     
     public function user()

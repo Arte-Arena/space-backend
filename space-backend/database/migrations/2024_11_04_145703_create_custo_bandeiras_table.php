@@ -11,8 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('calculo_bandeira', function (Blueprint $table) {
+        Schema::create('custo_bandeiras', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->decimal('altura', 8, 2);
             $table->decimal('largura', 8, 2);
             $table->decimal('custo_tecido', 10, 2);
