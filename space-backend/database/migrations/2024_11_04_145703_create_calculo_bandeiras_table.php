@@ -11,7 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('calculo_bandeiras', function (Blueprint $table) {
+        Schema::create('calculo_bandeira', function (Blueprint $table) {
+            $table->id();
             $table->decimal('altura', 8, 2);
             $table->decimal('largura', 8, 2);
             $table->decimal('custo_tecido', 10, 2);
@@ -19,19 +20,14 @@ return new class extends Migration
             $table->decimal('custo_papel', 10, 2);
             $table->decimal('custo_imposto', 5, 2);
             $table->decimal('custo_final', 10, 2);
+            $table->timestamps();
         });
     }
 
     /**
      * Reverse the migrations.
-     */
-    public function down(): void
+     */    public function down(): void
     {
-        Schema::table('calculo_bandeiras', function (Blueprint $table) {
-            $table->dropColumn([
-                'altura', 'largura', 'custo_tecido', 'custo_tinta', 
-                'custo_papel', 'custo_imposto', 'custo_final'
-            ]);
-        });
+        Schema::dropIfExists('calculo_bandeira');
     }
 };

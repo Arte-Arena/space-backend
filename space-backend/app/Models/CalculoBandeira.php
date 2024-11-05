@@ -9,13 +9,21 @@ class CalculoBandeira extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
+        protected $table = 'calculo_bandeira';
+
+        protected $fillable = [
         'altura',
         'largura',
         'custo_tecido',
         'custo_tinta',
         'custo_papel',
         'custo_imposto',
-        'custo_final'
+        'custo_final',
+        'user_id',
     ];
+    
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
