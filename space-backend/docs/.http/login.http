@@ -1,0 +1,13 @@
+@baseUrl = http://localhost:8000/api/login
+@email = ldamasio@gmail.com
+@password = artearena
+
+### Login
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+    "email": "{{email}}",
+    "password": "{{password}}"
+}
+

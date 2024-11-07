@@ -1,0 +1,14 @@
+### Create a new account
+POST http://localhost:8000/api/custo-bandeiras
+Content-Type: application/json
+Authorization: Bearer 1|LCZUkItmhKFLG8N47lKeMWptsn8BO8EjlFjSl84n267ea75f
+
+{
+    "altura": 2.5,
+    "largura": 1.5,
+    "custo_tecido": 30.0,
+    "custo_tinta": 15.0,
+    "custo_papel": 5.0,
+    "custo_imposto": 3.5,
+    "custo_final": 53.5
+}
