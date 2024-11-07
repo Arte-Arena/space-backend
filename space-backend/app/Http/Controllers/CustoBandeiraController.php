@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 
 class CustoBandeiraController extends Controller
 {
-
+    // Método para criar um novo custo de bandeira
     public function store(Request $request)
     {
         try {
@@ -46,6 +46,68 @@ class CustoBandeiraController extends Controller
             DB::rollBack();
             return response()->json([
                 'message' => 'Erro ao criar custo bandeira. Verifique se o usuário existe.',
+                'error' => $e->getMessage()
+            ], 422);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'message' => 'Erro ao processar a requisição.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    // Método para atualizar um custo de bandeira existente
+    public function update(Request $request, $id)
+    {
+        try {
+            $validated = $request->validate([
+                'altura' => 'nullable|numeric',
+                'largura' => 'nullable|numeric',
+                'custo_tecido' => 'nullable|numeric',
+                'custo_tinta' => 'nullable|numeric',
+                'custo_papel' => 'nullable|numeric',
+                'custo_imposto' => 'nullable|numeric',
+                'custo_final' => 'nullable|numeric',
+            ]);
+
+            $custoBandeira = CustoBandeira::findOrFail($id);
+
+            DB::beginTransaction();
+            $custoBandeira->update($validated);
+            DB::commit();
+
+            return response()->json($custoBandeira, 200);
+        } catch (QueryException $e) {
+            DB::rollBack();
+            return response()->json([
+                'message' => 'Erro ao atualizar o custo bandeira.',
+                'error' => $e->getMessage()
+            ], 422);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'message' => 'Erro ao processar a requisição.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    // Método para deletar um custo de bandeira
+    public function destroy($id)
+    {
+        try {
+            $custoBandeira = CustoBandeira::findOrFail($id);
+
+            DB::beginTransaction();
+            $custoBandeira->delete();
+            DB::commit();
+
+            return response()->json(['message' => 'Custo bandeira deletado com sucesso.'], 200);
+        } catch (QueryException $e) {
+            DB::rollBack();
+            return response()->json([
+                'message' => 'Erro ao deletar o custo bandeira.',
                 'error' => $e->getMessage()
             ], 422);
         } catch (\Exception $e) {

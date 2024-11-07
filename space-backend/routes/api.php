@@ -13,11 +13,18 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
+
+        Route::get('/contas', [ContaController::class, 'index']);
+    Route::post('/contas', [ContaController::class, 'store']);
+    Route::get('/contas/{id}', [ContaController::class, 'show']);
+    Route::put('/contas/{id}', [ContaController::class, 'update']);
+    Route::delete('/contas/{id}', [ContaController::class, 'destroy']);
+    Route::get('/contas/status/{status}', [ContaController::class, 'listarPorStatus']);
+    Route::get('/contas/tipo/{tipo}', [ContaController::class, 'listarPorTipo']);
     });
     // Outras rotas protegidas aqui
 
-    Route::post('/conta', [ContaController::class, 'store']);
-    Route::get('/conta', [ContaController::class, 'index']);
+    
     // Rota para salvar o cálculo de bandeiras
     Route::post('/custo-bandeira', [CustoBandeiraController::class, 'store']);
 
