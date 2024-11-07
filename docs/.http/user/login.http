@@ -1,4 +1,4 @@
-@baseUrl = http://localhost:8000/api/login
+@baseUrl = http://abf47d2d8539140fbb162c08e4d144a2-1032230775.sa-east-1.elb.amazonaws.com/api/login
 @email = ldamasio@gmail.com
 @password = artearena
 
