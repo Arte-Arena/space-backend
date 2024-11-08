@@ -1,4 +1,4 @@
 ### List all accounts
-GET http://abf47d2d8539140fbb162c08e4d144a2-1032230775.sa-east-1.elb.amazonaws.com/api/conta
-Authorization: Bearer 11|Z3d6GZ4FS0bzBRgCDaoRcftF89f7RiU3l9nce9Wsd6e8dc95
+GET http://localhost:8000/api/conta
+Authorization: Bearer 13|6UKPl8SIrR6bOYLM0HOldRy9BvHzcMPYqwlUlV0a5f3793bb
 

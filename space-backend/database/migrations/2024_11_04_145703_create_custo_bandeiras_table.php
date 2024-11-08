@@ -22,7 +22,6 @@ return new class extends Migration
             $table->decimal('custo_imposto', 5, 2);
             $table->decimal('custo_final', 10, 2);
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 

@@ -5,8 +5,8 @@ POST {{baseUrl}}/register
 Content-Type: application/json
 
 {
-    "name": "Gabriel Felix Gomes",
-    "email": "gabriel@artearena.com.br",
+    "name": "Leandro Damasio",
+    "email": "leandro@artearena.com.br",
     "password": "artearena",
     "password_confirmation": "artearena"
 }

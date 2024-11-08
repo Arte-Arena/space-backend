@@ -22,14 +22,15 @@ class ContaController extends Controller
     {
         try {
             $validated = $request->validate([
-                'user_id' => 'required|exists:users,id',
                 'titulo' => 'required|string|max:255',
                 'descricao' => 'nullable|string',
                 'valor' => 'required|numeric',
                 'data_vencimento' => 'required|date',
-                'status' => 'required|string|max:255', // Ex.: "pago", "pendente"
-                'tipo' => 'required|string|max:255', // Ex.: "pagar", "receber"
+                'status' => 'required|string|max:255',
+                'tipo' => 'required|string|max:255',
             ]);
+
+            $validated['user_id'] = $request->user()->id;
 
             DB::beginTransaction();
             $conta = Conta::create($validated);

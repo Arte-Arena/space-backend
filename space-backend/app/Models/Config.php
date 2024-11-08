@@ -11,8 +11,6 @@ class Config extends Model
 
     protected $fillable = [
         'user_id',
-        'altura',
-        'largura',
         'custo_tecido',
         'custo_tinta',
         'custo_papel',
