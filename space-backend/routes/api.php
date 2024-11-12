@@ -2,10 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\ContaController;
-use App\Http\Controllers\CustoBandeiraController;
-use App\Http\Controllers\ConfigController;
+use App\Http\Controllers\{AuthController, ContaController, CustoBandeiraController, PedidoController, ConfigController };
 
 
 Route::post('/register', [AuthController::class, 'register']);
@@ -23,6 +20,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/conta/{id}', [ContaController::class, 'destroy']);
     Route::get('/conta/status/{status}', [ContaController::class, 'listarPorStatus']);
     Route::get('/conta/tipo/{tipo}', [ContaController::class, 'listarPorTipo']);
+
+    Route::get('/pedido', [PedidoController::class, 'index']);
+    Route::post('/pedido', [PedidoController::class, 'store']);
+    Route::get('/pedido/{id}', [PedidoController::class, 'show']);
+    Route::put('/pedido/{id}', [PedidoController::class, 'update']);
+    Route::delete('/pedido/{id}', [PedidoController::class, 'destroy']);
 
     // Outras rotas protegidas aqui
 
