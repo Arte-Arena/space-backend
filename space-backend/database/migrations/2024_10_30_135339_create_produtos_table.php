@@ -13,18 +13,17 @@ return new class extends Migration
     {
         Schema::create('produtos', function (Blueprint $table) {
             $table->id();
-            $table->date('DATA_CRIACAO')->nullable();
-            $table->string('NOME')->nullable();
-            $table->string('CODIGO')->nullable();
-            $table->decimal('PRECO', 10, 2)->nullable();
-            $table->decimal('PRECO_PROMOCIONAL', 10, 2)->nullable();
-            $table->string('UNIDADE')->nullable();
-            $table->string('GTIN')->nullable();
-            $table->string('TIPOVARIACAO')->nullable();
-            $table->string('LOCALIZACAO')->nullable();
-            $table->decimal('PRECO_CUSTO', 10, 2)->nullable();
-            $table->decimal('PRECO_CUSTO_MEDIO', 10, 2)->nullable();
-            $table->string('SITUACAO')->nullable();
+            $table->string('nome')->nullable();
+            $table->string('codigo')->nullable();
+            $table->decimal('preco', 10, 2)->nullable();
+            $table->decimal('preco_promocional', 10, 2)->nullable();
+            $table->string('unidade')->nullable();
+            $table->string('gtin')->nullable();
+            $table->string('tipo_variacao')->nullable();
+            $table->string('localizacao')->nullable();
+            $table->decimal('preco_custo', 10, 2)->nullable();
+            $table->decimal('preco_custo_medio', 10, 2)->nullable();
+            $table->string('situacao')->nullable();
             $table->timestamps();
         });
     }

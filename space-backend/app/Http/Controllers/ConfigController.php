@@ -8,12 +8,12 @@ use App\Http\Resources\ContaResource;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\QueryException;
 
-class ContaController extends Controller
+class ConfigController extends Controller
 {
     // Lista todas as contas
     public function index()
     {
-        $contas = Conta::all();
+        $contas = Config::all();
         return ContaResource::collection($contas);
     }
 
@@ -31,7 +31,7 @@ class ContaController extends Controller
             ]);
 
             DB::beginTransaction();
-            $conta = Conta::create($validated);
+            $conta = Config::create($validated);
             DB::commit();
 
             return new ContaResource($conta);
@@ -49,3 +49,4 @@ class ContaController extends Controller
             ], 500);
         }
     }
+}

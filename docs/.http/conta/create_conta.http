@@ -10,6 +10,5 @@ Authorization: Bearer 5|Z2HXf7GYRzoSSgrFHe1rhEF0YiGQKRkI0tTrBpSuadba4553
     "data_vencimento": "2023-12-31",
     "status": "recebido",
     "tipo": "a receber",
-    "user_id": 1
 }
 
