@@ -16,6 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
             'role' => CheckRole::class,
+            'is_super_admin' => App\Http\Middleware\IsSuperAdmin::class, 
         ]);
 
         // Add Sanctum middleware for API requests
@@ -23,6 +24,7 @@ return Application::configure(basePath: dirname(__DIR__))
             EnsureFrontendRequestsAreStateful::class,
             'throttle:api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            // 'is_super_admin',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

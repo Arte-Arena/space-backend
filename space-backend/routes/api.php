@@ -3,16 +3,20 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\{AuthController, ContaController, CustoBandeiraController, PedidoController, ConfigController };
+use App\Models\User;
 
-
+// Rotas públicas
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
+// Rotas privadas para qualquer usuário logado
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
-
+    Route::get('/user/{user}', function (User $user) {
+        return $user->load('roles');
+    });
     Route::get('/conta', [ContaController::class, 'index']);
     Route::post('/conta', [ContaController::class, 'store']);
     Route::get('/conta/{id}', [ContaController::class, 'show']);
@@ -40,6 +44,15 @@ Route::middleware('auth:sanctum')->group(function () {
 
 });
 
+//Rotas para usuários logados definidos com role admin
 Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     // Rotas apenas para admins aqui
+    Route::get('/teste', [ContaController::class, 'index']);
 });
+
+//Rotas para usuários logados com permissão de leitura no módulo vendas
+Route::middleware(['auth:sanctum', 'permission:ler,produtos'])->group(function () {
+    // Rotas apenas para admins aqui
+    Route::get('/teste2', [ContaController::class, 'index']);
+});
+

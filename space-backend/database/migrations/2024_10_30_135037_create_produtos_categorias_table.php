@@ -55,6 +55,10 @@ return new class extends Migration
             ['descricao' => 'Toalha'],
             ['descricao' => 'Uniforme'],
             ['descricao' => 'Windbanner'],
+            ['descricao' => 'Calção'],
+            ['descricao' => 'Estandarte'],
+            ['descricao' => 'Samba Canção'],
+            ['descricao' => 'Bandeira para Windbanner'],
         ]);
     }
 
