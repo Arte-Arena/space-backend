@@ -12,7 +12,7 @@ class PedidoController extends Controller
 {
     public function index()
     {
-        $pedidos = Pedido::all();
+        $pedidos = Pedido::paginate(50);
         return PedidoResource::collection($pedidos);
     }
 
