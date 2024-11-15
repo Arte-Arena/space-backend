@@ -28,6 +28,9 @@ class AuthController extends Controller
         return response()->json([
             'access_token' => $token,
             'token_type' => 'Bearer',
+            'user_roles' => $user->roles()->pluck('role_id'),
+            'user_name' => $user->name,
+            'user_email' => $user->email,
         ]);
     }
 
@@ -48,6 +51,11 @@ class AuthController extends Controller
         return response()->json([
             'access_token' => $token,
             'token_type' => 'Bearer',
+            'user_id' => $user,
+            'user_roles' => $user->roles()->pluck('role_id'),
+            'user_cargos' => $user->cargos()->pluck('nome'),
+            'user_name' => $user->name,
+            'user_email' => $user->email,
         ]);
     }
 }

@@ -73,4 +73,10 @@ class User extends Authenticatable
     {
         return $this->roles()->where('name', $role)->exists();
     }
+
+    public function cargos(): BelongsToMany
+    {
+        return $this->belongsToMany(Cargo::class, 'cargo_user');
+    }
+
 }

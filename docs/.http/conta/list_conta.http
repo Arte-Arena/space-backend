@@ -1,5 +1,5 @@
 ### List all accounts
 GET http://localhost:8000/api/conta
-Authorization: Bearer 3|9pvjwqPNhImKeIOmkrZLKqAhNxB9Y8DpBUa07xbZ0f3db4a7
+Authorization: Bearer 1|lFbvZxgMRdH2QLkOO8tZDxgBHrkOO04IBJ5pRq5P67f37e43
 
 
