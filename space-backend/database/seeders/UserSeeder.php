@@ -101,6 +101,26 @@ class UserSeeder extends Seeder
                 'email' => 'marcelo.lopesdelima80@gmail.com',
                 'password' => '$2y$10$2mSF.Hl2xOnQsYsvhe6Wr.KTmmk4kyc2lFZQ4eD9Kzkfa.q.6rRjW',
             ],
+            [
+                'name' => 'Admin',
+                'email' => 'admin@artearena.com.br',
+                'password' => Hash::make('artearena'),
+            ],
+            [
+                'name' => 'Vendedor',
+                'email' => 'vendedor@artearena.com.br',
+                'password' => Hash::make('artearena'),
+            ],
+            [
+                'name' => 'Designer',
+                'email' => 'designer@artearena.com.br',
+                'password' => Hash::make('artearena'),
+            ],
+            [
+                'name' => 'Production',
+                'email' => 'production@artearena.com.br',
+                'password' => Hash::make('artearena'),
+            ],
         ];
 
         foreach ($users as $user) {

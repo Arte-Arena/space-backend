@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\{AuthController, ContaController, CustoBandeiraController, PedidoController, ConfigController };
+use App\Http\Controllers\{AuthController, SuperAdminController, ContaController, CustoBandeiraController, PedidoController, ConfigController };
 use App\Models\User;
 
 // Rotas públicas
@@ -42,6 +42,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('configs/{id}', [ConfigController::class, 'update']);
     Route::delete('configs/{id}', [ConfigController::class, 'destroy']);
 
+});
+
+//Rotas para usuários logados definidos com role super-admin
+Route::middleware(['auth:sanctum', 'role:super-admin'])->group(function () {
+    // Rotas apenas para admins aqui
+    Route::get('/super-admin/get-all-users', [SuperAdminController::class, 'getAllUsers']);
 });
 
 //Rotas para usuários logados definidos com role admin

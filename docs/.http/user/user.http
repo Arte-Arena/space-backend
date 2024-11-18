@@ -1,8 +1,8 @@
 @baseUrl = http://localhost:8000/api
-@token = 1|lFbvZxgMRdH2QLkOO8tZDxgBHrkOO04IBJ5pRq5P67f37e43
+@token = 16|PWTYM31bOwgXHpsr6LJGJ5KmqtVCxgLD1N60WJhk119fbf43
 
 ### Get User (Authenticated)
-GET {{baseUrl}}/user
+GET {{baseUrl}}/user/05
 Authorization: Bearer {{token}}
 
 
