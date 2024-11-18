@@ -22,6 +22,36 @@ class UserSeeder extends Seeder
                 'password' => Hash::make('artearena'),
             ],
             [
+                'name' => 'Admin Arte Arena',
+                'email' => 'admin@artearena.com.br',
+                'password' => Hash::make('artearena'),
+            ],
+            [
+                'name' => 'TI Arte Arena',
+                'email' => 'ti@artearena.com.br',
+                'password' => Hash::make('artearena'),
+            ],
+            [
+                'name' => 'Vendedor Arte Arena',
+                'email' => 'vendedor@artearena.com.br',
+                'password' => Hash::make('artearena'),
+            ],
+            [
+                'name' => 'Designer Arte Arena',
+                'email' => 'designer@artearena.com.br',
+                'password' => Hash::make('artearena'),
+            ],
+            [
+                'name' => 'Production Arte Arena',
+                'email' => 'prod@artearena.com.br',
+                'password' => Hash::make('artearena'),
+            ],
+            [
+                'name' => 'Lider Arte Arena',
+                'email' => 'lider@artearena.com.br',
+                'password' => Hash::make('artearena'),
+            ],
+            [
                 'name' => 'Contato Arte Arena',
                 'email' => 'contato@artearena.com.br',
                 'password' => Hash::make('artearena'),
@@ -100,26 +130,6 @@ class UserSeeder extends Seeder
                 'name' => 'Marcelo Lopes',
                 'email' => 'marcelo.lopesdelima80@gmail.com',
                 'password' => '$2y$10$2mSF.Hl2xOnQsYsvhe6Wr.KTmmk4kyc2lFZQ4eD9Kzkfa.q.6rRjW',
-            ],
-            [
-                'name' => 'Admin',
-                'email' => 'admin@artearena.com.br',
-                'password' => Hash::make('artearena'),
-            ],
-            [
-                'name' => 'Vendedor',
-                'email' => 'vendedor@artearena.com.br',
-                'password' => Hash::make('artearena'),
-            ],
-            [
-                'name' => 'Designer',
-                'email' => 'designer@artearena.com.br',
-                'password' => Hash::make('artearena'),
-            ],
-            [
-                'name' => 'Production',
-                'email' => 'production@artearena.com.br',
-                'password' => Hash::make('artearena'),
             ],
         ];
 

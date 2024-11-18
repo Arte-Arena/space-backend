@@ -16,14 +16,9 @@ class Role extends Model
     {
         return $this->belongsToMany(User::class);
     }
-
-    public function permissions() {
-        return $this->belongsToMany(Permission::class, 'module_permission_role')
-                    ->withPivot('module_id');
-    }
     
     public function modules() {
-        return $this->belongsToMany(Module::class, 'module_permission_role')
-                    ->withPivot('permission_id');
+        return $this->belongsToMany(Module::class, 'role_module');
     }
+    
 }

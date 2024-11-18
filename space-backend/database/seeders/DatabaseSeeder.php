@@ -19,6 +19,9 @@ class DatabaseSeeder extends Seeder
             PedidoTipoSeeder::class,
             PedidoStatusSeeder::class,
             RoleSeeder::class,
+            ModuleSeeder::class,
+            RoleUserSeeder::class,
+            RoleModuleSeeder::class,
         ]);
 
     }

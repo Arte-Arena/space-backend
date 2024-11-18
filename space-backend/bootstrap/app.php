@@ -17,7 +17,6 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role' => CheckRole::class,
             'is_super_admin' => App\Http\Middleware\IsSuperAdmin::class, 
-            'permission' => App\Http\Middleware\CheckPermission::class, 
         ]);
 
         // Add Sanctum middleware for API requests

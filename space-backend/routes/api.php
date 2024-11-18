@@ -48,6 +48,10 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::middleware(['auth:sanctum', 'role:super-admin'])->group(function () {
     // Rotas apenas para admins aqui
     Route::get('/super-admin/get-all-users', [SuperAdminController::class, 'getAllUsers']);
+    Route::get('/super-admin/get-all-roles', [SuperAdminController::class, 'getAllRoles']);
+    Route::get('/super-admin/get-all-modules', [SuperAdminController::class, 'getAllModules']);
+    Route::get('/super-admin/get-all-users-roles', [SuperAdminController::class, 'getAllUsersRoles']);
+    Route::get('/super-admin/get-all-roles-modules', [SuperAdminController::class, 'getAllRolesModules']);
 });
 
 //Rotas para usuários logados definidos com role admin
