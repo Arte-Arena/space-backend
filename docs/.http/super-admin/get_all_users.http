@@ -1,0 +1,7 @@
+@token = 23|KYETQyl3eMuM9ltW3La38G7bLX9qmYtnqI2Bm34a83bfcec9
+
+
+### Get All Users
+GET http://localhost:8000/api/super-admin/get-all-users
+Authorization: Bearer {{token}}
+Content-Type: application/json
