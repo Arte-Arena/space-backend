@@ -1,0 +1,7 @@
+@token = 7|NRhrLgZRMBDdWiKCvLQHdniJltj1bYQXv9v3pr8G3c5f177e
+
+
+### Get All Users
+DELETE  http://localhost:8000/api/super-admin/delete-role-module/9/3
+Authorization: Bearer {{token}}
+Content-Type: application/json
