@@ -1,4 +1,4 @@
-@token = 5|dgk5QKcJ02WGg8pVWi3Ib5o5DBGreEwDBWZRnw3P53ea9300
+@token = 7|NRhrLgZRMBDdWiKCvLQHdniJltj1bYQXv9v3pr8G3c5f177e
 
 ### Get All Users with Roles
 GET http://localhost:8000/api/super-admin/get-all-users-roles
