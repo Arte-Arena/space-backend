@@ -52,6 +52,8 @@ Route::middleware(['auth:sanctum', 'role:super-admin'])->group(function () {
     Route::get('/super-admin/get-all-modules', [SuperAdminController::class, 'getAllModules']);
     Route::get('/super-admin/get-all-users-roles', [SuperAdminController::class, 'getAllUsersRoles']);
     Route::get('/super-admin/get-all-roles-modules', [SuperAdminController::class, 'getAllRolesModules']);
+    Route::delete('/super-admin/delete-user/{id}', [SuperAdminController::class, 'deleteUser']);
+
 });
 
 //Rotas para usuários logados definidos com role admin
@@ -60,9 +62,5 @@ Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     Route::get('/teste', [ContaController::class, 'index']);
 });
 
-//Rotas para usuários logados com permissão de leitura no módulo vendas
-Route::middleware(['auth:sanctum', 'permission:ler,produtos'])->group(function () {
-    // Rotas apenas para admins aqui
-    Route::get('/teste2', [ContaController::class, 'index']);
-});
+
 
