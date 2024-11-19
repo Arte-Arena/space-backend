@@ -11,6 +11,19 @@ class SuperAdminController extends Controller
         return response()->json(\App\Models\User::all());
     }
 
+    public function deleteUser($id)
+{
+    $user = \App\Models\User::find($id);
+
+    if (!$user) {
+        return response()->json(['message' => 'Usuário não encontrado.'], 404);
+    }
+    $user->delete();
+
+    return response()->json(['message' => 'Usuário excluído com sucesso.'], 200);
+}
+
+
     public function getAllRoles()
     {
         return response()->json(\App\Models\Role::all());
