@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
+use App\Models\Config;
 
 class SuperAdminController extends Controller
 {
@@ -79,12 +80,11 @@ class SuperAdminController extends Controller
 
     public function createUser(Request $request)
     {
-        // Validação dos dados recebidos
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:6|confirmed', // Supondo que você tenha um campo de confirmação
-            'roles' => 'array|exists:roles,id', // Verifica se os IDs das roles existem
+            'password' => 'required|string|min:6|confirmed', 
+            'roles' => 'array|exists:roles,id', 
         ]);
 
         if ($validator->fails()) {
@@ -98,13 +98,40 @@ class SuperAdminController extends Controller
             'password' => bcrypt($request->password),
         ]);
 
-        // Se houver roles fornecidas, atribui-las ao usuário
         if ($request->has('roles')) {
             $user->roles()->attach($request->roles);
         }
 
         return response()->json(['message' => 'Usuário criado com sucesso!', 'user' => $user], 201);
     }
+
+    public function config(Request $request)
+    {
+        $validated = $request->validate([
+            'user_id' => 'required|exists:users,id', 
+            'custo_tecido' => 'required|numeric',
+            'custo_tinta' => 'required|numeric',
+            'custo_papel' => 'required|numeric',
+            'custo_imposto' => 'required|numeric',
+        ]);
+
+        $config = Config::updateOrCreate(
+            ['user_id' => $request->user_id], 
+            [
+                'custo_tecido' => $request->custo_tecido,
+                'custo_tinta' => $request->custo_tinta,
+                'custo_papel' => $request->custo_papel,
+                'custo_imposto' => $request->custo_imposto,
+                'custo_final' => $request->custo_tecido + $request->custo_tinta + $request->custo_papel + $request->custo_imposto, // Calculando o custo final
+            ]
+        );
+
+        return response()->json([
+            'message' => 'Configuração atualizada ou criada com sucesso!',
+            'config' => $config,
+        ], 200);
+    }
+
 }
 
 
