@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use App\Models\User;
 
 class SuperAdminController extends Controller
 {
@@ -74,4 +76,35 @@ class SuperAdminController extends Controller
 
         return response()->json($simplifiedResponse);
     }
+
+    public function createUser(Request $request)
+    {
+        // Validação dos dados recebidos
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:6|confirmed', // Supondo que você tenha um campo de confirmação
+            'roles' => 'array|exists:roles,id', // Verifica se os IDs das roles existem
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        // Criação do usuário
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => bcrypt($request->password),
+        ]);
+
+        // Se houver roles fornecidas, atribui-las ao usuário
+        if ($request->has('roles')) {
+            $user->roles()->attach($request->roles);
+        }
+
+        return response()->json(['message' => 'Usuário criado com sucesso!', 'user' => $user], 201);
+    }
 }
+
+
