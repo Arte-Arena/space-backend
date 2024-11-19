@@ -6,7 +6,7 @@ use App\Http\Controllers\{AuthController, SuperAdminController, ContaController,
 use App\Models\User;
 
 // Rotas públicas
-Route::post('/register', [AuthController::class, 'register']);
+//Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
 // Rotas privadas para qualquer usuário logado
@@ -52,6 +52,7 @@ Route::middleware(['auth:sanctum', 'role:super-admin'])->group(function () {
     Route::get('/super-admin/get-all-modules', [SuperAdminController::class, 'getAllModules']);
     Route::get('/super-admin/get-all-users-roles', [SuperAdminController::class, 'getAllUsersRoles']);
     Route::get('/super-admin/get-all-roles-modules', [SuperAdminController::class, 'getAllRolesModules']);
+    Route::post('/super-admin/create-user', [SuperAdminController::class, 'createUser']);
     Route::delete('/super-admin/delete-user/{id}', [SuperAdminController::class, 'deleteUser']);
 
 });
