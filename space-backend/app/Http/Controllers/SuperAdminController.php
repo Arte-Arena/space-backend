@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 use App\Models\Config;
+use App\Models\Role;
+
 
 class SuperAdminController extends Controller
 {
@@ -105,7 +107,7 @@ class SuperAdminController extends Controller
         return response()->json(['message' => 'Usuário criado com sucesso!', 'user' => $user], 201);
     }
 
-    public function config(Request $request)
+    public function upsertConfig(Request $request)
     {
         $validated = $request->validate([
             'user_id' => 'required|exists:users,id',
@@ -147,7 +149,8 @@ class SuperAdminController extends Controller
 
 
 
-    public function deleteModule($id) {
+    public function deleteModule($id)
+    {
         $module = \App\Models\Module::find($id);
 
         if (!$module) {
@@ -160,7 +163,8 @@ class SuperAdminController extends Controller
 
     public function upsertModule() {}
 
-    public function deleteRole($id) {
+    public function deleteRole($id)
+    {
         $role = \App\Models\Role::find($id);
 
         if (!$role) {
@@ -172,51 +176,83 @@ class SuperAdminController extends Controller
     }
 
 
-    public function upsertRole() {}
+    public function upsertRole(Request $request)
+    {
+        $validatedData = $request->validate([
+            'id' => 'nullable|integer',
+            'name' => 'required|string|max:255',
+        ]);
+    
+        $role = Role::updateOrCreate(
+            ['id' => $validatedData['id']],
+            ['name' => $validatedData['name']]
+        );
+    
+        return response()->json(['message' => 'Role atualizada com sucesso', 'role' => $role], 200);
 
-
-    public function deleteUserRoles($userId, $roleId) {
-        $user = \App\Models\User::find($userId);
-
-    if (!$user) {
-        return response()->json(['message' => 'Usuário não encontrado.'], 404);
     }
 
-    // Detach the specified role from the user
-    $user->roles()->detach($roleId);
 
-    return response()->json(['message' => 'Permissão do usuário excluída com sucesso.'], 200);
-    }
-
-
-    public function upsertUserRoles(Request $request) {
-        $userId = $request->input('user_id');
-        $roleIds = $request->input('role_ids');
-    
+    public function deleteUserRoles($userId, $roleId)
+    {
         $user = \App\Models\User::find($userId);
-    
+
         if (!$user) {
             return response()->json(['message' => 'Usuário não encontrado.'], 404);
         }
-    
+
+        // Detach the specified role from the user
+        $user->roles()->detach($roleId);
+
+        return response()->json(['message' => 'Permissão do usuário excluída com sucesso.'], 200);
+    }
+
+
+    public function upsertUserRoles(Request $request)
+    {
+        $userId = $request->input('user_id');
+        $roleIds = $request->input('role_ids');
+
+        $user = \App\Models\User::find($userId);
+
+        if (!$user) {
+            return response()->json(['message' => 'Usuário não encontrado.'], 404);
+        }
+
         // Sync the user's roles with the provided role IDs
         $user->roles()->sync($roleIds);
-    
+
         return response()->json(['message' => 'Permissões do usuário atualizadas com sucesso.'], 200);
     }
 
-    public function deleteRoleModule($roleId, $moduleId) {
+    public function deleteRoleModule($roleId, $moduleId)
+    {
         $role = \App\Models\Role::find($roleId);
 
         if (!$role) {
             return response()->json(['message' => 'Papel não encontrado.'], 404);
         }
-    
+
         // Detach the specified role from the user
         $role->modules()->detach($moduleId);
-    
-        return response()->json(['message' => 'Módulo do papel excluído com sucesso.'], 200); 
+
+        return response()->json(['message' => 'Módulo do papel excluído com sucesso.'], 200);
     }
 
-    public function upsertRoleModule() {}
+    public function upsertRoleModule(Request $request)
+    {
+        $roleId = $request->input('role_id');
+        $moduleIds = $request->input('module_ids');
+
+        $role = \App\Models\Role::find($roleId);
+
+        if (!$role) {
+            return response()->json(['message' => 'Papel não encontrado.'], 404);
+        }
+
+        // Sync the role's modules with the provided module IDs
+        $role->modules()->sync($moduleIds);
+
+        return response()->json(['message' => 'Módulos do papel atualizados com sucesso.'], 200);
+    }
 }

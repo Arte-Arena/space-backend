@@ -1,12 +1,12 @@
 @baseUrl = http://localhost:8000/api
 @token = 7|NRhrLgZRMBDdWiKCvLQHdniJltj1bYQXv9v3pr8G3c5f177e
 
-### Upsert User Roles
-PUT {{baseUrl}}/super-admin/upsert-user-roles
+### Upsert Role Module
+PUT {{baseUrl}}/super-admin/upsert-role-module
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-  "user_id": 25,
-  "role_ids": [1,3]
+  "role_id": 9,
+  "module_ids": [1,3]
 }
