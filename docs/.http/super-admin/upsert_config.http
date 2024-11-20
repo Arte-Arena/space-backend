@@ -1,4 +1,4 @@
-PUT http://localhost:8000/api/super-admin/config
+PUT http://localhost:8000/api/super-admin/upsert-config
 Content-Type: application/json
 Authorization: Bearer 5|dgk5QKcJ02WGg8pVWi3Ib5o5DBGreEwDBWZRnw3P53ea9300
 

@@ -7,6 +7,6 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-  "user_id": 123,
-  "role_ids": [1, 2, 3]
+  "user_id": 25,
+  "role_ids": [1,3]
 }
