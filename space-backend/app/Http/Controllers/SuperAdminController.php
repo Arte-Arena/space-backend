@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 use App\Models\Config;
-use App\Models\Role;
+
 
 
 class SuperAdminController extends Controller
@@ -93,7 +93,6 @@ class SuperAdminController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        // Criação do usuário
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
@@ -136,14 +135,12 @@ class SuperAdminController extends Controller
 
     public function getConfig()
     {
-        // Buscar as configurações do usuário
         $config = \App\Models\Config::first();
 
         if (!$config) {
             return response()->json(['message' => 'Configuração não encontrada para o usuário.'], 404);
         }
 
-        // Retornar as configurações
         return response()->json($config, 200);
     }
 
@@ -161,7 +158,24 @@ class SuperAdminController extends Controller
         return response()->json(['message' => 'Módulo excluído com sucesso.'], 200);
     }
 
-    public function upsertModule() {}
+    public function upsertModule(Request $request) {
+        $moduleId = $request->input('module_id');
+        $moduleName = $request->input('module_name');
+    
+        $module = \App\Models\Module::find($moduleId);
+    
+        if (!$module) {
+            $module = \App\Models\Module::create([
+                'name' => $moduleName,
+            ]);
+        } else {
+            $module->name = $moduleName;
+            $module->save();
+        }
+    
+        return response()->json(['message' => 'Módulo atualizado ou criado com sucesso!', 'module' => $module], 200);
+    
+    }
 
     public function deleteRole($id)
     {
@@ -178,18 +192,21 @@ class SuperAdminController extends Controller
 
     public function upsertRole(Request $request)
     {
-        $validatedData = $request->validate([
-            'id' => 'nullable|integer',
-            'name' => 'required|string|max:255',
-        ]);
+        $roleId = $request->input('role_id');
+        $roleName = $request->input('role_name');
     
-        $role = Role::updateOrCreate(
-            ['id' => $validatedData['id']],
-            ['name' => $validatedData['name']]
-        );
+        $role = \App\Models\Role::find($roleId);
     
-        return response()->json(['message' => 'Role atualizada com sucesso', 'role' => $role], 200);
-
+        if (!$role) {
+            $role = \App\Models\Role::create([
+                'name' => $roleName,
+            ]);
+        } else {
+            $role->name = $roleName;
+            $role->save();
+        }
+    
+        return response()->json(['message' => 'Papel atualizado ou criado com sucesso!', 'role' => $role], 200);
     }
 
 
@@ -201,7 +218,6 @@ class SuperAdminController extends Controller
             return response()->json(['message' => 'Usuário não encontrado.'], 404);
         }
 
-        // Detach the specified role from the user
         $user->roles()->detach($roleId);
 
         return response()->json(['message' => 'Permissão do usuário excluída com sucesso.'], 200);
@@ -219,7 +235,6 @@ class SuperAdminController extends Controller
             return response()->json(['message' => 'Usuário não encontrado.'], 404);
         }
 
-        // Sync the user's roles with the provided role IDs
         $user->roles()->sync($roleIds);
 
         return response()->json(['message' => 'Permissões do usuário atualizadas com sucesso.'], 200);
@@ -233,7 +248,6 @@ class SuperAdminController extends Controller
             return response()->json(['message' => 'Papel não encontrado.'], 404);
         }
 
-        // Detach the specified role from the user
         $role->modules()->detach($moduleId);
 
         return response()->json(['message' => 'Módulo do papel excluído com sucesso.'], 200);
@@ -250,7 +264,6 @@ class SuperAdminController extends Controller
             return response()->json(['message' => 'Papel não encontrado.'], 404);
         }
 
-        // Sync the role's modules with the provided module IDs
         $role->modules()->sync($moduleIds);
 
         return response()->json(['message' => 'Módulos do papel atualizados com sucesso.'], 200);

@@ -2,11 +2,11 @@
 @token = 7|NRhrLgZRMBDdWiKCvLQHdniJltj1bYQXv9v3pr8G3c5f177e
 
 ### Upsert Role
-PUT http://localhost:8000/api/super-admin/upsert-role
+PUT  http://localhost:8000/api/super-admin/upsert-role
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-  "id": 9,
-  "name": "com",
+  "role_id": 9,
+  "role_name": "Novo Papel"
 }
