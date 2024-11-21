@@ -114,7 +114,7 @@ class SuperAdminController extends Controller
             'custo_tecido' => 'required|numeric',
             'custo_tinta' => 'required|numeric',
             'custo_papel' => 'required|numeric',
-            'custo_imposto' => 'required|numeric',
+            'custo_imposto' => 'required|numeric|regex:/^\d+(\.\d+)?$/',
         ]);
 
         $config = Config::updateOrCreate(

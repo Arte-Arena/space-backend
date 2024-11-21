@@ -1,6 +1,6 @@
 ### Create a new account
 
-POST http://abf47d2d8539140fbb162c08e4d144a2-1032230775.sa-east-1.elb.amazonaws.com/custo-bandeira
+POST http://localhost:8000/api/custo-bandeira
 Content-Type: application/json
 Authorization: Bearer 11|Z3d6GZ4FS0bzBRgCDaoRcftF89f7RiU3l9nce9Wsd6e8dc95
 
