@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
+
 
 class AuthController extends Controller
 {
@@ -57,5 +59,21 @@ class AuthController extends Controller
             'user_name' => $user->name,
             'user_email' => $user->email,
         ]);
+    }
+
+    public function validateToken(Request $request)
+    {
+        // Check if the user is authenticated
+        if (Auth::check()) {
+            // If the user is authenticated, return a success response
+            return response()->json([
+                'message' => 'Token is valid',
+            ], 200);
+        } else {
+            // If the user is not authenticated, return an unauthorized response
+            return response()->json([
+                'message' => 'Token is invalid',
+            ], 401);
+        }
     }
 }

@@ -11,6 +11,7 @@ Route::post('/login', [AuthController::class, 'login']);
 
 // Rotas privadas para qualquer usuário logado
 Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/validate-token', [AuthController::class, 'validateToken']);
     Route::get('/user', function (Request $request) {
         return $request->user();
     });

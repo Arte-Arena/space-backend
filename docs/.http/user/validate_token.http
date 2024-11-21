@@ -1,0 +1,7 @@
+@token = 11|EOnpH5HF5Rok1tpvoCssBqqDXiwWKspozu7Fvcu8cb7b149e
+
+
+### Get All Users
+GET  http://localhost:8000/api/validate-token
+Authorization: Bearer {{token}}
+Content-Type: application/json
