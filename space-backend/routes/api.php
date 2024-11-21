@@ -31,18 +31,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/pedido/{id}', [PedidoController::class, 'show']);
     Route::put('/pedido/{id}', [PedidoController::class, 'update']);
     Route::delete('/pedido/{id}', [PedidoController::class, 'destroy']);
-
-    // Outras rotas protegidas aqui
-
-    
-    // Rota para salvar o cálculo de bandeiras
-    Route::post('/custo-bandeira', [CustoBandeiraController::class, 'store']);
-
-    Route::post('configs', [ConfigController::class, 'store']);
-    Route::get('configs', [ConfigController::class, 'index']);
-    Route::put('configs/{id}', [ConfigController::class, 'update']);
-    Route::delete('configs/{id}', [ConfigController::class, 'destroy']);
-
 });
 
 //Rotas para usuários logados definidos com role super-admin
@@ -57,7 +45,6 @@ Route::middleware(['auth:sanctum', 'role:super-admin'])->group(function () {
     Route::delete('/super-admin/delete-user/{id}', [SuperAdminController::class, 'deleteUser']);
     Route::put('/super-admin/upsert-config', [SuperAdminController::class, 'upsertConfig']);
     Route::get('/super-admin/get-config', [SuperAdminController::class, 'getConfig']);
-
     Route::delete('/super-admin/delete-module/{id}', [SuperAdminController::class, 'deleteModule']);
     Route::put('/super-admin/upsert-module', [SuperAdminController::class, 'upsertModule']);
     Route::delete('/super-admin/delete-role/{id}', [SuperAdminController::class, 'deleteRole']);
@@ -66,7 +53,11 @@ Route::middleware(['auth:sanctum', 'role:super-admin'])->group(function () {
     Route::put('/super-admin/upsert-user-roles', [SuperAdminController::class, 'upsertUserRoles']);
     Route::delete('/super-admin/delete-role-module/{roleId}/{moduleId}', [SuperAdminController::class, 'deleteRoleModule']);
     Route::put('/super-admin/upsert-role-module', [SuperAdminController::class, 'upsertRoleModule']);
-
+    Route::post('configs', [ConfigController::class, 'store']);
+    Route::get('configs', [ConfigController::class, 'index']);
+    Route::put('configs/{id}', [ConfigController::class, 'update']);
+    Route::delete('configs/{id}', [ConfigController::class, 'destroy']);
+    Route::post('/custo-bandeira', [CustoBandeiraController::class, 'upsertCustoBandeira']);
 
 });
 
