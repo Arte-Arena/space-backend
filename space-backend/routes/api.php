@@ -17,13 +17,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user/{user}', function (User $user) {
         return $user->load('roles');
     });
-    Route::get('/conta', [ContaController::class, 'index']);
-    Route::post('/conta', [ContaController::class, 'store']);
-    Route::get('/conta/{id}', [ContaController::class, 'show']);
-    Route::put('/conta/{id}', [ContaController::class, 'update']);
-    Route::delete('/conta/{id}', [ContaController::class, 'destroy']);
-    Route::get('/conta/status/{status}', [ContaController::class, 'listarPorStatus']);
-    Route::get('/conta/tipo/{tipo}', [ContaController::class, 'listarPorTipo']);
+    
 
     Route::get('/pedido', [PedidoController::class, 'index']);
     Route::post('/pedido', [PedidoController::class, 'store']);
@@ -60,7 +54,9 @@ Route::middleware(['auth:sanctum', 'role:super-admin'])->group(function () {
     Route::delete('/super-admin/delete-module/{id}', [SuperAdminController::class, 'deleteModule']);
     Route::put('/super-admin/upsert-module', [SuperAdminController::class, 'upsertModule']);
     Route::delete('/super-admin/delete-role/{id}', [SuperAdminController::class, 'deleteRole']);
-    Route::put('/super-admin/upsert-role', [SuperAdminController::class, 'upsertRole']);
+
+
+
     Route::delete('/super-admin/delete-user-roles/{userId}/{roleId}', [SuperAdminController::class, 'deleteUserRoles']);
     Route::put('/super-admin/upsert-user-roles', [SuperAdminController::class, 'upsertUserRoles']);
     Route::delete('/super-admin/delete-role-module/{roleId}/{moduleId}', [SuperAdminController::class, 'deleteRoleModule']);
@@ -72,7 +68,12 @@ Route::middleware(['auth:sanctum', 'role:super-admin'])->group(function () {
 //Rotas para usuários logados definidos com role admin
 Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
     // Rotas apenas para admins aqui
-    Route::get('/teste', [ContaController::class, 'index']);
+
+    Route::get('/conta', [ContaController::class, 'getAllConta']);
+    Route::put('/conta/{id}', [ContaController::class, 'upsertConta']);
+    Route::delete('/conta/{id}', [ContaController::class, 'deleteConta']);
+    //Route::get('/conta/status/{status}', [ContaController::class, 'listarPorStatus']);
+    //Route::get('/conta/tipo/{tipo}', [ContaController::class, 'listarPorTipo']);
 });
 
 
