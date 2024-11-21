@@ -161,7 +161,24 @@ class SuperAdminController extends Controller
         return response()->json(['message' => 'Módulo excluído com sucesso.'], 200);
     }
 
-    public function upsertModule() {}
+    public function upsertModule(Request $request)
+    {
+        $moduleId = $request->input('module_id');
+        $moduleName = $request->input('module_name');
+
+        $module = \App\Models\Module::find($moduleId);
+
+        if (!$module) {
+            $module = \App\Models\Module::create([
+                'name' => $moduleName,
+            ]);
+        } else {
+            $module->name = $moduleName;
+            $module->save();
+        }
+
+        return response()->json(['message' => 'Módulo atualizado ou criado com sucesso!', 'module' => $module], 200);
+    }
 
     public function deleteRole($id)
     {
@@ -178,18 +195,19 @@ class SuperAdminController extends Controller
 
     public function upsertRole(Request $request)
     {
-        $validatedData = $request->validate([
-            'id' => 'nullable|integer',
-            'name' => 'required|string|max:255',
-        ]);
-    
-        $role = Role::updateOrCreate(
-            ['id' => $validatedData['id']],
-            ['name' => $validatedData['name']]
-        );
-    
-        return response()->json(['message' => 'Role atualizada com sucesso', 'role' => $role], 200);
+        $roleId = $request->input('role_id');
+        $roleName = $request->input('role_name');
+        $role = \App\Models\Role::find($roleId);
+        if (!$role) {
+            $role = \App\Models\Role::create([
+                'name' => $roleName,
+            ]);
+        } else {
+            $role->name = $roleName;
+            $role->save();
+        }
 
+        return response()->json(['message' => 'Papel atualizado ou criado com sucesso!', 'role' => $role], 200);
     }
 
 
