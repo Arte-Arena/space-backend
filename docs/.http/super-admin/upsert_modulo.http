@@ -1,0 +1,12 @@
+@baseUrl = http://localhost:8000/api
+@token = 13|eQqTOvD9ZRKirBvqyWJVcfAtVJFchP92aY8Ou6B81283bdd3
+
+### Upsert Role Module
+PUT {{baseUrl}}/super-admin/upsert-module
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+   "module_id": 6,
+   "module_name": "com",
+}

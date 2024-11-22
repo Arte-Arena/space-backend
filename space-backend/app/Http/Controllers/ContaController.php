@@ -18,40 +18,46 @@ class ContaController extends Controller
     }
 
     // Cria uma nova conta
-    public function store(Request $request)
+    public function insertConta(Request $request)
     {
         try {
-            $validated = $request->validate([
-                'titulo' => 'required|string|max:255',
-                'descricao' => 'nullable|string',
+            // Valida os dados recebidos
+            $request->validate([
+                'titulo' => 'required|string',
                 'valor' => 'required|numeric',
+                'status' => 'required|string',
+                'tipo' => 'required|string',
+                'user_id' => 'required|integer',
+                'descricao' => 'required|string',
                 'data_vencimento' => 'required|date',
-                'status' => 'required|string|max:255',
-                'tipo' => 'required|string|max:255',
             ]);
-
-            $validated['user_id'] = $request->user()->id;
-
-            DB::beginTransaction();
-            $conta = Conta::create($validated);
-            DB::commit();
-
-            return new ContaResource($conta);
+    
+            // Cria um novo registro no banco de dados
+            $novaConta = new Conta();
+            $novaConta->titulo = $request->titulo;
+            $novaConta->valor = $request->valor;
+            $novaConta->status = $request->status;
+            $novaConta->tipo = $request->tipo;
+            $novaConta->user_id = $request->user_id;
+            $novaConta->descricao = $request->descricao;
+            $novaConta->data_vencimento = $request->data_vencimento;
+    
+            // Salva o novo registro no banco de dados
+            $novaConta->save();
+    
+            // Retorna uma resposta de sucesso
+            return response()->json([
+                'message' => 'Conta criada com sucesso.',
+                'data' => new ContaResource($novaConta),
+            ], 201);
         } catch (QueryException $e) {
-            DB::rollBack();
+            // Retorna uma resposta de erro caso ocorra uma exceção de consulta
             return response()->json([
-                'message' => 'Erro ao criar conta. Verifique se o usuário existe.',
-                'error' => $e->getMessage()
-            ], 422);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json([
-                'message' => 'Erro ao processar a requisição.',
-                'error' => $e->getMessage()
+                'message' => 'Falha ao criar conta.',
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
-
     // Exibe uma conta específica
     public function show($id)
     {
@@ -63,67 +69,44 @@ class ContaController extends Controller
         return response()->json(['message' => 'Conta não encontrada.'], 404);
     }
 
-    // Atualiza uma conta existente
-    public function update(Request $request, $id)
-    {
-        try {
-            $validated = $request->validate([
-                'titulo' => 'string|max:255',
-                'descricao' => 'nullable|string',
-                'valor' => 'numeric',
-                'data_vencimento' => 'date',
-                'status' => 'string|max:255',
-                'tipo' => 'string|max:255',
-            ]);
-
-            $conta = Conta::find($id);
-            if (!$conta) {
-                return response()->json(['message' => 'Conta não encontrada.'], 404);
-            }
-
-            DB::beginTransaction();
-            $conta->update($validated);
-            DB::commit();
-
-            return new ContaResource($conta);
-        } catch (QueryException $e) {
-            DB::rollBack();
-            return response()->json([
-                'message' => 'Erro ao atualizar conta.',
-                'error' => $e->getMessage()
-            ], 422);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json([
-                'message' => 'Erro ao processar a requisição.',
-                'error' => $e->getMessage()
-            ], 500);
-        }
-    }
-
-    // Exclui uma conta
-    public function destroy($id)
+  
+    public function deleteConta($id)
     {
         $conta = Conta::find($id);
-        if (!$conta) {
-            return response()->json(['message' => 'Conta não encontrada.'], 404);
+    
+        if ($conta) {
+            try {
+                // Exclui o registro do banco de dados
+                $conta->delete();
+    
+                // Retorna uma resposta de sucesso
+                return response()->json([
+                    'message' => 'Conta excluída com sucesso.',
+                ], 200);
+            } catch (QueryException $e) {
+                // Retorna uma resposta de erro caso ocorra uma exceção de consulta
+                return response()->json([
+                    'message' => 'Falha ao excluir conta.',
+                    'error' => $e->getMessage(),
+                ], 500);
+            }
         }
-
-        $conta->delete();
-        return response()->json(['message' => 'Conta excluída com sucesso.'], 200);
+    
+        return response()->json(['message' => 'Conta não encontrada.'], 404);
     }
+   
 
-    // Lista contas por status (ex.: "pago", "pendente")
-    public function listarPorStatus($status)
-    {
-        $contas = Conta::where('status', $status)->get();
-        return ContaResource::collection($contas);
-    }
+    // // Lista contas por status (ex.: "pago", "pendente")
+    // public function listarPorStatus($status)
+    // {
+    //     $contas = Conta::where('status', $status)->get();
+    //     return ContaResource::collection($contas);
+    // }
 
-    // Lista contas por tipo (ex.: "pagar", "receber")
-    public function listarPorTipo($tipo)
-    {
-        $contas = Conta::where('tipo', $tipo)->get();
-        return ContaResource::collection($contas);
-    }
+    // // Lista contas por tipo (ex.: "pagar", "receber")
+    // public function listarPorTipo($tipo)
+    // {
+    //     $contas = Conta::where('tipo', $tipo)->get();
+    //     return ContaResource::collection($contas);
+    // }
 }

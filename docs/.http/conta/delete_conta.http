@@ -1,7 +1,7 @@
-@baseUrl = http://localhost:8000/api/conta/4
+@baseUrl = http://localhost:8000/api/conta/1
 
 ### Delete Account
 DELETE {{baseUrl}}
 Content-Type: application/json
-Authorization: Bearer 5|Z2HXf7GYRzoSSgrFHe1rhEF0YiGQKRkI0tTrBpSuadba4553
+Authorization: Bearer 14|M07HfehUI2NYTpWNPX0sz6aznFdhB4P4wNa8aXUwd3af70f5
 

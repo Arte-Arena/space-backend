@@ -1,0 +1,13 @@
+POST http://localhost:8000/api/conta
+Content-Type: application/json
+Authorization: Bearer 14|M07HfehUI2NYTpWNPX0sz6aznFdhB4P4wNa8aXUwd3af70f5
+
+{
+  "user_id": 1,
+  "titulo": "Conta de Teste",
+  "descricao": "Esta é uma conta de teste para verificar a criação de contas.",
+  "valor": 100.00,
+  "data_vencimento": "2022-12-31",
+  "status": "pendente",
+  "tipo": "a pagar"
+}
