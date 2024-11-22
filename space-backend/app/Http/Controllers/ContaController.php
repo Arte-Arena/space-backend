@@ -70,7 +70,30 @@ class ContaController extends Controller
     }
 
   
-
+    public function deleteConta($id)
+    {
+        $conta = Conta::find($id);
+    
+        if ($conta) {
+            try {
+                // Exclui o registro do banco de dados
+                $conta->delete();
+    
+                // Retorna uma resposta de sucesso
+                return response()->json([
+                    'message' => 'Conta excluída com sucesso.',
+                ], 200);
+            } catch (QueryException $e) {
+                // Retorna uma resposta de erro caso ocorra uma exceção de consulta
+                return response()->json([
+                    'message' => 'Falha ao excluir conta.',
+                    'error' => $e->getMessage(),
+                ], 500);
+            }
+        }
+    
+        return response()->json(['message' => 'Conta não encontrada.'], 404);
+    }
    
 
     // // Lista contas por status (ex.: "pago", "pendente")
