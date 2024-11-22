@@ -11,7 +11,7 @@ use Illuminate\Database\QueryException;
 class ContaController extends Controller
 {
     // Lista todas as contas
-    public function index()
+    public function getAllContas()
     {
         $contas = Conta::all();
         return ContaResource::collection($contas);
