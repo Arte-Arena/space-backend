@@ -41,7 +41,7 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin'])->group(function ()
     Route::post('/custo-bandeira', [CustoBandeiraController::class, 'insertCustoBandeira']);
     Route::get('/conta', [ContaController::class, 'getAllContas']);
     Route::get('/conta/{id}', [ContaController::class, 'getConta']);
-    Route::put('/conta/{id}', [ContaController::class, 'upsertConta']);
+    Route::post('/conta', [ContaController::class, 'insertConta']);
     Route::delete('/conta/{id}', [ContaController::class, 'deleteConta']);
     // Route::get('/conta/status/{status}', [ContaController::class, 'listarPorStatus']);
     // Route::get('/conta/tipo/{tipo}', [ContaController::class, 'listarPorTipo']);
