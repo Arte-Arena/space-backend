@@ -49,7 +49,7 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin'])->group(function ()
 
 Route::middleware(['auth:sanctum', 'role:super-admin,admin,vendedor'])->group(function () {
     Route::get('/pedido', [PedidoController::class, 'getAllPedidos']);
-    // Route::post('/pedido', [PedidoController::class, 'store']);
+    Route::put('/pedido', [PedidoController::class, 'upsertPedido']);
     // Route::get('/pedido/{id}', [PedidoController::class, 'show']);
     // Route::put('/pedido/{id}', [PedidoController::class, 'update']);
     // Route::delete('/pedido/{id}', [PedidoController::class, 'destroy']);

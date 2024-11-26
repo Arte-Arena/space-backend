@@ -5,8 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Pedido;
 use App\Http\Resources\PedidoResource;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Auth;
 
 class PedidoController extends Controller
 {
@@ -15,54 +14,67 @@ class PedidoController extends Controller
         $pedidos = Pedido::paginate(50);
         return PedidoResource::collection($pedidos);
     }
-
-    public function store(Request $request)
+    public function upsertPedido(Request $request)
     {
+        $pedidoId = $request->input('pedido_id');
+        $pedidoUserId = Auth::id();
+        $pedidoNumero = $request->input('pedido_numero');
+        $pedidoDataPrevista = $request->input('pedido_data_prevista');
+        $pedidoProdutoCategoria = $request->input('pedido_produto_categoria');
+        $pedidoMaterial = $request->input('pedido_material');
+        $pedidoMedidaLinear = $request->input('pedido_medida_linear');
+        $pedidoObservacoes = $request->input('pedido_observacoes');
+        $pedidoRolo = $request->input('pedido_rolo');
+        $pedidoDesignerId = $request->input('pedido_designer_id');
+        $pedidoStatusId = $request->input('pedido_status_id');
+        $pedidoTipoId = $request->input('pedido_tipo_id');
+        $pedidoEstagio = $request->input('pedido_estagio');
+        $pedidoUrlTrello = $request->input('pedido_url_trello');
+        $pedidoSituacao = $request->input('pedido_situacao');
+        $pedidoPrioridade = $request->input('pedido_prioridade');
 
-        try {
-            $validated = $request->validate([
-                'numero_pedido' => 'required',
-                'data_prevista' => 'required',
-                'pedido_produto_categoria' => 'required',
-                'pedido_material' => 'required',
-                'medida_linear' => 'required',
-                'observacoes' => 'required',
-                'rolo' => 'required',
-                'designer_id' => 'required',
-                'pedido_status_id' => 'required',
-                'pedido_tipo_id' => 'required',
-                'estagio' => 'required',
-                'url_trello' => 'required',
-                'situacao' => 'required',
-                'prioridade' => 'required',
+        $pedido = Pedido::find($pedidoId);
+
+        if (!$pedido) {
+            $pedido = Pedido::create([
+                'user_id' => $pedidoUserId,
+                'numero_pedido' => $pedidoNumero,
+                'data_prevista' => $pedidoDataPrevista,
+                'pedido_produto_categoria' => $pedidoProdutoCategoria,
+                'pedido_material' => $pedidoMaterial,
+                'medida_linear' => $pedidoMedidaLinear,
+                'observacoes' => $pedidoObservacoes,
+                'rolo' => $pedidoRolo,
+                'designer_id' => $pedidoDesignerId,
+                'pedido_status_id' => $pedidoStatusId,
+                'pedido_tipo_id' => $pedidoTipoId,
+                'pedido_estagio' => $pedidoEstagio,
+                'pedido_url_trello' => $pedidoUrlTrello,
+                'pedido_situacao' => $pedidoSituacao,
+                'pedido_prioridade' => $pedidoPrioridade,
             ]);
-
-            $validated['user_id'] = $request->user()->id;
-
-            DB::beginTransaction();
-            $conta = Pedido::create($validated);
-            DB::commit();
-
-            return new PedidoResource($conta);
-        } catch (QueryException $e) {
-            DB::rollBack();
-            return response()->json([
-                'message' => 'Erro ao criar pedido. Verifique se o usuário existe.',
-                'error' => $e->getMessage()
-            ], 422);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json([
-                'message' => 'Erro ao processar a requisição.',
-                'error' => $e->getMessage()
-            ], 500);
+        } else {
+            $pedido->user_id = $pedidoUserId;
+            $pedido->numero_pedido = $pedidoNumero;
+            $pedido->data_prevista = $pedidoDataPrevista;
+            $pedido->pedido_produto_categoria = $pedidoProdutoCategoria;
+            $pedido->pedido_material = $pedidoMaterial;
+            $pedido->medida_linear = $pedidoMedidaLinear;
+            $pedido->observacoes = $pedidoObservacoes;
+            $pedido->rolo = $pedidoRolo;
+            $pedido->designer_id = $pedidoDesignerId;
+            $pedido->pedido_status_id = $pedidoStatusId;
+            $pedido->estagio = $pedidoEstagio;
+            $pedido->url_trello = $pedidoUrlTrello;
+            $pedido->situacao = $pedidoSituacao;
+            $pedido->prioridade = $pedidoPrioridade;
+            $pedido->save();
         }
 
-        // $pedido = Pedido::create($request->all());
-        // return new PedidoResource($pedido);
+        return response()->json(['message' => 'Pedido atualizado ou criada com sucesso!', 'conta' => $pedido], 200);
     }
 
-    public function show($id)
+    public function getPedido($id)
     {
         $pedido = Pedido::find($id);
         if (!$pedido) {
@@ -71,17 +83,7 @@ class PedidoController extends Controller
         return new PedidoResource($pedido);
     }
 
-    public function update(Request $request, $id)
-    {
-        $pedido = Pedido::find($id);
-        if (!$pedido) {
-            return response()->json(['error' => 'Pedido not found'], 404);
-        }
-        $pedido->update($request->all());
-        return new PedidoResource($pedido);
-    }
-
-    public function destroy($id)
+    public function deletePedido($id)
     {
         $pedido = Pedido::find($id);
         if (!$pedido) {
