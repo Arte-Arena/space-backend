@@ -4,21 +4,19 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use App\Models\User;
-use App\Models\Config;
-use App\Models\Role;
+use App\Models\{User, Role, Module, Config};
 
 
 class SuperAdminController extends Controller
 {
     public function getAllUsers()
     {
-        return response()->json(\App\Models\User::all());
+        return response()->json(User::all());
     }
 
     public function deleteUser($id)
     {
-        $user = \App\Models\User::find($id);
+        $user = User::find($id);
 
         if (!$user) {
             return response()->json(['message' => 'Usuário não encontrado.'], 404);
@@ -31,17 +29,17 @@ class SuperAdminController extends Controller
 
     public function getAllRoles()
     {
-        return response()->json(\App\Models\Role::all());
+        return response()->json(Role::all());
     }
 
     public function getAllModules()
     {
-        return response()->json(\App\Models\Module::all());
+        return response()->json(Module::all());
     }
 
     public function getAllUsersRoles()
     {
-        $usersWithRoles = \App\Models\User::with('roles')->get();
+        $usersWithRoles = User::with('roles')->get();
 
         $simplifiedResponse = $usersWithRoles->map(function ($user) {
             return [
@@ -62,7 +60,7 @@ class SuperAdminController extends Controller
 
     public function getAllRolesModules()
     {
-        $rolesWithModules = \App\Models\Role::with('modules')->get();
+        $rolesWithModules = Role::with('modules')->get();
 
         $simplifiedResponse = $rolesWithModules->map(function ($role) {
             return [
@@ -137,7 +135,7 @@ class SuperAdminController extends Controller
     public function getConfig()
     {
         // Buscar as configurações do usuário
-        $config = \App\Models\Config::first();
+        $config = Config::first();
 
         if (!$config) {
             return response()->json(['message' => 'Configuração não encontrada para o usuário.'], 404);
@@ -151,7 +149,7 @@ class SuperAdminController extends Controller
 
     public function deleteModule($id)
     {
-        $module = \App\Models\Module::find($id);
+        $module = Module::find($id);
 
         if (!$module) {
             return response()->json(['message' => 'Módulo não encontrado.'], 404);
@@ -166,10 +164,10 @@ class SuperAdminController extends Controller
         $moduleId = $request->input('module_id');
         $moduleName = $request->input('module_name');
 
-        $module = \App\Models\Module::find($moduleId);
+        $module = Module::find($moduleId);
 
         if (!$module) {
-            $module = \App\Models\Module::create([
+            $module = Module::create([
                 'name' => $moduleName,
             ]);
         } else {
@@ -182,7 +180,7 @@ class SuperAdminController extends Controller
 
     public function deleteRole($id)
     {
-        $role = \App\Models\Role::find($id);
+        $role = Role::find($id);
 
         if (!$role) {
             return response()->json(['message' => 'Papel não encontrado.'], 404);
@@ -197,9 +195,9 @@ class SuperAdminController extends Controller
     {
         $roleId = $request->input('role_id');
         $roleName = $request->input('role_name');
-        $role = \App\Models\Role::find($roleId);
+        $role = Role::find($roleId);
         if (!$role) {
-            $role = \App\Models\Role::create([
+            $role = Role::create([
                 'name' => $roleName,
             ]);
         } else {
@@ -213,7 +211,7 @@ class SuperAdminController extends Controller
 
     public function deleteUserRoles($userId, $roleId)
     {
-        $user = \App\Models\User::find($userId);
+        $user = User::find($userId);
 
         if (!$user) {
             return response()->json(['message' => 'Usuário não encontrado.'], 404);
@@ -231,7 +229,7 @@ class SuperAdminController extends Controller
         $userId = $request->input('user_id');
         $roleIds = $request->input('role_ids');
 
-        $user = \App\Models\User::find($userId);
+        $user = User::find($userId);
 
         if (!$user) {
             return response()->json(['message' => 'Usuário não encontrado.'], 404);
@@ -245,7 +243,7 @@ class SuperAdminController extends Controller
 
     public function deleteRoleModule($roleId, $moduleId)
     {
-        $role = \App\Models\Role::find($roleId);
+        $role = Role::find($roleId);
 
         if (!$role) {
             return response()->json(['message' => 'Papel não encontrado.'], 404);
@@ -262,7 +260,7 @@ class SuperAdminController extends Controller
         $roleId = $request->input('role_id');
         $moduleIds = $request->input('module_ids');
 
-        $role = \App\Models\Role::find($roleId);
+        $role = Role::find($roleId);
 
         if (!$role) {
             return response()->json(['message' => 'Papel não encontrado.'], 404);

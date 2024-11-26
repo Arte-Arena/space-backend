@@ -43,13 +43,26 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin'])->group(function ()
     Route::get('/conta/{id}', [ContaController::class, 'getConta']);
     Route::put('/conta/{id}', [ContaController::class, 'upsertConta']);
     Route::delete('/conta/{id}', [ContaController::class, 'deleteConta']);
-    // Route::get('/conta/status/{status}', [ContaController::class, 'listarPorStatus']);
-    // Route::get('/conta/tipo/{tipo}', [ContaController::class, 'listarPorTipo']);
-    Route::get('/pedido', [PedidoController::class, 'index']);
-    Route::post('/pedido', [PedidoController::class, 'store']);
-    Route::get('/pedido/{id}', [PedidoController::class, 'show']);
-    Route::put('/pedido/{id}', [PedidoController::class, 'update']);
-    Route::delete('/pedido/{id}', [PedidoController::class, 'destroy']);
+    Route::get('/conta/status/{status}', [ContaController::class, 'getContaStatus']);
+    Route::get('/conta/tipo/{tipo}', [ContaController::class, 'getContaTipo']);
+});
+
+Route::middleware(['auth:sanctum', 'role:super-admin,admin,vendedor'])->group(function () {
+    Route::get('/pedido', [PedidoController::class, 'getAllPedidos']);
+    Route::get('/pedido/{id}', [PedidoController::class, 'getPedido']);
+    Route::put('/pedido/{id}', [PedidoController::class, 'upsertPedido']);
+    Route::delete('/pedido/{id}', [PedidoController::class, 'deletePedido']);
+    Route::get('/pedido/status/{status}', [PedidoController::class, 'getPedidoStatus']);
+    Route::get('/pedido/tipo/{tipo}', [PedidoController::class, 'getPedidoTipo']);
+});
+
+
+Route::middleware(['auth:sanctum', 'role:super-admin,admin,vendedor,designer,producao'])->group(function () {
+    Route::get('/impressao', [PedidoController::class, 'index']);
+    // Route::post('/impressao', [PedidoController::class, 'store']);
+    // Route::get('/impressao/{id}', [PedidoController::class, 'show']);
+    // Route::put('/impressao/{id}', [PedidoController::class, 'update']);
+    // Route::delete('/impressao/{id}', [PedidoController::class, 'destroy']);
 });
 
 
