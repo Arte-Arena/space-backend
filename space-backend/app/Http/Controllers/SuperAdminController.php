@@ -217,7 +217,6 @@ class SuperAdminController extends Controller
             return response()->json(['message' => 'Usuário não encontrado.'], 404);
         }
 
-        // Detach the specified role from the user
         $user->roles()->detach($roleId);
 
         return response()->json(['message' => 'Permissão do usuário excluída com sucesso.'], 200);
@@ -235,7 +234,6 @@ class SuperAdminController extends Controller
             return response()->json(['message' => 'Usuário não encontrado.'], 404);
         }
 
-        // Sync the user's roles with the provided role IDs
         $user->roles()->sync($roleIds);
 
         return response()->json(['message' => 'Permissões do usuário atualizadas com sucesso.'], 200);
@@ -249,7 +247,6 @@ class SuperAdminController extends Controller
             return response()->json(['message' => 'Papel não encontrado.'], 404);
         }
 
-        // Detach the specified role from the user
         $role->modules()->detach($moduleId);
 
         return response()->json(['message' => 'Módulo do papel excluído com sucesso.'], 200);
@@ -266,7 +263,6 @@ class SuperAdminController extends Controller
             return response()->json(['message' => 'Papel não encontrado.'], 404);
         }
 
-        // Sync the role's modules with the provided module IDs
         $role->modules()->sync($moduleIds);
 
         return response()->json(['message' => 'Módulos do papel atualizados com sucesso.'], 200);

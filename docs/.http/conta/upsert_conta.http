@@ -1,11 +1,14 @@
-@baseUrl = http://localhost:8000/api/conta/5
-
-### Update Account
-PUT {{baseUrl}}
+PUT http://localhost:8000/api/conta/
 Content-Type: application/json
-Authorization: Bearer 5|Z2HXf7GYRzoSSgrFHe1rhEF0YiGQKRkI0tTrBpSuadba4553
+Authorization: Bearer 15|yTGjJtH7W7wV0DHGGk9AtYFXOfkPA2uWxK48s1NT8a1ab648
 
 {
-  "valor": 2000
+  "conta_titulo": 2000,
+  "conta_descricao": 2000,
+  "conta_valor": 2000,
+  "conta_data_vencimento": "2024-12-25",
+  "conta_status": "pendente",
+  "conta_tipo": "a receber"
+
 }
 
