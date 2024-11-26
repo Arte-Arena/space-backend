@@ -1,0 +1,14 @@
+PUT http://localhost:8000/api/conta/
+Content-Type: application/json
+Authorization: Bearer 15|yTGjJtH7W7wV0DHGGk9AtYFXOfkPA2uWxK48s1NT8a1ab648
+
+{
+  "conta_titulo": 4000,
+  "conta_descricao": 4000,
+  "conta_valor": 4000,
+  "conta_data_vencimento": "2024-12-25",
+  "conta_status": "pendente",
+  "conta_tipo": "a receber"
+
+}
+

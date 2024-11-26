@@ -1,0 +1,4 @@
+GET http://localhost:8000/api/conta
+Content-Type: application/json
+Authorization: Bearer 15|yTGjJtH7W7wV0DHGGk9AtYFXOfkPA2uWxK48s1NT8a1ab648
+
