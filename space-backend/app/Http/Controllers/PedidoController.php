@@ -10,7 +10,7 @@ use Illuminate\Database\QueryException;
 
 class PedidoController extends Controller
 {
-    public function index()
+    public function getAllPedidos()
     {
         $pedidos = Pedido::paginate(50);
         return PedidoResource::collection($pedidos);
