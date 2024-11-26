@@ -2,14 +2,14 @@
 
 POST http://localhost:8000/api/custo-bandeira
 Content-Type: application/json
-Authorization: Bearer 11|Z3d6GZ4FS0bzBRgCDaoRcftF89f7RiU3l9nce9Wsd6e8dc95
+Authorization: Bearer 13|irnWyBmt5tTFRjywlqTYah741OFoHlM78pD9XYVfde2f8d33
 
 {
-    "altura": 2.5,
-    "largura": 1.5,
-    "custo_tecido": 20.0,
-    "custo_tinta": 15.0,
-    "custo_papel": 5.0,
-    "custo_imposto": 8.0,
-    "custo_final": 48.0
+  "altura": 100,
+  "largura": 60,
+  "custo_tecido": 5.5,
+  "custo_tinta": 30.3,
+  "custo_papel": 7.2,
+  "custo_imposto": 6.0,
+  "custo_final": 100.0
 }
