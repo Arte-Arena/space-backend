@@ -1,0 +1,8 @@
+
+GET http://localhost:8000/api/pedido?page=2
+Content-Type: application/json
+Authorization: Bearer 3|Gol819dyRp37yWptObBauhVbPmmyfOeqA6fC0CuF4079e915
+
+
+
+

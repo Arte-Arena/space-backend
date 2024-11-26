@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             ModuleSeeder::class,
             RoleUserSeeder::class,
             RoleModuleSeeder::class,
+            ConfigSeeder::class,
         ]);
 
     }

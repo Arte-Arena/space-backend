@@ -1,0 +1,21 @@
+### Create a new pedido
+PUT http://localhost:8000/api/pedido
+Content-Type: application/json
+Authorization: Bearer 1|ZJhsOEAeIVkM8So8klylz9rSKhyLupkciNBRGQdQfbbbb003
+
+{
+  "numero_pedido": "P002",
+  "data_prevista": "2024-12-31",
+  "pedido_produto_categoria": "Category 1",
+  "pedido_material": "Material A",
+  "medida_linear": 140.5,
+  "observacoes": "Some observations",
+  "rolo": "Rolo 1",
+  "designer_id": 2,
+  "pedido_status_id": 1,
+  "pedido_tipo_id": 2,
+  "estagio": "Stage 1",
+  "url_trello": "https://trello.com/c/example",
+  "situacao": "Situation A",
+  "prioridade": "High"
+}
