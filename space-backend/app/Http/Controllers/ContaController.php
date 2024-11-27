@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Conta;
-use App\Http\Resources\ContaResource;
+use App\Models\{Conta, ContaRecorrente};
+use App\Http\Resources\{ContaResource, ContasAndRecorrentesRessource};
 use Illuminate\Support\Facades\Auth;
 
 class ContaController extends Controller
@@ -72,6 +72,17 @@ class ContaController extends Controller
 
         $conta->delete();
         return response()->json(['message' => 'Conta excluída com sucesso.'], 204);
+    }
+
+    public function getAllContasAndRecorrentes()
+    {
+        $contas = Conta::all();
+        $contasWithRecorrente = $contas->map(function ($conta) {
+            $conta->isRecorrente = ContaRecorrente::where('conta_id', $conta->id)->exists();
+            return $conta;
+        });
+
+        return ContasAndRecorrentesRessource::collection($contasWithRecorrente);
     }
 
     // // Lista contas por status (ex.: "pago", "pendente")

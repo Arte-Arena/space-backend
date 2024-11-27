@@ -1,0 +1,6 @@
+GET http://localhost:8000/api/contas-and-recorrentes
+Content-Type: application/json
+Authorization: Bearer 2|YEnISjwvGUE8q9Za7v9Pk1xY1uafCB8PefMizhz920cb3e9e
+
+
+

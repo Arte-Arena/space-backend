@@ -23,6 +23,8 @@ class DatabaseSeeder extends Seeder
             RoleUserSeeder::class,
             RoleModuleSeeder::class,
             ConfigSeeder::class,
+            ContaSeeder::class,
+            ContaRecorrenteSeeder::class,
         ]);
 
     }

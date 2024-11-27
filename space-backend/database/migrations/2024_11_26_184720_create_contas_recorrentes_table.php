@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('contas_recorrentes', function (Blueprint $table) {
             $table->id();
-            $table->foreign('recorrencia_pai_id')->references('id')->on('contas');
+            $table->foreignId('conta_id')->constrained('contas');
             $table->integer('periodo_recorrencia');
             $table->date('data_proxima_recorrencia');
             $table->integer('recorrencias_restantes')->nullable();

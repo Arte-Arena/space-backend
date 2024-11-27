@@ -43,6 +43,7 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin'])->group(function ()
     Route::get('/conta/{id}', [ContaController::class, 'getConta']);
     Route::put('/conta', [ContaController::class, 'upsertConta']);
     Route::delete('/conta/{id}', [ContaController::class, 'deleteConta']);
+    Route::get('/contas-and-recorrentes', [ContaController::class, 'getAllContasAndRecorrentes']);
     // Route::get('/conta/status/{status}', [ContaController::class, 'listarPorStatus']);
     // Route::get('/conta/tipo/{tipo}', [ContaController::class, 'listarPorTipo']);
 });
