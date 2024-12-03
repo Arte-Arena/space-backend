@@ -1,0 +1,3 @@
+GET http://localhost:8000/apicontato
+Authorization: Bearer 1|qK0F84E6OOuJPaMuykYlGiX1Ranx3ldrjzcWp0u0dd02fe91
+

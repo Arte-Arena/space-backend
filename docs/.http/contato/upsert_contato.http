@@ -1,0 +1,17 @@
+@baseUrl = http://localhost:8000/api
+@token = 1|qK0F84E6OOuJPaMuykYlGiX1Ranx3ldrjzcWp0u0dd02fe91
+
+PUT {{baseUrl}}/contato
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nome_completo": "Teste Contato",
+  "email": "teste@teste.com",
+  "telefone": "123456789",
+  "endereco": "Rua Teste, 123",
+  "cidade": "Teste City",
+  "estado": "Teste State"
+}
+
+

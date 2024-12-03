@@ -1,4 +1,0 @@
-### List all accounts
-GET http://localhost:8000/api/config
-Authorization: Bearer 1|eMAXoRacRb35N6xvUPW2IuiTyVMZueaSBMHRdzX020971898
-

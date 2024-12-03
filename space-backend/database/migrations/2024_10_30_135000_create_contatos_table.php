@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('cadastros', function (Blueprint $table) {
+        Schema::create('contatos', function (Blueprint $table) {
             $table->id();
-            $table->enum('tipo_pessoa', ['juridica', 'fisica']);
+            $table->enum('tipo_pessoa', ['juridica', 'fisica'])->nullable();
             $table->string('razao_social')->nullable();
             $table->string('cnpj')->nullable();
             $table->string('ie')->nullable();
@@ -27,7 +27,7 @@ return new class extends Migration
             $table->string('bairro')->nullable();
             $table->string('cidade')->nullable();
             $table->string('fone_fixo')->nullable();
-            $table->string('cell')->nullable();
+            $table->string('cel')->nullable();
             $table->string('endereco_cobranca')->nullable();
             $table->string('cep_cobranca')->nullable();
             

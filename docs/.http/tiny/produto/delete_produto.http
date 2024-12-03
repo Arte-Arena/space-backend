@@ -1,0 +1,4 @@
+DELETE http://localhost:8000/api/delete-produto/1 HTTP/1.1
+Host: localhost:8000
+Content-Type: application/json
+Authorization: Bearer 2|TKOoF559OdTp5bObq2sFO9yYiXyPpjiiizCRgFlQ466d962c

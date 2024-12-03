@@ -77,8 +77,16 @@ class ContaController extends Controller
     public function getAllContasAndRecorrentes()
     {
         $contas = Conta::all();
+        // $contasWithRecorrente = $contas->map(function ($conta) {
+        //     $conta->isRecorrente = ContaRecorrente::where('conta_id', $conta->id)->exists();
+        //     return $conta;
+        // });
+
         $contasWithRecorrente = $contas->map(function ($conta) {
-            $conta->isRecorrente = ContaRecorrente::where('conta_id', $conta->id)->exists();
+            $contaRecorrente = ContaRecorrente::where('conta_id', $conta->id)->first();
+            $conta->isRecorrente = $contaRecorrente ? true : false;
+            $conta->recorrenciaPeriodo = $contaRecorrente ? $contaRecorrente->periodo_recorrencia : null;
+            $conta->recorrenciaRestantes = $contaRecorrente ? $contaRecorrente->recorrencias_restantes : null;
             return $conta;
         });
 

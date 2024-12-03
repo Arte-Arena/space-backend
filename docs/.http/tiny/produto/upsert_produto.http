@@ -1,0 +1,41 @@
+### upsertProduto
+PUT http://localhost:8000/api/upsert-produto HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer 2|TKOoF559OdTp5bObq2sFO9yYiXyPpjiiizCRgFlQ466d962c
+
+{
+    "produto_id": 1,
+    "produto_nome": "Teste",
+    "produto_codigo": "123",
+    "produto_preco": 10.99,
+    "produto_preco_promocional": 5.99,
+    "produto_preco_custo": 3.99,
+    "produto_preco_custo_medio": 2.99,
+    "produto_peso_liquido": 1,
+    "produto_peso_bruto": 2,
+    "produto_tipoEmbalagem": "unidade",
+    "produto_alturaEmbalagem": 10,
+    "produto_comprimentoEmbalagem": 20,
+    "produto_larguraEmbalagem": 30,
+    "produto_diametroEmbalagem": 40,
+    "produto_unidade": "un",
+    "produto_gtin": "1234567890123",
+    "produto_gtin_embalagem": "1234567890123",
+    "produto_localizacao": "Teste",
+    "produto_situacao": "ativo",
+    "produto_tipo": "produto",
+    "produto_tipo_variacao": "variacao",
+    "produto_ncm": "1234567890123",
+    "produto_origem": "nacional",
+    "produto_estoque_minimo": 10,
+    "produto_estoque_maximo": 20,
+    "produto_id_fornecedor": 1,
+    "produto_nome_fornecedor": "Teste",
+    "produto_codigo_fornecedor": "123",
+    "produto_codigo_pelo_fornecedor": "123",
+    "produto_unidade_por_caixa": 10,
+    "produto_classe_ipi": "1234567890123",
+    "produto_valor_ipi_fixo": 10.99,
+    "produto_cod_lista_servicos": "1234567890123",
+    "produto_descricao_complementar": "Teste"
+}

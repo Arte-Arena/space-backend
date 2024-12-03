@@ -1,0 +1,25 @@
+
+PUT http://localhost:8000/api/chat-octa
+Authorization: Bearer 2|bPYrqGts7GxTP31OXvtjddSjzJgQfduncA6HHVz05512c3b5
+Content-Type: application/json
+
+{
+  "octa_id": 1,
+  "number": "123456789",
+  "channel": "Whatsapp",
+  "contact_id": 1,
+  "contact_name": "Fulano de Tal",
+  "agent_id": 1,
+  "agent_name": "Beltrano de Tal",
+  "agent_email": "beltrano@octa.chat",
+  "lastMessageDate": "2022-01-01T00:00:00.000Z",
+  "status": "open",
+  "closedAt": null,
+  "group_id": 1,
+  "group_name": "Grupo de Testes",
+  "tags": [],
+  "withBot": false,
+  "unreadMessages": 0,
+  "createdAt": "2022-01-01T00:00:00.000Z",
+  "updatedAt": "2022-01-01T00:00:00.000Z"
+}
