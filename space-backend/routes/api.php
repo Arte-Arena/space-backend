@@ -71,7 +71,7 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin'])->group(function ()
     Route::get('/contas-and-recorrentes', [ContaController::class, 'getAllContasAndRecorrentes']);
 });
 
-Route::middleware(['auth:sanctum', 'role:super-admin,admin,vendedor'])->group(function () {
+Route::middleware(['auth:sanctum', 'role:super-admin,admin,comercial'])->group(function () {
     Route::get('/pedido', [PedidoController::class, 'getAllPedidos']);
     Route::put('/pedido', [PedidoController::class, 'upsertPedido']);
     Route::get('/contato', [ContatoController::class, 'getAllContatos']);
