@@ -11,11 +11,17 @@ class ProdutoController extends Controller
 {
 
 
-    public function getAllProdutos(): JsonResponse
-    {
-        $produtos = Produto::all();
-        return response()->json($produtos);
-    }
+public function getAllProdutos(Request $request): JsonResponse
+{
+    $perPage = $request->query('per_page', 500);
+    $page = $request->query('page', 1);
+
+    $produtos = Produto::select('id', 'nome', 'preco')
+        ->paginate($perPage, ['*'], 'page', $page);
+
+    return response()->json($produtos);
+}
+
 
 
     public function upsertProduto(Request $request)

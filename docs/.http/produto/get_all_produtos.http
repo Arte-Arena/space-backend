@@ -1,4 +1,4 @@
-GET http://localhost:8000/api/get-all-produtos
+GET http://localhost:8000/api/produto
 Content-Type: application/json
-Authorization: Bearer 1|ICQtcNPMYv8WKSUTzZLezyy52oNwCZ0Qyxep1c9w204aedbb
+Authorization: Bearer 17|YGwe9DzouCd5Dfs3cfrjMTtm1xVLGFCsGsnZdIkqa9186ae2
 
