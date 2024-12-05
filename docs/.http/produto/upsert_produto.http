@@ -1,5 +1,5 @@
 ### upsertProduto
-PUT http://localhost:8000/api/upsert-produto HTTP/1.1
+PUT http://localhost:8000/api/produto HTTP/1.1
 Content-Type: application/json
 Authorization: Bearer 2|TKOoF559OdTp5bObq2sFO9yYiXyPpjiiizCRgFlQ466d962c
 

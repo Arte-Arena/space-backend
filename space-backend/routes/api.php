@@ -24,8 +24,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user/{user}', function (User $user) {
         return $user->load('roles');
     });
-    Route::get('/get-all-produtos', [ProdutoController::class, 'getAllProdutos']);
-    Route::put('/upsert-produto', [ProdutoController::class, 'upsertProduto']);
     Route::delete('/delete-produto/{id}', [ProdutoController::class, 'deleteProduto']);
 });
 
@@ -72,16 +70,18 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin'])->group(function ()
 });
 
 Route::middleware(['auth:sanctum', 'role:super-admin,admin,comercial'])->group(function () {
+    Route::get('/chat-octa', [ChatOctaController::class, 'getAllChatOcta']);
+    Route::put('/chat-octa', [ChatOctaController::class, 'upsertChatOcta']);
+    Route::put('/produto', [ProdutoController::class, 'upsertProduto']);
+    Route::get('/produto', [ProdutoController::class, 'getAllProdutos']);
     Route::get('/pedido', [PedidoController::class, 'getAllPedidos']);
     Route::put('/pedido', [PedidoController::class, 'upsertPedido']);
     Route::get('/contato', [ContatoController::class, 'getAllContatos']);
     Route::put('/contato', [ContatoController::class, 'upsertContato']);
-    Route::get('/chat-octa', [ChatOctaController::class, 'getAllChatOcta']);
-    Route::put('/chat-octa', [ChatOctaController::class, 'upsertChatOcta']);
-
 });
 
 
 Route::middleware(['auth:sanctum', 'role:super-admin,admin,vendedor,designer,producao'])->group(function () {
     Route::get('/impressao', [PedidoController::class, 'index']);
+    
 });

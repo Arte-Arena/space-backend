@@ -1,3 +1,0 @@
-GET http://localhost:8000/api/get-all-produtos HTTP/1.1
-Authorization: Bearer 2|TKOoF559OdTp5bObq2sFO9yYiXyPpjiiizCRgFlQ466d962c
-Accept: application/json
