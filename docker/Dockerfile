@@ -13,4 +13,5 @@ COPY ./space-backend .
 ENTRYPOINT ["./scripts/init-container.sh"]
 RUN composer dump-autoload --optimize
 EXPOSE 9000
+RUN cat .env
 CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=9000"]
