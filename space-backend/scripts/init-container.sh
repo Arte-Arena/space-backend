@@ -7,3 +7,4 @@ echo "DB_USERNAME=$SPACE_DB_USERNAME" >> ../.env
 echo "DB_HOST=$SPACE_DB_PASSWORD" >> ../.env
 
 
+echo "Script de inicialização concluído com sucesso."

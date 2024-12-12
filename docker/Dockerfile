@@ -12,4 +12,3 @@ RUN composer install --no-interaction --no-scripts --no-autoloader
 COPY ./space-backend .
 RUN composer dump-autoload --optimize
 EXPOSE 9000
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=9000"]
