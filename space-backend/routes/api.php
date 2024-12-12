@@ -10,7 +10,8 @@ use App\Http\Controllers\{
     PedidoController,
     ProdutoController,
     ContatoController,
-    ChatOctaController
+    ChatOctaController,
+    FreteController
 };
 use App\Models\User;
 
@@ -78,6 +79,8 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,comercial'])->group(f
     Route::put('/pedido', [PedidoController::class, 'upsertPedido']);
     Route::get('/contato', [ContatoController::class, 'getAllContatos']);
     Route::put('/contato', [ContatoController::class, 'upsertContato']);
+    Route::put('/frete', [FreteController::class, 'getFrete']);
+
 });
 
 

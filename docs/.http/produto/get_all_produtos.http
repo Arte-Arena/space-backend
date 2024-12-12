@@ -1,4 +1,4 @@
 GET http://localhost:8000/api/produto
 Content-Type: application/json
-Authorization: Bearer 17|YGwe9DzouCd5Dfs3cfrjMTtm1xVLGFCsGsnZdIkqa9186ae2
+Authorization: Bearer 1|qY1EyyhSjZ5Q4TyclBiKINmMSBlgww1RYpfkn0If7b40fbcb
 
