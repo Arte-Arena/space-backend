@@ -11,7 +11,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 RUN composer install --no-interaction --no-scripts --no-autoloader
 COPY ./space-backend .
 RUN chmod u+w .env
-ENTRYPOINT ["./init-container.sh"]
+CMD ["bash", "./init-container.sh"]
 RUN chmod 644 .env
 RUN composer dump-autoload --optimize
 EXPOSE 9000
