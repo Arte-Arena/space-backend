@@ -1,5 +1,6 @@
 #!/bin/bash
 
+echo "" >> .env
 echo "DB_HOST=$SPACE_DB_HOST" >> .env
 echo "DB_PORT=$SPACE_DB_PORT" >> .env
 echo "DB_DATABASE=$SPACE_DB_DATABASE" >> .env
