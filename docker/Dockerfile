@@ -11,10 +11,13 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 RUN composer install --no-interaction --no-scripts --no-autoloader
 COPY ./space-backend .
 RUN chmod u+w .env
-# CMD ["bash", "./init-container.sh"]
-RUN bash ./init-container.sh
-RUN chmod 644 .env
 RUN composer dump-autoload --optimize
 EXPOSE 9000
-RUN cat .env
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=9000"]
+
+COPY ./init-container.sh /usr/local/bin/init-container.sh
+RUN chmod +x /usr/local/bin/init-container.sh
+CMD ["/usr/local/bin/init-container.sh"]
+
+# RUN bash ./init-container.sh
+# RUN chmod 644 .env
+# CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=9000"]

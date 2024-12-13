@@ -11,3 +11,5 @@ echo "DB_PASSWORD=$SPACE_DB_PASSWORD" >> .env
 # echo "DB_HOST=$SPACE_DB_HOST" >> TESTAAAAA
 
 echo "Script de inicialização concluído com sucesso."
+
+exec php artisan serve --host=0.0.0.0 --port=9000
