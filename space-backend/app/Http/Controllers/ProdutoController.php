@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Cache;
 use App\Models\Produto;
+use GuzzleHttp\Client;
 
 class ProdutoController extends Controller
 {
@@ -13,11 +14,22 @@ class ProdutoController extends Controller
 
 public function getAllProdutos(Request $request): JsonResponse
 {
-    $perPage = $request->query('per_page', 500);
-    $page = $request->query('page', 1);
+    $query = $request->input('q', ''); // Termo de busca
+    $page = $request->input('page', 1); // Página atual
+    $perPage = 10; // Número de itens por página
 
-    $produtos = Produto::select('id', 'nome', 'preco')
-        ->paginate($perPage, ['*'], 'page', $page);
+    $cacheKey = "produtos_busca_{$query}_page_{$page}";
+
+    // Verificar se existe cache
+    $produtos = Cache::remember($cacheKey, 600, function () use ($query, $page, $perPage) {
+        return Produto::query()
+            ->when($query, function ($queryBuilder) use ($query) {
+                $queryBuilder->where('nome', 'like', "%{$query}%")
+                             ->orWhere('descricao', 'like', "%{$query}%");
+            })
+            ->orderBy('nome')
+            ->paginate($perPage, ['*'], 'page', $page);
+    });
 
     return response()->json($produtos);
 }
