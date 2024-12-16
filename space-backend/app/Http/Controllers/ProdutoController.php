@@ -12,27 +12,27 @@ class ProdutoController extends Controller
 {
 
 
-public function getAllProdutos(Request $request): JsonResponse
-{
-    $query = $request->input('q', ''); // Termo de busca
-    $page = $request->input('page', 1); // Página atual
-    $perPage = 10; // Número de itens por página
+    public function getAllProdutos(Request $request): JsonResponse
+    {
+        $query = $request->input('q', ''); // Termo de busca
+        $page = $request->input('page', 1); // Página atual
+        $perPage = 10; // Número de itens por página
 
-    $cacheKey = "produtos_busca_{$query}_page_{$page}";
+        $cacheKey = "produtos_busca_{$query}_page_{$page}";
 
-    // Verificar se existe cache
-    $produtos = Cache::remember($cacheKey, 600, function () use ($query, $page, $perPage) {
-        return Produto::query()
-            ->when($query, function ($queryBuilder) use ($query) {
-                $queryBuilder->where('nome', 'like', "%{$query}%")
-                             ->orWhere('descricao', 'like', "%{$query}%");
-            })
-            ->orderBy('nome')
-            ->paginate($perPage, ['*'], 'page', $page);
-    });
+        // Verificar se existe cache
+        $produtos = Cache::remember($cacheKey, 600, function () use ($query, $page, $perPage) {
+            return Produto::query()
+                ->when($query, function ($queryBuilder) use ($query) {
+                    $queryBuilder->where('nome', 'like', "%{$query}%")
+                        ->orWhere('codigo', 'like', "%{$query}%");
+                })
+                ->orderBy('nome')
+                ->paginate($perPage, ['*'], 'page', $page);
+        });
 
-    return response()->json($produtos);
-}
+        return response()->json($produtos);
+    }
 
 
 
@@ -91,9 +91,9 @@ public function getAllProdutos(Request $request): JsonResponse
         $produtoLinkVideo = $request->input('produto_link_video');
         $produtoSeoDescription = $request->input('produto_seo_description');
         $produtoSlug = $request->input('produto_slug');
-    
+
         $produto = Produto::find($produtoId);
-    
+
         if (!$produto) {
             $produto = Produto::create([
                 'nome' => $produtoNome,
@@ -202,7 +202,7 @@ public function getAllProdutos(Request $request): JsonResponse
             $produto->slug = $produtoSlug;
             $produto->save();
         }
-    
+
         return response()->json(['message' => 'Produto atualizado ou criado com sucesso!', 'produto' => $produto], 200);
     }
 
@@ -210,13 +210,12 @@ public function getAllProdutos(Request $request): JsonResponse
     public function deleteProduto($id)
     {
         $produto = Produto::find($id);
-    
+
         if (!$produto) {
             return response()->json(['error' => 'Produto not found'], 404);
         }
-    
+
         $produto->delete();
         return response()->json(['message' => 'Produto deleted successfully']);
     }
-
 }
