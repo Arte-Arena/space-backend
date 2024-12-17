@@ -1,0 +1,4 @@
+GET http://localhost:8000/api/produto?q=Camis
+Content-Type: application/json
+Authorization: Bearer 3|qp4uCsycGXKXEooGOUwfGgxoy1PQpm7E8OccuwR2a6ec1cb2
+

@@ -16,6 +16,7 @@ use App\Http\Controllers\{
 use App\Models\User;
 
 Route::post('/login', [AuthController::class, 'login']);
+Route::post('/octa-webhook', [ChatOctaController::class, 'webhook']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/validate-token', [AuthController::class, 'validateToken']);
