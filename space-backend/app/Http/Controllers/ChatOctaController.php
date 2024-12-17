@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\ChatOcta;
+use App\Models\{ChatOcta, OctaWebHook};
+
 
 class ChatOctaController extends Controller
 {
@@ -28,12 +29,12 @@ class ChatOctaController extends Controller
             'withBot',
             'unreadMessages',
         ]);
-    
+
         $chatOcta = ChatOcta::updateOrCreate(
             ['chat_octa_id' => $request->input('chat_octa_id')],
             $chatOctaData
         );
-    
+
         return $chatOcta;
     }
 
@@ -42,30 +43,47 @@ class ChatOctaController extends Controller
         return ChatOcta::all();
     }
 
-    
+
     public function webhook(Request $request)
     {
-        $data = $request->only([
-            'nome',
-            'telefone',
-            'email',
-            'origem',
-            'url_octa',
-            'id',
-            'primeira_mensagem_cliente',
-            'responsavel_contato',
-            'tel_comercial_contato',
-            'tel_residencial_contato',
-            'status_do_contato',
-            'numero_de_pedido_contato',
-            'nome_organizacao',
-            'primeiro_telefone_organizacao',
-            'primeiro_dominio_organizacao',
-            'empresa',
-        ]);
-        
-        return response()->json(['message' => 'Dados recebidos com sucesso!', 'data' => $data], 200);
+        $nome = $request->input('nome');
+        $telefone = $request->input('telefone');
+        $email = $request->input('email');
+        $origem = $request->input('origem');
+        $urlOcta = $request->input('url_octa');
+        $octaId = $request->input('id');
+        $primeiraMensagemCliente = $request->input('primeira_mensagem_cliente');
+        $responsavelContato = $request->input('responsavel_contato');
+        $telComercialContato = $request->input('tel_comercial_contato');
+        $telResidencialContato = $request->input('tel_residencial_contato');
+        $statusDoContato = $request->input('status_do_contato');
+        $numeroDePedidoContato = $request->input('numero_de_pedido_contato');
+        $nomeOrganizacao = $request->input('nome_organizacao');
+        $primeiroTelefoneOrganizacao = $request->input('primeiro_telefone_organizacao');
+        $primeiroDominioOrganizacao = $request->input('primeiro_dominio_organizacao');
+        $empresa = $request->input('empresa');
+
+        $data = [
+            'nome' => $nome,
+            'telefone' => $telefone,
+            'email' => $email,
+            'origem' => $origem,
+            'url_octa' => $urlOcta,
+            'octa_id' => $octaId,
+            'primeira_mensagem_cliente' => $primeiraMensagemCliente,
+            'responsavel_contato' => $responsavelContato,
+            'tel_comercial_contato' => $telComercialContato,
+            'tel_residencial_contato' => $telResidencialContato,
+            'status_do_contato' => $statusDoContato,
+            'numero_de_pedido_contato' => $numeroDePedidoContato,
+            'nome_organizacao' => $nomeOrganizacao,
+            'primeiro_telefone_organizacao' => $primeiroTelefoneOrganizacao,
+            'primeiro_dominio_organizacao' => $primeiroDominioOrganizacao,
+            'empresa' => $empresa,
+        ];
+
+        $octaWebhook = OctaWebhook::create($data);
+
+        return response()->json(['message' => 'Dados recebidos com sucesso!', 'data' => $octaWebhook], 200);
     }
-
-
 }
