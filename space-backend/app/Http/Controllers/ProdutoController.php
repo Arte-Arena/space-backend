@@ -218,4 +218,24 @@ class ProdutoController extends Controller
         $produto->delete();
         return response()->json(['message' => 'Produto deleted successfully']);
     }
+
+    public function getAllProdutosOrcamento(Request $request): JsonResponse
+    {
+        $query = 'Personalizado';
+
+        $cacheKey = "produtos_busca_{$query}";
+
+        // Verificar se existe cache
+        $produtos = Cache::remember($cacheKey, 600, function () use ($query) {
+            return Produto::query()
+                ->when($query, function ($queryBuilder) use ($query) {
+                    $queryBuilder->where('nome', 'like', "%Personalizado%")
+                        ->orWhere('codigo', 'like', "%{$query}%");
+                })
+                ->orderBy('nome')
+                ->get();
+        });
+
+        return response()->json($produtos);
+    }
 }

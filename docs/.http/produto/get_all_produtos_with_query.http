@@ -1,4 +1,7 @@
-GET http://localhost:8000/api/produto?q=Camis
+GET http://localhost:8000/api/produto?q=Personalizado
 Content-Type: application/json
-Authorization: Bearer 3|qp4uCsycGXKXEooGOUwfGgxoy1PQpm7E8OccuwR2a6ec1cb2
+Authorization: Bearer 9|dOOm8Km54YTIAjJviKvfyJExaWgPM1gGGNhPw71ybc409c50
+
+
+
 

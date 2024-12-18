@@ -1,4 +1,4 @@
 
 GET http://localhost:8000/api/chat-octa
-Authorization: Bearer 2|bPYrqGts7GxTP31OXvtjddSjzJgQfduncA6HHVz05512c3b5
+Authorization: Bearer 8|Za15nefUExQ7kUzhs8N7N09iTStBpLWVTMlqIn4t9fdf32dc
 Content-Type: application/json
