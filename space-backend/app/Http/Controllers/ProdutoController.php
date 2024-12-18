@@ -10,8 +10,6 @@ use GuzzleHttp\Client;
 
 class ProdutoController extends Controller
 {
-
-
     public function getAllProdutos(Request $request): JsonResponse
     {
         $query = $request->input('q', ''); // Termo de busca
@@ -33,8 +31,6 @@ class ProdutoController extends Controller
 
         return response()->json($produtos);
     }
-
-
 
     public function upsertProduto(Request $request)
     {
@@ -205,7 +201,6 @@ class ProdutoController extends Controller
 
         return response()->json(['message' => 'Produto atualizado ou criado com sucesso!', 'produto' => $produto], 200);
     }
-
 
     public function deleteProduto($id)
     {
