@@ -18,6 +18,7 @@ use App\Models\User;
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/octa-webhook', [ChatOctaController::class, 'webhook']);
+Route::get('/super-admin/get-config', [SuperAdminController::class, 'getConfig']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/validate-token', [AuthController::class, 'validateToken']);
@@ -46,7 +47,6 @@ Route::middleware(['auth:sanctum', 'role:super-admin'])->group(function () {
     Route::put('/super-admin/upsert-user-roles', [SuperAdminController::class, 'upsertUserRoles']);
     Route::delete('/super-admin/delete-role-module/{roleId}/{moduleId}', [SuperAdminController::class, 'deleteRoleModule']);
     Route::put('/super-admin/upsert-role-module', [SuperAdminController::class, 'upsertRoleModule']);
-    Route::get('/super-admin/get-config', [SuperAdminController::class, 'getConfig']);
     Route::put('/super-admin/upsert-config', [SuperAdminController::class, 'upsertConfig']);
 });
 
@@ -64,7 +64,7 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin'])->group(function ()
     Route::put('/cliente', [ContaController::class, 'upsertConta']);
     Route::delete('/cliente/{id}', [ContaController::class, 'deleteConta']);
     Route::get('/cliente-and-recorrentes', [ContaController::class, 'getAllContasAndRecorrentes']);
-
+    
     Route::get('/conta', [ContaController::class, 'getAllContas']);
     Route::get('/conta/{id}', [ContaController::class, 'getConta']);
     Route::put('/conta', [ContaController::class, 'upsertConta']);
@@ -84,7 +84,6 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,comercial'])->group(f
     Route::get('/contato', [ContatoController::class, 'getAllContatos']);
     Route::put('/contato', [ContatoController::class, 'upsertContato']);
     Route::put('/frete', [FreteController::class, 'getFrete']);
-    
 
 });
 
