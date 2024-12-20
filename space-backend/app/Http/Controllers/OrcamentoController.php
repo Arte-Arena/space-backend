@@ -17,6 +17,11 @@ class OrcamentoController extends Controller
         return response()->json(Orcamento::orderBy('created_at', 'desc')->paginate(10));
     }
 
+    public function getAllOrcamentosWithStatus(string $status): JsonResponse
+    {
+        return response()->json(Orcamento::with('status')->orderBy('created_at', 'desc')->paginate(10));
+    }
+
     public function getOrcamento(Orcamento $orcamento): JsonResponse
     {
         return response()->json($orcamento);
