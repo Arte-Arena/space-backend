@@ -9,33 +9,26 @@ class Orcamento extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['nome', 'codigo', 'user_id', 'status', 'aprovado_por', 'aprovado_em'];
-    protected $casts = [
-        'aprovado_por' => 'datetime',
+    protected $fillable = [
+        'user_id',
+        'cliente_octa_number',
+        'nome_cliente',
+        'lista_produtos',
+        'texto_orcamento',
+        'endereco_cep',
+        'endereco',
+        'opcao_entrega',
+        'prazo_opcao_entrega',
+        'preco_opcao_entrega',
     ];
 
-    public function lista_produtos() {
-        return $this->belongsToMany(Produto::class, 'orcamentos')
-                    ->withPivot('quantidade', 'preco_unitario', 'subtotal')
-                    ->withTimestamps();
-    }
-
-    public function user() {
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
 
-    public function aprovado_por()
+    public function status()
     {
-        return $this->belongsTo(User::class, 'approved_by');
-    }
-
-    public function aprovacoes()
-    {
-        return $this->hasMany(OrcamentoAprovado::class);
-    }
-
-    public function ultima_aprovacao()
-    {
-        return $this->hasOne(OrcamentoAprovado::class)->latestOfMany();
+        return $this->hasMany(OrcamentoStatus::class, 'orcamento_id');
     }
 }

@@ -13,15 +13,16 @@ return new class extends Migration
     {
         Schema::create('orcamentos', function (Blueprint $table) {
             $table->id();
-            $table->string('nome');
-            $table->text('descricao')->nullable();
-            $table->foreignId('user_id')->constrained('users');
-            $table->enum('status', ['pendente', 'aprovado', 'rejeitado'])->default('pendente');
-            $table->unsignedBigInteger('aprovado_por')->nullable(); // ID do usuário que aprovou
-            $table->timestamp('aprovado_em')->nullable(); // Data e hora da aprovação
-
-            $table->foreign('aprovado_por')->references('id')->on('users')->nullable(); // Chave estrangeira para usuários
- 
+            $table->foreignId('user_id')->nullable()->constrained()->onDelete('SET NULL');
+            $table->string('cliente_octa_number')->default('');
+            $table->string('nome_cliente')->nullable()->default(null);
+            $table->json('lista_produtos')->nullable()->default(null);
+            $table->text('texto_orcamento')->nullable()->default(null);
+            $table->string('endereco_cep')->default('');
+            $table->string('endereco')->default('');
+            $table->string('opcao_entrega')->default('');
+            $table->integer('prazo_opcao_entrega')->default(0);
+            $table->decimal('preco_opcao_entrega', 10, 2)->nullable()->default(null);
             $table->timestamps();
         });
     }

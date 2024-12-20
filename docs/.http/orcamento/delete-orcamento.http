@@ -1,0 +1,4 @@
+### delete orcamento
+DELETE http://localhost:8000/api/orcamento/delete-orcamento/1/ HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer 14|ZnacPcB3bumIiIfE6ipQa08FxZSaimt4UfHGZpjy9e88f733

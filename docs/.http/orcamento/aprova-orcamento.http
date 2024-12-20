@@ -1,0 +1,4 @@
+### delete orcamento
+PUT http://localhost:8000/api/orcamento/status/aprova/3/ HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer 14|ZnacPcB3bumIiIfE6ipQa08FxZSaimt4UfHGZpjy9e88f733

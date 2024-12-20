@@ -1,0 +1,19 @@
+### upsert orcamento
+PUT http://localhost:8000/api/orcamento/upsert-orcamento HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer 14|ZnacPcB3bumIiIfE6ipQa08FxZSaimt4UfHGZpjy9e88f733
+
+{
+    "cliente_octa_number": 44,
+    "nome_cliente": "nome do cliente44",
+    "lista_produtos": "[{\"id\": 1, \"nome\": \"produto 1\", \"preco\": 10.99, \"quantidade\": 1, \"subtotal\": 10.99}]",
+    "texto_orcamento": "texto do orcamento",
+    "endereco_cep": "12345678",
+    "endereco": "rua x",
+    "opcao_entrega": "pac",
+    "prazo_opcao_entrega": 10.99,
+    "preco_opcao_entrega": 10.99,
+}
+
+
+

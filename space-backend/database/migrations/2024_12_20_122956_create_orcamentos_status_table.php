@@ -11,14 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('orcamento_produtos', function (Blueprint $table) {
+        Schema::create('orcamentos_status', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->nullable()->constrained()->onDelete('SET NULL');
             $table->foreignId('orcamento_id')->constrained('orcamentos')->onDelete('cascade');
-            $table->foreignId('lista_produtos_id')->constrained('produtos')->onDelete('cascade');
-            $table->integer('quantidade');
-            $table->decimal('preco_unitario', 10, 2);
-            $table->decimal('subtotal', 10, 2);
-            $table->unique(['orcamento_id', 'lista_produtos_id']); // Evita duplicatas
+            $table->enum('status', ['aprovado', 'reprovado', 'pendente'])->default('pendente');
+            $table->text('comentarios')->nullable()->default(null);
             $table->timestamps();
         });
     }
@@ -28,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('orcamento_produtos');
+        Schema::dropIfExists('orcamentos_status');
     }
 };
