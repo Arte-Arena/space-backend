@@ -11,9 +11,8 @@ use Illuminate\Support\Collection;
 
 class OrcamentoController extends Controller
 {
-    public function upsertOrcamento(Request $request)
+    public function createOrcamento(Request $request)
     {
-        $orcamentoId = $request->input('orcamento_id');
         $userId = Auth::id();
         $clienteOctaNumber = $request->input('cliente_octa_number', '');
         $nomeCliente = $request->input('nome_cliente');
@@ -25,34 +24,19 @@ class OrcamentoController extends Controller
         $prazoOpcaoEntrega = $request->input('prazo_opcao_entrega', 0);
         $precoOpcaoEntrega = $request->input('preco_opcao_entrega');
 
-        $orcamento = Orcamento::find($orcamentoId);
 
-        if (!$orcamento) {
-            $orcamento = Orcamento::create([
-                'user_id' => $userId,
-                'cliente_octa_number' => $clienteOctaNumber,
-                'nome_cliente' => $nomeCliente,
-                'lista_produtos' => $listaProdutos,
-                'texto_orcamento' => $textoOrcamento,
-                'endereco_cep' => $enderecoCep,
-                'endereco' => $endereco,
-                'opcao_entrega' => $opcaoEntrega,
-                'prazo_opcao_entrega' => $prazoOpcaoEntrega,
-                'preco_opcao_entrega' => $precoOpcaoEntrega
-            ]);
-        } else {
-            $orcamento->user_id = $userId;
-            $orcamento->cliente_octa_number = $clienteOctaNumber;
-            $orcamento->nome_cliente = $nomeCliente;
-            $orcamento->lista_produtos = $listaProdutos;
-            $orcamento->texto_orcamento = $textoOrcamento;
-            $orcamento->endereco_cep = $enderecoCep;
-            $orcamento->endereco = $endereco;
-            $orcamento->opcao_entrega = $opcaoEntrega;
-            $orcamento->prazo_opcao_entrega = $prazoOpcaoEntrega;
-            $orcamento->preco_opcao_entrega = $precoOpcaoEntrega;
-            $orcamento->save();
-        }
+        $orcamento = Orcamento::create([
+            'user_id' => $userId,
+            'cliente_octa_number' => $clienteOctaNumber,
+            'nome_cliente' => $nomeCliente,
+            'lista_produtos' => $listaProdutos,
+            'texto_orcamento' => $textoOrcamento,
+            'endereco_cep' => $enderecoCep,
+            'endereco' => $endereco,
+            'opcao_entrega' => $opcaoEntrega,
+            'prazo_opcao_entrega' => $prazoOpcaoEntrega,
+            'preco_opcao_entrega' => $precoOpcaoEntrega
+        ]);
 
         return response()->json(['message' => 'Orçamento atualizado ou criado com sucesso!', 'orcamento' => $orcamento], 200);
     }

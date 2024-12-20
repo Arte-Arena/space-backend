@@ -85,7 +85,7 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,comercial'])->group(f
     Route::get('/contato', [ContatoController::class, 'getAllContatos']);
     Route::put('/contato', [ContatoController::class, 'upsertContato']);
     Route::post('/frete-melhorenvio', [FreteController::class, 'getFreteMelhorEnvio']);
-    Route::put('/orcamento/upsert-orcamento', [OrcamentoController::class, 'upsertOrcamento']);
+    Route::put('/orcamento/create-orcamento', [OrcamentoController::class, 'createOrcamento']);
     Route::get('/orcamento/get-orcamentos', [OrcamentoController::class, 'getAllOrcamentos']);
     Route::get('/orcamento/get-orcamento/{id}', [OrcamentoController::class, 'getOrcamento']);
     Route::put('/orcamento/status/aprova/{id}', [OrcamentoController::class, 'aprova']);
