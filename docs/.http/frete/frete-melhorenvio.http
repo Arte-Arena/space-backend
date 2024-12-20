@@ -1,0 +1,13 @@
+POST http://localhost:8000/api/frete-melhorenvio HTTP/1.1
+Authorization: Bearer 10|QMDW13JOstaD0IFZOCx4BfoQPE2IVpvXxcjZXJOP9490b888
+Content-Type: application/json
+
+{
+    "cepTo": "88840000",
+    "largura": 2,
+    "altura": 3,
+    "comprimento": 11,
+    "peso": 0.3,
+    "valor": 10.1,
+    "qtd": 1
+}

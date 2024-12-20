@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Orcamento;
 
 class Produto extends Model
 {
+    use HasFactory;
 
     // Desabilita os campos de timestamp se você não os usa (remova ou ajuste conforme necessário)
     public $timestamps = true;
@@ -21,5 +24,11 @@ class Produto extends Model
         'idProdutoPai', 'sob_encomenda', 'dias_preparacao', 'marca', 'qtd_volumes', 'categoria', 'anexos',
         'imagens_externas', 'classe_produto', 'seo_title', 'seo_keywords', 'link_video', 'seo_description', 'slug'
     ];
+
+    public function orcamentos() {
+        return $this->belongsToMany(Orcamento::class, 'budget_products')
+                    ->withPivot('quantity', 'unit_price', 'subtotal')
+                    ->withTimestamps();
+    }
 
 }

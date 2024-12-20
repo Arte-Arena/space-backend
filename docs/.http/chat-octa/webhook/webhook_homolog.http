@@ -1,0 +1,21 @@
+POST https://api-homolog.spacearena.net/api/octa-webhook HTTP/1.1
+Content-Type: application/json
+
+{
+    "nome": "#nome-contato",
+    "telefone": "#tel-celular-contato",
+    "email": "#email-contato",
+    "origem": "#origem-contato",
+    "url_octa": "#id-conversa",
+    "id": "#numero-conversa",
+    "primeira_mensagem_cliente": "#primeira-mensagem-cliente",
+    "responsavel_contato": "#responsavel-contato",
+    "tel_comercial_contato": "#tel-comercial-contato",
+    "tel_residencial_contato": "#tel-residencial-contato",
+    "status_do_contato": "#status-do-contato",
+    "numero_de_pedido_contato": "#numero-de-pedido-contato",
+    "nome_organizacao": "#nome-organizacao",
+    "primeiro_telefone_organizacao": "#primeiro-telefone-organizacao",
+    "primeiro_dominio_organizacao": "#primeiro-dominio-organizacao",
+    "empresa": "Arte Arena"
+}

@@ -1,0 +1,8 @@
+GET http://localhost:8000/api/produto-personalizad
+Content-Type: application/json
+Authorization: Bearer 10|QMDW13JOstaD0IFZOCx4BfoQPE2IVpvXxcjZXJOP9490b888
+
+
+
+
+

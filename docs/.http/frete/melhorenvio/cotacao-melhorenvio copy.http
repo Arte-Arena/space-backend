@@ -1,21 +1,20 @@
 POST https://www.melhorenvio.com.br/api/v2/me/shipment/calculate
 Accept: application/json
-Authorization: Bearer 
-Content-Type: application/json
+Authorization: Bearer Content-Type: application/json
 User-Agent: Aplicação leandro@artearena.com.br
 
 {
     "from": {
-        "postal_code": "96020360"
+        "postal_code": "04781000"
     },
     "to": {
-        "postal_code": "01018020"
+        "postal_code": "88840000"
     },
     "products": [
         {
             "id": "x",
-            "width": 11,
-            "height": 17,
+            "width": 2,
+            "height": 3,
             "length": 11,
             "weight": 0.3,
             "insurance_value": 10.1,
@@ -26,7 +25,7 @@ User-Agent: Aplicação leandro@artearena.com.br
         "receipt": false,
         "own_hand": false
     },
-    "services": "1,2,18"
+    "services": "1,2,17"
 }
 
 

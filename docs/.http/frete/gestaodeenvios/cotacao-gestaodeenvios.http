@@ -1,0 +1,18 @@
+
+POST https://www.gestaodeenvios.com.br/novo/api/consulta-precos-prazos?chave_integracao=7a50c554c284915c909af92833e1dd43
+Content-Type: application/json
+
+{
+    "identificador": 1,
+    "cep_origem": "80230-110",
+    "cep_destino": "83606-594",
+    "formato": "1",
+    "peso": "3,75",
+    "comprimento": "25",
+    "altura": "40",
+    "largura": "11",
+    "mao_propria": "S",
+    "aviso_recebimento": "S",
+    "valor_declarado": "100,80",
+    "servicos": ["3298", "3220"]
+}

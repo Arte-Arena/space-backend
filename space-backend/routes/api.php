@@ -13,6 +13,7 @@ use App\Http\Controllers\{
     ChatOctaController,
     FreteController,
     ProdutosPersonalizadController,
+    OrcamentoController
 };
 use App\Models\User;
 
@@ -83,7 +84,14 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,comercial'])->group(f
     Route::put('/pedido', [PedidoController::class, 'upsertPedido']);
     Route::get('/contato', [ContatoController::class, 'getAllContatos']);
     Route::put('/contato', [ContatoController::class, 'upsertContato']);
-    Route::put('/frete', [FreteController::class, 'getFrete']);
+    Route::post('/frete-melhorenvio', [FreteController::class, 'getFreteMelhorEnvio']);
+    Route::get('/orcamentos', [OrcamentoController::class, 'getAllOrcamentos']);
+    Route::get('/{orcamento}', [OrcamentoController::class, 'getOrcamento']);
+    Route::put('/{orcamento}', [OrcamentoController::class, 'upsertOrcamento']);
+    Route::delete('/{orcamento}', [OrcamentoController::class, 'deleteOrcamento']);
+    Route::post('/{orcamento}/aprova', [OrcamentoController::class, 'aprova']);
+    Route::post('/{orcamento}/rejeita', [OrcamentoController::class, 'rejeita']);
+
 
 });
 
@@ -92,3 +100,5 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,vendedor,designer,pro
     Route::get('/impressao', [PedidoController::class, 'index']);
     
 });
+
+
