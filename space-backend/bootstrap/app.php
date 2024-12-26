@@ -3,19 +3,14 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use App\Http\Middleware\CheckRole;
+use App\Http\Middleware\{CheckRole, CorsMiddleware};
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 use Dotenv\Dotenv;
 
 $basePath = dirname(__DIR__);
 
-// Determine o ambiente com base na variável de ambiente APP_ENV
 $env = getenv('APP_ENV') ?: 'production';
-
-// Defina o caminho do arquivo `.env` baseado no ambiente
 $envFile = ".env.{$env}";
-
-// Carregar o arquivo .env específico do ambiente
 $dotenv = Dotenv::createImmutable($basePath, $envFile);
 $dotenv->safeLoad();
 
@@ -32,8 +27,9 @@ return Application::configure(basePath: $basePath)
             'is_super_admin' => App\Http\Middleware\IsSuperAdmin::class,
         ]);
 
-        // Add Sanctum middleware for API requests
+        // Grupo 'api' com Sanctum e CORS
         $middleware->group('api', [
+            CorsMiddleware::class,
             EnsureFrontendRequestsAreStateful::class,
             'throttle:api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
