@@ -19,16 +19,27 @@ class CorsMiddleware
         $origin = $request->headers->get('Origin');
 
         if (in_array($origin, $allowedOrigins)) {
-            $response = $next($request);
-
-            $response->headers->set('Access-Control-Allow-Origin', $origin);
-            $response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-            $response->headers->set('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept, Origin, X-Requested-With');
-
+            $response = $this->handleCorsRequest($request, $next, $origin); // Passa $origin como argumento
             return $response;
         }
 
-        // Se a origem não for permitida, você pode retornar uma resposta de erro ou simplesmente continuar sem adicionar os cabeçalhos CORS.
         return $next($request);
     }
+
+    private function handleCorsRequest(Request $request, Closure $next, $origin) // Recebe $origin como argumento
+    {
+        $response = $next($request);
+
+        if ($request->isMethod('OPTIONS')) {
+            $response = response('', 200);
+        }
+
+        $response->headers->set('Access-Control-Allow-Origin', $origin); // Agora $origin está definido
+        $response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+        $response->headers->set('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept, Origin, X-Requested-With');
+        $response->headers->set('Access-Control-Allow-Credentials', 'true');
+
+        return $response;
+    }
 }
+
