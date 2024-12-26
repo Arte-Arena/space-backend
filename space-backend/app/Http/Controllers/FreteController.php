@@ -53,7 +53,7 @@ class FreteController extends Controller
                 'headers' => [
                     'Accept' => 'application/json',
                     'Content-Type' => 'application/json',
-                    'Authorization' => 'Bearer ' . env('MELHOR_ENVIO_API_TOKEN'),
+                    'Authorization' => 'Bearer ' . env('FRETE_MELHORENVIO_API_TOKEN'),
                     'User-Agent' => 'Aplicação leandro@artearena.com.br'
                 ],
                 'json' => $data
