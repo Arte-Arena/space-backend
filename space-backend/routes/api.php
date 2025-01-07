@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Models\User;
 use App\Http\Controllers\{
     AuthController,
     SuperAdminController,
@@ -13,9 +14,9 @@ use App\Http\Controllers\{
     ChatOctaController,
     FreteController,
     ProdutosPersonalizadController,
-    OrcamentoController
+    OrcamentoController,
+    CalendarEventController,
 };
-use App\Models\User;
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/octa-webhook', [ChatOctaController::class, 'webhook']);
@@ -85,21 +86,24 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,comercial'])->group(f
     Route::get('/contato', [ContatoController::class, 'getAllContatos']);
     Route::put('/contato', [ContatoController::class, 'upsertContato']);
     Route::post('/frete-melhorenvio', [FreteController::class, 'getFreteMelhorEnvio']);
-    Route::put('/orcamento/create-orcamento', [OrcamentoController::class, 'createOrcamento']);
+    Route::post('/orcamento/create-orcamento', [OrcamentoController::class, 'createOrcamento']);
     Route::get('/orcamento/get-orcamentos', [OrcamentoController::class, 'getAllOrcamentos']);
     Route::get('/orcamento/get-orcamento/{id}', [OrcamentoController::class, 'getOrcamento']);
     Route::put('/orcamento/status/aprova/{id}', [OrcamentoController::class, 'aprova']);
     Route::put('/orcamento/status/reprova/{id}', [OrcamentoController::class, 'reprova']);
     Route::get('/orcamento/get-orcamentos-status', [OrcamentoController::class, 'getAllOrcamentosWithStatus']);
     Route::delete('/orcamento/delete-orcamento/{id}', [OrcamentoController::class, 'deleteOrcamento']);
-
-
+    
 });
 
 
 Route::middleware(['auth:sanctum', 'role:super-admin,admin,vendedor,designer,producao'])->group(function () {
     Route::get('/impressao', [PedidoController::class, 'index']);
-    
+    Route::put('/calendar', [CalendarEventController::class, 'upsertCalendar']);
+    Route::get('/calendar-unfiltred', [CalendarEventController::class, 'getAllCalendarEventsUnfiltered']);
+    Route::get('/calendar', [CalendarEventController::class, 'getAllCalendarEvents']);
+    Route::get('/calendar/feriados', [CalendarEventController::class, 'getHolidaysBetweenCalendarEvents']);
+
 });
 
 

@@ -1,6 +1,7 @@
 GET http://localhost:8000/api/produto-personalizad
+# GET https://api.spacearena.net/api/produto-personalizad
 Content-Type: application/json
-Authorization: Bearer 10|QMDW13JOstaD0IFZOCx4BfoQPE2IVpvXxcjZXJOP9490b888
+Authorization: Bearer 13|FpMgyH1HQDJwBJtQSLmSbNJNwP7WR1F7Ik4qZeBd3a566129
 
 
 

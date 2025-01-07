@@ -80,14 +80,23 @@ class OrcamentoController extends Controller
 
     public function getAllOrcamentosWithStatus(Request $request)
     {
+
+        $query = $request->input('q', ''); // Termo de busca
+
         // Número de itens por página
         $perPage = $request->get('per_page', 15);
 
         // Obtenha os orçamentos paginados
         $orcamentosPaginated = Orcamento::with(['status' => function ($query) {
             $query->orderByDesc('created_at')->limit(1); // Apenas o status mais recente
-        }])->paginate($perPage);
+        }])
+        ->when($query, function ($queryBuilder) use ($query) {
+            $queryBuilder->where('nome_cliente', 'like', "%{$query}%")
+                         ->orWhere('cliente_octa_number', 'like', "%{$query}%");
+        })
+        ->paginate($perPage);
 
+        
         // Obtenha os dados brutos da página atual
         $orcamentos = $orcamentosPaginated->items();
 
