@@ -11,7 +11,7 @@ echo "FRETE_MELHORENVIO_API_TOKEN=$FRETE_MELHORENVIO_API_TOKEN" >> .env
 echo "CACHE_STORE=redis" >> .env
 echo "CACHE_PREFIX=$REDIS_CACHE_PREFIX" >> .env
 echo "REDIS_CLIENT=phpredis" >> .env
-echo "REDIS_HOST=$REDIS_PASSWORD" >> .env
+echo "REDIS_HOST=$REDIS_HOST" >> .env
 echo "REDIS_PORT=$REDIS_PORT" >> .env
 echo "REDIS_PASSWORD=$REDIS_PASSWORD" >> .env
 
