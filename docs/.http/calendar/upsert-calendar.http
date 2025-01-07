@@ -1,0 +1,29 @@
+
+PUT http://localhost:8000/api/calendar HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer 20|jU2g0eiCGJJTr6VqChCFApV6GEv7A3s5cuZ5RAvI17a433b9
+
+{
+    "title": "Dia da Consciência Negra",
+    "description": "Feriado estadual e nacional",
+    "category": "feriado_nacional",
+    "start_at": "2025-01-03 00:00:00",
+    "end_at": "2025-01-03 23:59:59",
+    "is_active": true
+}
+
+
+
+
+# PUT http://localhost:8000/api/calendar HTTP/1.1
+# Content-Type: application/json
+# Authorization: Bearer 20|jU2g0eiCGJJTr6VqChCFApV6GEv7A3s5cuZ5RAvI17a433b9
+
+# {
+#     "title": "Anúncio do novo ERP",
+#     "description": "Lançamento do Space",
+#     "category": "evento",
+#     "start_at": "2025-01-23 08:00:00",
+#     "end_at": "2025-01-23 17:59:59",
+#     "is_active": true
+# }

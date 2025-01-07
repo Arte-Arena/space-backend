@@ -77,16 +77,11 @@ class OrcamentoController extends Controller
         return response()->json(['message' => 'Orçamento reprovado!'], 200);
     }
 
-
     public function getAllOrcamentosWithStatus(Request $request)
     {
-
-        $query = $request->input('q', ''); // Termo de busca
-
-        // Número de itens por página
+        $query = $request->input('q', '');
         $perPage = $request->get('per_page', 15);
 
-        // Obtenha os orçamentos paginados
         $orcamentosPaginated = Orcamento::with(['status' => function ($query) {
             $query->orderByDesc('created_at')->limit(1); // Apenas o status mais recente
         }])
@@ -94,13 +89,13 @@ class OrcamentoController extends Controller
             $queryBuilder->where('nome_cliente', 'like', "%{$query}%")
                          ->orWhere('cliente_octa_number', 'like', "%{$query}%");
         })
+
+        ->orderByDesc('created_at')
+        ->orderByDesc('updated_at')
         ->paginate($perPage);
 
-        
-        // Obtenha os dados brutos da página atual
         $orcamentos = $orcamentosPaginated->items();
 
-        // Transformar os dados
         $transformedOrcamentos = array_map(function ($orcamento) {
             $latestStatus = $orcamento->status->first(); // Obtenha o status mais recente
             return [
@@ -121,7 +116,6 @@ class OrcamentoController extends Controller
             ];
         }, $orcamentos);
 
-        // Retorne a resposta paginada com os dados transformados
         return response()->json([
             'current_page' => $orcamentosPaginated->currentPage(),
             'data' => $transformedOrcamentos,

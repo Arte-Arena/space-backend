@@ -1,0 +1,4 @@
+
+GET http://localhost:8000/api/calendar/feriados?datainicio=2023-01-10&datafim=2027-03-15 HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer 23|jhZYmBGECTZFY8Fzyaec5DsEslKCTvC82IFsN2LYd36ca661
