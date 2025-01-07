@@ -13,6 +13,7 @@ echo "CACHE_PREFIX=$REDIS_CACHE_PREFIX" >> .env
 echo "REDIS_CLIENT=phpredis" >> .env
 echo "REDIS_HOST=$REDIS_HOST" >> .env
 echo "REDIS_PORT=$REDIS_PORT" >> .env
+echo "REDIS_USERNAME=$REDIS_USERNAME" >> .env
 echo "REDIS_PASSWORD=$REDIS_PASSWORD" >> .env
 
 
