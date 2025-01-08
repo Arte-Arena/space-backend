@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\{ChatOcta, OctaWebHook};
+use Illuminate\Support\Facades\Log;
 
 
 class ChatOctaController extends Controller
@@ -46,12 +47,23 @@ class ChatOctaController extends Controller
 
     public function webhook(Request $request)
     {
+
+        // Dentro do seu controller ou middleware
+        Log::info('Requisição recebida:', request()->all());
+
+        // Para formatar melhor a saída, você pode usar json_encode:
+        Log::info('Requisição recebida (JSON):', [json_encode(request()->all())]);
+
+        // Ou ainda, formatar com pretty print:
+        Log::info('Requisição recebida (JSON formatado):', [json_encode(request()->all(), JSON_PRETTY_PRINT)]);
+
+
         $nome = $request->input('nome');
         $telefone = $request->input('telefone');
         $email = $request->input('email');
         $origem = $request->input('origem');
         $urlOcta = $request->input('url_octa');
-        $octaId = $request->input('id');
+        $id = $request->input('id');
         $primeiraMensagemCliente = $request->input('primeira_mensagem_cliente');
         $responsavelContato = $request->input('responsavel_contato');
         $telComercialContato = $request->input('tel_comercial_contato');
@@ -69,7 +81,7 @@ class ChatOctaController extends Controller
             'email' => $email,
             'origem' => $origem,
             'url_octa' => $urlOcta,
-            'octa_id' => $octaId,
+            'id' => $id,
             'primeira_mensagem_cliente' => $primeiraMensagemCliente,
             'responsavel_contato' => $responsavelContato,
             'tel_comercial_contato' => $telComercialContato,

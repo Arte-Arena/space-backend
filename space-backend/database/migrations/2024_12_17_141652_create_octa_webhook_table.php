@@ -12,13 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('octa_webhook', function (Blueprint $table) {
-            $table->id();
             $table->string('nome')->nullable()->default(null);
             $table->string('telefone')->nullable()->default(null);
             $table->string('email')->nullable()->default(null);
             $table->string('origem')->nullable()->default(null);
             $table->string('url_octa')->nullable()->default(null);
-            $table->string('octa_id')->nullable()->default(null);
+            $table->string('id')->nullable()->default(null);
             $table->text('primeira_mensagem_cliente')->nullable()->default(null);
             $table->string('responsavel_contato')->nullable()->default(null);
             $table->string('tel_comercial_contato')->nullable()->default(null);
