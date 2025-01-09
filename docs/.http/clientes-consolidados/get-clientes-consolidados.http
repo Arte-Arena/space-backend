@@ -1,7 +1,8 @@
 ### Testar a rota de clientes consolidados
-GET http://localhost:8000/api/clientes-consolidados
+GET https://api-homolog.spacearena.net/api/clientes-consolidados
+# GET http://localhost:8000/api/clientes-consolidados
 Accept: application/json
-Authorization: Bearer 35|EODivVBOfhEYSqkf7jHgENTilxFbYEb9jcPqXV5Xd759b7c3
+Authorization: Bearer 37|iYbY5ilY0s4ROyfrrcQ3zQ4jDrnlptRLcvJk3zJPc2f56854
 
 
 
