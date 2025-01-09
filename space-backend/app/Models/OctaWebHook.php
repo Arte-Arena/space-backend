@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 class OctaWebHook extends Model
 {
@@ -26,4 +27,15 @@ class OctaWebHook extends Model
         'primeiro_dominio_organizacao',
         'empresa',
     ];
+
+    protected static function booted()
+    {
+        static::saved(function () {
+            Cache::forget('clientes_consolidados');
+        });
+
+        static::deleted(function () {
+            Cache::forget('clientes_consolidados');
+        });
+    }
 }

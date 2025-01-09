@@ -1,5 +1,5 @@
-POST http://localhost:8000/api/octa-webhook
-# POST http://api.spacearena.net/api/octa-webhook
+# POST http://localhost:8000/api/octa-webhook
+POST http://api.spacearena.net/api/octa-webhook
 Content-Type: application/json
 
 {

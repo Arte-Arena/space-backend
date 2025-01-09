@@ -16,6 +16,7 @@ use App\Http\Controllers\{
     ProdutosPersonalizadController,
     OrcamentoController,
     CalendarEventController,
+    ClientesConsolidadosController,
 };
 
 Route::post('/login', [AuthController::class, 'login']);
@@ -93,6 +94,7 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,comercial'])->group(f
     Route::put('/orcamento/status/reprova/{id}', [OrcamentoController::class, 'reprova']);
     Route::get('/orcamento/get-orcamentos-status', [OrcamentoController::class, 'getAllOrcamentosWithStatus']);
     Route::delete('/orcamento/delete-orcamento/{id}', [OrcamentoController::class, 'deleteOrcamento']);
+    Route::get('/clientes-consolidados', [ClientesConsolidadosController::class, 'consolidateDataPaginated']);
     
 });
 

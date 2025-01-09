@@ -48,16 +48,6 @@ class ChatOctaController extends Controller
     public function webhook(Request $request)
     {
 
-        // Dentro do seu controller ou middleware
-        Log::info('Requisição recebida:', request()->all());
-
-        // Para formatar melhor a saída, você pode usar json_encode:
-        Log::info('Requisição recebida (JSON):', [json_encode(request()->all())]);
-
-        // Ou ainda, formatar com pretty print:
-        Log::info('Requisição recebida (JSON formatado):', [json_encode(request()->all(), JSON_PRETTY_PRINT)]);
-
-
         $nome = $request->input('nome');
         $telefone = $request->input('telefone');
         $email = $request->input('email');
