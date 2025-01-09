@@ -16,11 +16,8 @@ echo "REDIS_PORT=$REDIS_PORT" >> .env
 echo "REDIS_USERNAME=$REDIS_USERNAME" >> .env
 echo "REDIS_PASSWORD=$REDIS_PASSWORD" >> .env
 
-
 echo "[arte arena security] Configurando variáveis de ambiente..."
 
-php -r "set_time_limit(300);"
-php -r "ini_set('memory_limit', '512M');"
 php artisan cache:clear && \
 php artisan config:clear && \
 php artisan route:clear && \
