@@ -2,7 +2,8 @@
 GET https://api-homolog.spacearena.net/api/clientes-consolidados
 # GET http://localhost:8000/api/clientes-consolidados
 Accept: application/json
-Authorization: Bearer 37|iYbY5ilY0s4ROyfrrcQ3zQ4jDrnlptRLcvJk3zJPc2f56854
+Authorization: Bearer 38|1k9JUhoi3CYqbmBkcnyOAwsPVnopPt0k6p5OYLry3c1d3704
+
 
 
 
