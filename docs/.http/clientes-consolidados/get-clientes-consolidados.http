@@ -1,0 +1,7 @@
+### Testar a rota de clientes consolidados
+GET http://localhost:8000/api/clientes-consolidados
+Accept: application/json
+Authorization: Bearer 35|EODivVBOfhEYSqkf7jHgENTilxFbYEb9jcPqXV5Xd759b7c3
+
+
+
