@@ -9,36 +9,24 @@ use Illuminate\Http\Request;
 
 class ClientesConsolidadosController extends Controller
 {
-    /**
-     * Consolidar dados de CrmCliente e OctaWebHook com cache.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\JsonResponse
-     */
+
     public function consolidateDataPaginated(Request $request)
     {
         $pageSize = (int) $request->get('pageSize', 20);
         $page = (int) $request->get('page', 1);
         $searchTerm = $request->get('search', '');
 
-        // Dados de CrmCliente com cache
-        $crmClientes = $this->getCachedCrmClientes($searchTerm);
+        // Dados de CrmCliente paginados
+        $crmClientes = $this->getPagedCrmClientes($searchTerm, $pageSize, $page);
 
-        // Dados de OctaWebHook
-        $octaWebhooks = $this->getFilteredOctaWebhooks($searchTerm);
-
-        // Dados paginados
-        $crmPaginated = $crmClientes->forPage($page, $pageSize)->values();
-        $octaPaginated = $octaWebhooks->forPage($page, $pageSize)->values();
+        // Dados de OctaWebHook paginados
+        $octaWebhooks = $this->getPagedOctaWebhooks($searchTerm, $pageSize, $page);
 
         // Consolidando os dados
-        $consolidatedData = $crmPaginated->merge($octaPaginated);
-
-        // Order by id in descending order
-        $consolidatedData = $consolidatedData->sortByDesc('id');
+        $consolidatedData = collect($crmClientes['data'])->merge($octaWebhooks['data'])->sortByDesc('id')->values();
 
         // Dados de paginação
-        $totalItems = $crmClientes->count() + $octaWebhooks->count();
+        $totalItems = $crmClientes['total'] + $octaWebhooks['total'];
         $totalPages = ceil($totalItems / $pageSize);
 
         return response()->json([
@@ -52,40 +40,28 @@ class ClientesConsolidadosController extends Controller
         ]);
     }
 
-    /**
-     * Obter CrmClientes filtrados com cache.
-     *
-     * @param string $searchTerm
-     * @return \Illuminate\Support\Collection
-     */
-    private function getCachedCrmClientes(string $searchTerm)
+    private function getPagedCrmClientes(string $searchTerm, int $pageSize, int $page)
     {
-        $crmClientes = Cache::rememberForever('clientes_crm', function () {
-            return CrmCliente::select(['id', 'nome', 'telefone', 'email'])->get();
-        });
+        $query = CrmCliente::select(['id', 'nome', 'telefone', 'email']);
 
         if ($searchTerm) {
-            $crmClientes = $crmClientes->filter(function ($cliente) use ($searchTerm) {
-                return str_contains(strtolower($cliente->id), strtolower($searchTerm)) ||
-                    str_contains(strtolower($cliente->nome), strtolower($searchTerm)) ||
-                    str_contains(strtolower($cliente->telefone), strtolower($searchTerm)) ||
-                    str_contains(strtolower($cliente->email), strtolower($searchTerm));
-            });
+            $query->where('id', 'like', "%{$searchTerm}%")
+                ->orWhere('nome', 'like', "%{$searchTerm}%")
+                ->orWhere('telefone', 'like', "%{$searchTerm}%")
+                ->orWhere('email', 'like', "%{$searchTerm}%");
         }
 
-        // Order by id in descending order
-        $crmClientes = $crmClientes->sortByDesc('id');
+        $clientes = Cache::remember("crmClientes:{$searchTerm}:{$page}:{$pageSize}", now()->addMinutes(10), function () use ($query, $pageSize, $page) {
+            return $query->orderByDesc('id')->paginate($pageSize, ['*'], 'page', $page);
+        });
 
-        return $crmClientes;
+        return [
+            'data' => $clientes->items(),
+            'total' => $clientes->total(),
+        ];
     }
 
-    /**
-     * Obter OctaWebhooks filtrados.
-     *
-     * @param string $searchTerm
-     * @return \Illuminate\Support\Collection
-     */
-    private function getFilteredOctaWebhooks(string $searchTerm)
+    private function getPagedOctaWebhooks(string $searchTerm, int $pageSize, int $page)
     {
         $query = OctaWebHook::select(['id', 'nome', 'telefone', 'email']);
 
@@ -96,9 +72,11 @@ class ClientesConsolidadosController extends Controller
                 ->orWhere('email', 'like', "%{$searchTerm}%");
         }
 
-        // Order by id in descending order
-        $octaWebhooks = $query->orderByDesc('id')->get();
+        $webhooks = $query->orderByDesc('id')->paginate($pageSize, ['*'], 'page', $page);
 
-        return $query->get();
+        return [
+            'data' => $webhooks->items(),
+            'total' => $webhooks->total(),
+        ];
     }
 }
