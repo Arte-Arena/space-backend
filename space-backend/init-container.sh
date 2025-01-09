@@ -20,9 +20,4 @@ echo "REDIS_PASSWORD=$REDIS_PASSWORD" >> .env
 echo "[arte arena security] Script de inicialização concluído com sucesso."
 
 
-exec php artisan cache:clear
-exec php artisan config:clear
-exec php artisan route:clear
-exec php artisan view:clear
-
-exec php artisan serve --host=0.0.0.0 --port=9000
+exec php artisan cache:clear && php artisan config:clear && php artisan route:clear && php artisan view:clear && php artisan serve --host=0.0.0.0 --port=9000
