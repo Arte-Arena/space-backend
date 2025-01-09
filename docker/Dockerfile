@@ -1,4 +1,6 @@
 FROM php:8.2-fpm
+RUN mkdir -p /usr/local/etc/php/conf.d
+RUN echo "memory_limit = 512M" > /usr/local/etc/php/conf.d/memory-limit.ini
 WORKDIR /var/www/html
 COPY ./space-backend/composer.json ./space-backend/composer.lock ./
 RUN apt-get update && apt-get install -y \
