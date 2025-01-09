@@ -14,6 +14,8 @@ RUN composer install --no-interaction --no-scripts --no-autoloader
 COPY ./space-backend .
 COPY ./space-backend/init-container.sh /usr/local/bin/init-container.sh
 RUN composer dump-autoload --optimize
+ENV PHP_MEMORY_LIMIT=256M
+ENV PHP_MAX_EXECUTION_TIME=30
 EXPOSE 9000
 RUN chmod u+w .env
 RUN chmod +x /usr/local/bin/init-container.sh
