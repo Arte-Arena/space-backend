@@ -58,7 +58,14 @@ return new class extends Migration
             ['descricao' => 'Calção'],
             ['descricao' => 'Estandarte'],
             ['descricao' => 'Samba Canção'],
+            ['descricao' => 'Balaclava'],
+            ['descricao' => 'Mosaico 3D'],
+            ['descricao' => 'Mousepad'],
+            ['descricao' => 'Touca'],
+            ['descricao' => 'Faixa de Campeão'],
+            ['descricao' => 'Meião'],
             ['descricao' => 'Bandeira para Windbanner'],
+            ['descricao' => 'Canga'],
         ]);
     }
 
