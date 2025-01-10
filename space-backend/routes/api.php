@@ -99,7 +99,7 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,comercial'])->group(f
 });
 
 
-Route::middleware(['auth:sanctum', 'role:super-admin,admin,vendedor,designer,producao'])->group(function () {
+Route::middleware(['auth:sanctum', 'role:super-admin,admin,comercial,designer,producao'])->group(function () {
     Route::get('/impressao', [PedidoController::class, 'index']);
     Route::put('/calendar', [CalendarEventController::class, 'upsertCalendar']);
     Route::get('/calendar-unfiltred', [CalendarEventController::class, 'getAllCalendarEventsUnfiltered']);
