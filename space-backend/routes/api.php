@@ -13,7 +13,7 @@ use App\Http\Controllers\{
     ContatoController,
     ChatOctaController,
     FreteController,
-    ProdutosPersonalizadController,
+    ProdutoOrcamentoController,
     OrcamentoController,
     CalendarEventController,
     ClientesConsolidadosController,
@@ -80,8 +80,9 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,comercial'])->group(f
     Route::put('/chat-octa', [ChatOctaController::class, 'upsertChatOcta']);
     Route::put('/produto', [ProdutoController::class, 'upsertProduto']);
     Route::get('/produto', [ProdutoController::class, 'getAllProdutos']);
-    Route::get('/produto-orcamento', [ProdutoController::class, 'getAllProdutosOrcamento']);
-    Route::get('/produto-personalizad', [ProdutosPersonalizadController::class, 'getAllProdutosPersonalizad']);
+    Route::get('/produto-orcamento-query', [ProdutoController::class, 'getAllProdutosOrcamento']);
+    // Route::get('/produto-personalizad', [ProdutosPersonalizadController::class, 'getAllProdutosPersonalizad']);
+    Route::get('/produto-orcamento-consolidado', [ProdutoOrcamentoController::class, 'getAllProdutosOrcamento']);
     Route::get('/pedido', [PedidoController::class, 'getAllPedidos']);
     Route::put('/pedido', [PedidoController::class, 'upsertPedido']);
     Route::get('/contato', [ContatoController::class, 'getAllContatos']);

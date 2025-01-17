@@ -1,0 +1,8 @@
+
+GET http://localhost:8000/api/produto-orcamento-query
+Content-Type: application/json
+Authorization: Bearer 40|EUxgmhnKLMLZVdVinOpKfV5BCGIq7NN2aUEMLMixfb5f6a22
+
+
+
+
