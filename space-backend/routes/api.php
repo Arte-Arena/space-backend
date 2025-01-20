@@ -106,6 +106,7 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,comercial,designer,pr
     Route::get('/calendar-unfiltred', [CalendarEventController::class, 'getAllCalendarEventsUnfiltered']);
     Route::get('/calendar', [CalendarEventController::class, 'getAllCalendarEvents']);
     Route::get('/calendar/feriados', [CalendarEventController::class, 'getHolidaysBetweenCalendarEvents']);
+    Route::get('/calendar/feriados-ano-mes', [CalendarEventController::class, 'getHolidaysByMonthAndYear']);
 
 });
 
