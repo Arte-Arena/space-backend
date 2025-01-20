@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\CalendarEvent;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class CalendarEventController extends Controller
 {
@@ -29,12 +30,12 @@ class CalendarEventController extends Controller
         return response()->json(['message' => 'Evento salvo com sucesso!']);
     }
 
-public function getAllCalendarEventsUnfiltered()
-{
-    $events = CalendarEvent::all();
+    public function getAllCalendarEventsUnfiltered()
+    {
+        $events = CalendarEvent::all();
 
-    return response()->json(['events' => $events]);
-}
+        return response()->json(['events' => $events]);
+    }
 
 
 
@@ -51,10 +52,37 @@ public function getAllCalendarEventsUnfiltered()
         $startAt = $request->query('datainicio');
         $endAt = $request->query('datafim');
 
-        $holidays = CalendarEvent::where('category', 'feriado_nacional')
-            ->whereBetween('start_at', [$startAt, $endAt])
-            ->count();
+        // Gera uma chave única para o cache com base nos parâmetros
+        $cacheKey = "holidays:{$startAt}-{$endAt}";
+
+        // Tenta obter os dados do cache
+        $holidays = Cache::rememberForever($cacheKey, function () use ($startAt, $endAt) {
+            return CalendarEvent::where('category', 'feriado_nacional')
+                ->whereBetween('start_at', [$startAt, $endAt])
+                ->count();
+        });
 
         return response()->json(['dias_feriados' => $holidays]);
     }
+
+    
+    public function getHolidaysByMonthAndYear(Request $request)
+    {
+        $month = $request->query('mes');
+        $year = $request->query('ano');
+
+        $cacheKey = "holidays:{$year}-{$month}";
+
+        $holidays = Cache::rememberForever($cacheKey, function () use ($month, $year) {
+            $startAt = date('Y-m-d', strtotime("{$year}-{$month}-01"));
+            $endAt = date('Y-m-d', strtotime("{$year}-{$month}-01 +5 month"));
+
+            return CalendarEvent::where('category', 'feriado_nacional')
+                ->whereBetween('start_at', [$startAt, $endAt])
+                ->get();
+        });
+
+        return response()->json(['dias_feriados' => $holidays]);
+    }
+
 }
