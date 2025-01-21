@@ -1,0 +1,6 @@
+### get orcamentos
+GET http://localhost:8000/api/orcamento/get-orcamentos-aprovados HTTP/1.1
+# GET https://spacearena.net/api/orcamento/get-orcamentos-status HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer 31|Wv0RdlI2Deo0tthif0I8siHNqIy5w5MAz6N96w1D20cf9e9e
+
