@@ -1,11 +1,12 @@
-name: Cromo Backend Production CI/CD Pipeline
+name: Cromo Backend Homolog CI/CD Pipeline
 
 on:
   push:
-    branches: ["main"]
+    branches:
+      - homolog # Acionado somente em pushes para a branch homolog
 
 jobs:
-  CI:
+  deploy_to_production:
     runs-on: ubuntu-latest
 
     steps:
@@ -24,8 +25,8 @@ jobs:
           file: ./docker/Dockerfile
           push: true
           tags: | 
-            artearenahub/space-backend:0.0.${{github.run_number}}
-            artearenahub/space-backend:latest
+            artearenahub/space-backend-homolog:0.0.${{github.run_number}}
+            artearenahub/space-backend-homolog:latest
         env:
           ACTIONS_RUNNER_DEBUG: true
           ACTIONS_STEP_DEBUG: true

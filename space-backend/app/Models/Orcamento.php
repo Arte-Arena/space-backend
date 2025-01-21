@@ -31,4 +31,9 @@ class Orcamento extends Model
     {
         return $this->hasMany(OrcamentoStatus::class, 'orcamento_id');
     }
+
+    public function cliente()
+    {
+        return $this->hasOneThrough(ClienteCadastro::class, 'orcamento_cliente_cadastro', 'orcamento_id', 'cliente_cadastro_id');
+    }
 }

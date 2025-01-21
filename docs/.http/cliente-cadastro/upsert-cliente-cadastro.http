@@ -1,0 +1,27 @@
+
+PUT http://localhost:8000/api/cliente-cadastro
+# Authorization: Bearer 2|bPYrqGts7GxTP31OXvtjddSjzJgQfduncA6HHVz05512c3b5
+Content-Type: application/json
+
+{
+    "id": 1,
+    "tipo_pessoa": "PF",
+    "nome_completo": "João da Silva",
+    "cpf": "123.456.789-10",
+    "email": "joao@example.com",
+    "celular": "99999-9999",
+    "cep": "12345-678",
+    "endereco": "Rua das Flores",
+    "numero": "123",
+    "complemento": "Apto 101",
+    "bairro": "Centro",
+    "cidade": "São Paulo",
+    "uf": "SP",
+    "cep_cobranca": "12345-678",
+    "endereco_cobranca": "Rua das Rosas",
+    "numero_cobranca": "456",
+    "complemento_cobranca": "",
+    "bairro_cobranca": "Jardins",
+    "cidade_cobranca": "São Paulo",
+    "uf_cobranca": "SP"
+}

@@ -1,0 +1,33 @@
+name: Cromo Backend Production CI/CD Pipeline
+
+on:
+  pull_request:
+    branches:
+      - main # Escuta pull requests para a branch main
+    types: [closed] # Acionado quando um PR é fechado
+
+jobs:
+  deploy_to_production:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4.1.1
+
+      - name: Docker Login
+        uses: docker/login-action@v3.0.0
+        with:
+          username: ${{secrets.DOCKERHUB_USER}}
+          password: ${{secrets.DOCKERHUB_PWD}}
+
+      - name: Build and push Docker backend image
+        uses: docker/build-push-action@v5.0.0
+        with: 
+          context: .
+          file: ./docker/Dockerfile
+          push: true
+          tags: | 
+            artearenahub/space-backend:0.0.${{github.run_number}}
+            artearenahub/space-backend:latest
+        env:
+          ACTIONS_RUNNER_DEBUG: true
+          ACTIONS_STEP_DEBUG: true

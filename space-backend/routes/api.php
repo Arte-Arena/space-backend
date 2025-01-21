@@ -17,11 +17,15 @@ use App\Http\Controllers\{
     OrcamentoController,
     CalendarEventController,
     ClientesConsolidadosController,
+    ClienteCadastroController,
 };
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/octa-webhook', [ChatOctaController::class, 'webhook']);
 Route::get('/super-admin/get-config', [SuperAdminController::class, 'getConfig']);
+Route::put('/orcamento/backoffice/cliente-cadastro', [ClienteCadastroController::class, 'upsertClienteCadastro']);
+Route::get('/orcamento/backoffice/get-cliente-cadastro', [ClienteCadastroController::class, 'getClienteCadastro']);
+
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/validate-token', [AuthController::class, 'validateToken']);
@@ -96,6 +100,7 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,comercial'])->group(f
     Route::get('/orcamento/get-orcamentos-status', [OrcamentoController::class, 'getAllOrcamentosWithStatus']);
     Route::delete('/orcamento/delete-orcamento/{id}', [OrcamentoController::class, 'deleteOrcamento']);
     Route::get('/clientes-consolidados', [ClientesConsolidadosController::class, 'consolidateDataPaginated']);
+    Route::get('/orcamento/get-orcamentos-aprovados', [OrcamentoController::class, 'getAllOrcamentosAprovados']);
     
 });
 
