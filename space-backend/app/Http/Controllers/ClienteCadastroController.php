@@ -72,7 +72,7 @@ class ClienteCadastroController extends Controller
 
             // Insere a associação entre ClienteCadastro e Orcamento
             DB::table('orcamento_cliente_cadastro')->insertOrIgnore([
-                'orcamento_id' => $orcamentoId, 
+                'orcamento_id' => $orcamentoId,
                 'cliente_cadastro_id' => $cliente->id
             ]);
 
