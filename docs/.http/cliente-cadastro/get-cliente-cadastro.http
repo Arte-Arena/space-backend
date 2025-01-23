@@ -1,0 +1,4 @@
+
+GET http://localhost:8000/api/orcamento/backoffice/get-cliente-cadastro?id=161
+# Authorization: Bearer 2|bPYrqGts7GxTP31OXvtjddSjzJgQfduncA6HHVz05512c3b5
+Content-Type: application/json

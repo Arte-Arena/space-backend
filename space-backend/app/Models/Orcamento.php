@@ -27,13 +27,14 @@ class Orcamento extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function status()
-    {
-        return $this->hasMany(OrcamentoStatus::class, 'orcamento_id');
-    }
-
     public function cliente()
     {
-        return $this->hasOneThrough(ClienteCadastro::class, 'orcamento_cliente_cadastro', 'orcamento_id', 'cliente_cadastro_id');
+        return $this->belongsToMany(
+            ClienteCadastro::class,
+            'orcamento_cliente_cadastro', // Nome da tabela intermediária
+            'orcamento_id',               // Chave estrangeira na tabela intermediária para Orcamento
+            'cliente_cadastro_id'         // Chave estrangeira na tabela intermediária para ClienteCadastro
+        );
     }
+
 }

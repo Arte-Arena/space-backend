@@ -30,16 +30,20 @@ class CorsMiddleware
     {
         $response = $next($request);
 
+        // Handle preflight requests
         if ($request->isMethod('OPTIONS')) {
-            $response = response('', 200);
+            return response('', 200)
+                ->header('Access-Control-Allow-Origin', $origin)
+                ->header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+                ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept');
         }
 
-        $response->headers->set('Access-Control-Allow-Origin', $origin); // Agora $origin está definido
+        // Set CORS headers for other requests
+        $response->headers->set('Access-Control-Allow-Origin', $origin);
         $response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-        $response->headers->set('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept, Origin, X-Requested-With');
+        $response->headers->set('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept');
         $response->headers->set('Access-Control-Allow-Credentials', 'true');
 
         return $response;
     }
 }
-
