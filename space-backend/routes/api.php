@@ -18,6 +18,7 @@ use App\Http\Controllers\{
     CalendarEventController,
     ClientesConsolidadosController,
     ClienteCadastroController,
+    VendasController,
 };
 
 Route::post('/login', [AuthController::class, 'login']);
@@ -101,6 +102,11 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,comercial'])->group(f
     Route::delete('/orcamento/delete-orcamento/{id}', [OrcamentoController::class, 'deleteOrcamento']);
     Route::get('/clientes-consolidados', [ClientesConsolidadosController::class, 'consolidateDataPaginated']);
     Route::get('/orcamento/get-orcamentos-aprovados', [OrcamentoController::class, 'getAllOrcamentosAprovados']);
+    Route::get('/vendas/orcamentos', [VendasController::class, 'getOrcamentos']);
+    Route::get('/vendas/orcamentos-aprovados', [VendasController::class, 'getOrcamentosAprovados']);
+    Route::get('/vendas/clientes-atendidos', [VendasController::class, 'getClientesAtendidos']);
+    Route::get('/vendas/produtos-vendidos', [VendasController::class, 'getProdutosVendidos']);
+    Route::get('/vendas/valores-vendidos', [VendasController::class, 'getValoresVendidos']);
     
 });
 
