@@ -27,6 +27,11 @@ class Orcamento extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function status()
+    {
+        return $this->hasMany(OrcamentoStatus::class, 'orcamento_id');
+    }
+
     public function cliente()
     {
         return $this->belongsToMany(
