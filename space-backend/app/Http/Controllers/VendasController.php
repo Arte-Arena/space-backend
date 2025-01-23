@@ -30,5 +30,83 @@ class VendasController extends Controller
         return response()->json(['totalOrcamentosAprovados' => $totalOrcamentos]);
     }
 
-    
+    public function getProdutosVendidos(Request $request)
+    {
+        $user = $request->user();
+
+        $produtosVendidos = [];
+
+        $orcamentosAprovados = Orcamento::select('lista_produtos')
+            ->where('user_id', $user->id)
+            ->whereHas('status', function ($query) {
+                $query->where('status', 'aprovado');
+            })
+            ->whereHas('status', function ($query) {
+                $query->latest('created_at')->latest('created_at')->distinct('orcamento_id');
+            })
+            ->get();
+
+        foreach ($orcamentosAprovados as $orcamento) {
+            $produtos = json_decode($orcamento['lista_produtos'], true);
+
+            foreach ($produtos as $produto) {
+                if (isset($produtosVendidos[$produto['nome']])) {
+                    $produtosVendidos[$produto['nome']]['quantidade'] += $produto['quantidade'];
+                } else {
+                    $produtosVendidos[$produto['nome']] = [
+                        'nome' => $produto['nome'],
+                        'quantidade' => $produto['quantidade'],
+                    ];
+                }
+            }
+        }
+
+
+        return response()->json(['produtosVendidos' => array_values($produtosVendidos)]);
+    }
+
+    public function getValoresVendidosPorOrcamento(Request $request)
+    {
+        $user = $request->user();
+
+        $valoresVendidosPorOrcamento = [];
+        $totalVendido = 0;
+
+        $orcamentosAprovados = Orcamento::select('id', 'lista_produtos')
+            ->where('user_id', $user->id)
+            ->whereHas('status', function ($query) {
+                $query->where('status', 'aprovado');
+            })
+            ->whereHas('status', function ($query) {
+                $query->latest('created_at')->latest('created_at')->distinct('orcamento_id');
+            })
+            ->get();
+
+        foreach ($orcamentosAprovados as $orcamento) {
+            $produtos = json_decode($orcamento['lista_produtos'], true);
+
+            $valorVendido = 0;
+
+            foreach ($produtos as $produto) {
+                $valorVendido += $produto['preco'] * $produto['quantidade'];
+            }
+
+            $totalVendido += $valorVendido;
+
+            $valoresVendidosPorOrcamento[] = [
+                'orcamento_id' => $orcamento['id'],
+                'valor_vendido' => $valorVendido,
+            ];
+        }
+
+        return response()->json([
+            'valoresVendidosPorOrcamento' => $valoresVendidosPorOrcamento,
+            'totalVendido' => $totalVendido,
+        ]);
+    }
+
+    public function getValoresVendidos(Request $request)
+    {
+        $user = $request->user();
+    }
 }
