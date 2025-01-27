@@ -1,0 +1,6 @@
+
+
+GET http://localhost:8000/api/url/160
+Authorization: Bearer 46|2mMfZEKSWm7kJZCQL4YJ7TBqGBDpvnapw2PCSLZK47511772
+Content-Type: application/json
+

@@ -19,6 +19,7 @@ use App\Http\Controllers\{
     ClientesConsolidadosController,
     ClienteCadastroController,
     VendasController,
+    ClienteCadastroShortUrlController,
 };
 
 Route::post('/login', [AuthController::class, 'login']);
@@ -26,6 +27,7 @@ Route::post('/octa-webhook', [ChatOctaController::class, 'webhook']);
 Route::get('/super-admin/get-config', [SuperAdminController::class, 'getConfig']);
 Route::put('/orcamento/backoffice/cliente-cadastro', [ClienteCadastroController::class, 'upsertClienteCadastro']);
 Route::get('/orcamento/backoffice/get-cliente-cadastro', [ClienteCadastroController::class, 'getClienteCadastro']);
+Route::get('/url/{id}', [ClienteCadastroShortUrlController::class, 'createShortUrl']);
 
 
 Route::middleware('auth:sanctum')->group(function () {
@@ -108,7 +110,6 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,comercial'])->group(f
     Route::get('/vendas/produtos-vendidos', [VendasController::class, 'getProdutosVendidos']);
     Route::get('/vendas/valores-vendidos', [VendasController::class, 'getValoresVendidos']);
     Route::get('/vendas/valores-vendidos-por-orcamento', [VendasController::class, 'getValoresVendidosPorOrcamento']);
-    
 });
 
 
