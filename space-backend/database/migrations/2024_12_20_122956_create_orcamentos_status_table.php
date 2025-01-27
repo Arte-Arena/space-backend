@@ -14,8 +14,14 @@ return new class extends Migration
         Schema::create('orcamentos_status', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->nullable()->constrained()->onDelete('SET NULL');
-            $table->foreignId('orcamento_id')->constrained('orcamentos')->onDelete('cascade');
-            $table->enum('status', ['aprovado', 'reprovado', 'pendente'])->default('pendente');
+            $table->foreignId('orcamento_id')->constrained('orcamentos')->onDelete('cascade')->unique();
+            $table->enum('status', ['aprovado', 'pendente'])->nullable()->default(null);
+            $table->string('forma_pagamento')->nullable()->default(null);
+            $table->string('tipo_faturamento')->nullable()->default(null);
+            $table->date('data_faturamento')->nullable()->default(null);
+            $table->integer('qtd_parcelas')->nullable()->default(null);
+            $table->string('link_trello')->nullable()->default(null);
+            $table->date('data_entrega')->nullable()->default(null);
             $table->text('comentarios')->nullable()->default(null);
             $table->timestamps();
         });

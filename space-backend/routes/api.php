@@ -107,6 +107,7 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,comercial'])->group(f
     Route::get('/vendas/clientes-atendidos', [VendasController::class, 'getClientesAtendidos']);
     Route::get('/vendas/produtos-vendidos', [VendasController::class, 'getProdutosVendidos']);
     Route::get('/vendas/valores-vendidos', [VendasController::class, 'getValoresVendidos']);
+    Route::get('/vendas/valores-vendidos-por-orcamento', [VendasController::class, 'getValoresVendidosPorOrcamento']);
     
 });
 
