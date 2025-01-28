@@ -20,6 +20,7 @@ use App\Http\Controllers\{
     ClienteCadastroController,
     VendasController,
     ClienteCadastroShortUrlController,
+    LinkController,
 };
 
 Route::post('/login', [AuthController::class, 'login']);
@@ -28,7 +29,8 @@ Route::get('/super-admin/get-config', [SuperAdminController::class, 'getConfig']
 Route::get('/url/resolve/{id}', [ClienteCadastroShortUrlController::class, 'resolveShortUrl']);
 Route::put('/orcamento/backoffice/cliente-cadastro', [ClienteCadastroController::class, 'upsertClienteCadastro']);
 Route::get('/orcamento/backoffice/get-cliente-cadastro', [ClienteCadastroController::class, 'getClienteCadastro']);
-
+Route::post('/encurtador-link', [LinkController::class, 'encurta']);
+Route::post('/encurtador-link/resolve/{code}', [LinkController::class, 'resolve']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/validate-token', [AuthController::class, 'validateToken']);
