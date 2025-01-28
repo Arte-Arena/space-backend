@@ -19,14 +19,18 @@ use App\Http\Controllers\{
     ClientesConsolidadosController,
     ClienteCadastroController,
     VendasController,
+    ClienteCadastroShortUrlController,
+    LinkController,
 };
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/octa-webhook', [ChatOctaController::class, 'webhook']);
 Route::get('/super-admin/get-config', [SuperAdminController::class, 'getConfig']);
+Route::get('/url/resolve/{id}', [ClienteCadastroShortUrlController::class, 'resolveShortUrl']);
 Route::put('/orcamento/backoffice/cliente-cadastro', [ClienteCadastroController::class, 'upsertClienteCadastro']);
 Route::get('/orcamento/backoffice/get-cliente-cadastro', [ClienteCadastroController::class, 'getClienteCadastro']);
-
+Route::post('/encurtador-link', [LinkController::class, 'encurta']);
+Route::post('/encurtador-link/resolve/{code}', [LinkController::class, 'resolve']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/validate-token', [AuthController::class, 'validateToken']);
@@ -56,6 +60,8 @@ Route::middleware(['auth:sanctum', 'role:super-admin'])->group(function () {
     Route::delete('/super-admin/delete-role-module/{roleId}/{moduleId}', [SuperAdminController::class, 'deleteRoleModule']);
     Route::put('/super-admin/upsert-role-module', [SuperAdminController::class, 'upsertRoleModule']);
     Route::put('/super-admin/upsert-config', [SuperAdminController::class, 'upsertConfig']);
+
+    
 });
 
 Route::middleware(['auth:sanctum', 'role:super-admin,admin'])->group(function () {
@@ -78,6 +84,8 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin'])->group(function ()
     Route::put('/conta', [ContaController::class, 'upsertConta']);
     Route::delete('/conta/{id}', [ContaController::class, 'deleteConta']);
     Route::get('/contas-and-recorrentes', [ContaController::class, 'getAllContasAndRecorrentes']);
+
+    Route::get('/url/{id}', [ClienteCadastroShortUrlController::class, 'createShortUrl']);
 });
 
 Route::middleware(['auth:sanctum', 'role:super-admin,admin,comercial'])->group(function () {
@@ -108,7 +116,6 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,comercial'])->group(f
     Route::get('/vendas/produtos-vendidos', [VendasController::class, 'getProdutosVendidos']);
     Route::get('/vendas/valores-vendidos', [VendasController::class, 'getValoresVendidos']);
     Route::get('/vendas/valores-vendidos-por-orcamento', [VendasController::class, 'getValoresVendidosPorOrcamento']);
-    
 });
 
 

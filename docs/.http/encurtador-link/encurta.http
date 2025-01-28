@@ -1,0 +1,8 @@
+### Create a short link
+POST http://localhost:8000/api/encurtador-link
+Content-Type: application/json
+
+{
+    "url": "https://example.com"
+}
+
