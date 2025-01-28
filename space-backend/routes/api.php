@@ -25,9 +25,9 @@ use App\Http\Controllers\{
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/octa-webhook', [ChatOctaController::class, 'webhook']);
 Route::get('/super-admin/get-config', [SuperAdminController::class, 'getConfig']);
+Route::get('/url/resolve/{id}', [ClienteCadastroShortUrlController::class, 'resolveShortUrl']);
 Route::put('/orcamento/backoffice/cliente-cadastro', [ClienteCadastroController::class, 'upsertClienteCadastro']);
 Route::get('/orcamento/backoffice/get-cliente-cadastro', [ClienteCadastroController::class, 'getClienteCadastro']);
-Route::get('/url/{id}', [ClienteCadastroShortUrlController::class, 'createShortUrl']);
 
 
 Route::middleware('auth:sanctum')->group(function () {
@@ -58,6 +58,8 @@ Route::middleware(['auth:sanctum', 'role:super-admin'])->group(function () {
     Route::delete('/super-admin/delete-role-module/{roleId}/{moduleId}', [SuperAdminController::class, 'deleteRoleModule']);
     Route::put('/super-admin/upsert-role-module', [SuperAdminController::class, 'upsertRoleModule']);
     Route::put('/super-admin/upsert-config', [SuperAdminController::class, 'upsertConfig']);
+
+    
 });
 
 Route::middleware(['auth:sanctum', 'role:super-admin,admin'])->group(function () {
@@ -80,6 +82,8 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin'])->group(function ()
     Route::put('/conta', [ContaController::class, 'upsertConta']);
     Route::delete('/conta/{id}', [ContaController::class, 'deleteConta']);
     Route::get('/contas-and-recorrentes', [ContaController::class, 'getAllContasAndRecorrentes']);
+
+    Route::get('/url/{id}', [ClienteCadastroShortUrlController::class, 'createShortUrl']);
 });
 
 Route::middleware(['auth:sanctum', 'role:super-admin,admin,comercial'])->group(function () {
