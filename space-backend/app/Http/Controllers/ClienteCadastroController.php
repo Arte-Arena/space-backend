@@ -4,19 +4,116 @@ namespace App\Http\Controllers;
 
 use App\Models\{ClienteCadastro, Orcamento};
 use Illuminate\Http\Request;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use GuzzleHttp\Client;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class ClienteCadastroController extends Controller
 {
-    /**
-     * Insere ou atualiza um cliente no cadastro.
-     */
+    private function sendClientDataToTinyApi($clienteData)
+    {
+        
+        Log::info('Dados recebidos para Tiny API:', $clienteData);
+
+        $apiUrl = 'https://api.tiny.com.br/api2/contato.incluir.php';
+        $token = "teste";
+        $contato = [
+            "contatos" => [
+                [
+                    "contato" => [
+                        "sequencia" => "1", // Valor fixo, você pode ajustar se necessário
+                        "codigo" => "1235", // Valor fixo, você pode ajustar se necessário
+                        "nome" => $clienteData['nome'] ?? "Contato Teste 2",
+                        "tipo_pessoa" => $clienteData['tipo_pessoa'] ?? "F",
+                        "cpf_cnpj" => $clienteData['cpf_cnpj'] ?? "22755777850", // Use cpf ou cnpj, se disponível
+                        "ie" => $clienteData['ie'] ?? "",
+                        "rg" => $clienteData['rg'] ?? "1234567890",
+                        "endereco" => $clienteData['endereco'] ?? "Rua Teste",
+                        "numero" => $clienteData['numero'] ?? "123",
+                        "complemento" => $clienteData['complemento'] ?? "sala 2",
+                        "bairro" => $clienteData['bairro'] ?? "Teste",
+                        "cep" => $clienteData['cep'] ?? "95700-000",
+                        "cidade" => $clienteData['cidade'] ?? "Bento Gonçalves",
+                        "uf" => $clienteData['uf'] ?? "RS",
+                        "celular" => $clienteData['celular'] ?? "",
+                        "email" => $clienteData['email'] ?? "teste@teste.com.br",
+                        "situacao" => "A",
+                        "obs" => "teste de obs",
+                        "contribuinte" => "1"
+                    ]
+                ]
+            ]
+        ];
+        $contatoJson = json_encode($contato);
+        $contatoEncoded = urlencode($contatoJson);  // Codifica o JSON para URL
+
+        $urlWithParams = "$apiUrl?token=$token&formato=JSON&contato=$contatoEncoded";
+
+        try {
+            $response = $this->enviarREST($urlWithParams); // Envia a requisição
+
+            Log::debug('Raw Tiny Response Body:', ['body' => $response['body']]);
+            Log::debug('Tiny Response Headers:', ['headers' => $response['headers']]);
+
+            $responseBody = json_decode($response['body'], true);
+
+            if ($responseBody === null) {
+                Log::error('Failed to decode Tiny response. Likely an HTML error page.', ['body' => $response['body']]);
+                return ['success' => false, 'message' => 'Erro na API Tiny (HTML Response)', 'response' => null, 'headers' => $response['headers']];
+            }
+
+            if (isset($responseBody['retorno']['status']) && $responseBody['retorno']['status'] === 'OK') {
+                Log::info('Dados enviados com sucesso para o Tiny.', ['response' => $responseBody]);
+                return ['success' => true, 'response' => $responseBody, 'headers' => $response['headers']];
+            }
+
+            Log::warning('Erro ao enviar dados para o Tiny.', ['response' => $responseBody]);
+            return ['success' => false, 'response' => $responseBody, 'headers' => $response['headers']];
+        } catch (\Exception $e) {
+            Log::error('Exceção ao enviar dados para o Tiny: ' . $e->getMessage());
+            return ['success' => false, 'response' => null];
+        }
+    }
+
+    private function enviarREST($url) // Simplificado, sem $data e $optional_headers
+    {
+        Log::debug('Request URL to Tiny:', ['url' => $url]);
+
+        $params = [
+            'http' => [
+                'method' => 'POST',
+                'ignore_errors' => true, // Importante para capturar erros 4xx e 5xx
+            ]
+        ];
+
+        $ctx = stream_context_create($params);
+        $fp = @fopen($url, 'rb', false, $ctx);
+
+        if (!$fp) {
+            $error = error_get_last();
+            throw new \Exception("Erro na conexão: " . $error['message']);
+        }
+
+        $response = stream_get_contents($fp);
+        fclose($fp);
+
+        if ($response === false) {
+            $error = error_get_last();
+            throw new \Exception("Erro ao ler resposta: " . $error['message']);
+        }
+
+        return [
+            'body' => $response,
+            'headers' => $http_response_header // $http_response_header precisa estar definido.
+        ];
+    }
+
     public function upsertClienteCadastro(Request $request)
     {
-        try {
 
+        Log::debug('Request to upsertClienteCadastro:', ['request' => $request->all()]);
+
+        try {
             $orcamentoId = $request->input('orcamento_id');
 
             if (!$orcamentoId) {
@@ -25,19 +122,38 @@ class ClienteCadastroController extends Controller
                     'message' => 'Orcamento ID não fornecido'
                 ], 400);
             }
-
             $cpf = $request->input('cpf');
-            $clienteExistente = ClienteCadastro::where('cpf', $cpf)->first();
+            $cnpj = $request->input('cnpj');
 
-            if ($clienteExistente && $clienteExistente->id != $request->id) {
-                // CPF já existe e não pertence ao cliente que está sendo atualizado
+            if (empty($cpf) && empty($cnpj)) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'CPF já cadastrado.'
+                    'message' => 'CPF e CNPJ estão vazios.'
                 ], 400);
             }
 
-            // Valida os dados recebidos
+            $clienteExistente = ClienteCadastro::where(function ($query) use ($cpf, $cnpj) {
+                if (!empty($cpf)) {
+                    $query->where('cpf', $cpf);
+                }
+                if (!empty($cnpj)) {
+                    $query->where('cnpj', $cnpj);
+                }
+            })->first();
+
+            if ($cpf) {
+                Log::info('Usando CPF para busca ou cadastro:', ['cpf' => $cpf]);
+            } elseif ($cnpj) {
+                Log::info('Usando CNPJ para busca ou cadastro:', ['cnpj' => $cnpj]);
+            }
+
+            if ($clienteExistente && $clienteExistente->id != $request->id) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'CPF ou CNPJ já cadastrado.'
+                ], 400);
+            }
+
             $validatedData = $request->validate([
                 'tipo_pessoa' => 'required|in:PJ,PF',
                 'nome_completo' => 'nullable|string|max:255',
@@ -64,25 +180,57 @@ class ClienteCadastroController extends Controller
                 'uf_cobranca' => 'nullable|string|max:2',
             ]);
 
-            // Insere ou atualiza o cliente
             $cliente = ClienteCadastro::updateOrCreate(
-                ['id' => $request->id], // Critério para atualização (id)
-                $validatedData  // Dados validados
+                ['id' => $request->id],
+                $validatedData
             );
 
-            // Insere a associação entre ClienteCadastro e Orcamento
             DB::table('orcamento_cliente_cadastro')->insertOrIgnore([
                 'orcamento_id' => $orcamentoId,
                 'cliente_cadastro_id' => $cliente->id
             ]);
 
+            $clientData = [
+                "nome" => $cliente->nome_completo?? "Contato Teste 2",
+                "tipo_pessoa" => $cliente->tipo_pessoa?? "F",
+                "cpf_cnpj" => $cliente->cpf?? $cliente->cnpj?? "85951545030",
+                "ie" => $cliente->inscricao_estadual?? "",
+                "rg" => $cliente->rg?? "1234567890",
+                "endereco" => $cliente->endereco?? "Rua Teste",
+                "numero" => $cliente->numero?? "123",
+                "complemento" => $cliente->complemento?? "sala 2",
+                "bairro" => $cliente->bairro?? "Teste",
+                "cep" => $cliente->cep?? "95700-000",
+                "cidade" => $cliente->cidade?? "Bento Gonçalves",
+                "uf" => $cliente->uf?? "RS",
+                "celular" => $cliente->celular?? "",
+                "email" => $cliente->email?? "teste@teste.com.br",
+                "situacao" => "A",
+                "obs" => "teste de obs",
+                "contribuinte" => "1"
+            ];
+
+            $clientData['cpf_cnpj'] = preg_replace('/[^0-9]/', '', $clientData['cpf_cnpj']);
+
+            $response = $this->sendClientDataToTinyApi($clientData);
+
+            $message = $response['success'] ? 'Cliente salvo com sucesso!' : 'Erro ao enviar dados do cliente para a API.';
+
             return response()->json([
-                'success' => true,
-                'message' => 'Cliente salvo com sucesso!',
+                'success' => $response['success'],
+                'message' => $message,
+                'alert' => $response['success'] ? 'success' : 'error',
                 'cliente' => $cliente,
+                'tiny_response' => $response['response'],
+                'tiny_headers' => $response['headers']  // Inclui os headers para debugar
             ]);
         } catch (\Exception $e) {
-            Log::error($e); // Log da exceção
+            Log::error($e);
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro ao processar a requisição.',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
 

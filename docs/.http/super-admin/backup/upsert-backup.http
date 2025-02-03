@@ -1,0 +1,12 @@
+### Upsert Backup
+PUT http://localhost:8000/api/super-admin/upsert-backup
+Content-Type: application/json
+X-API-KEY: B4ackupArteArena25
+
+{
+    "nome": "backup_mysql_spacedb_2025-02-03_13-41-07.sql",
+    "data_inicio": "2022-02-03 00:13:40",
+    "data_fim": "2022-02-03 13:41:02",
+    "status": "sucesso",
+    "tamanho": 30585979
+}

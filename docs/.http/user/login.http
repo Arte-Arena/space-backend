@@ -1,7 +1,7 @@
 @baseUrl = http://localhost:8000/api/login
 # @baseUrl = https://api-homolog.spacearena.net/api/login
 
-@email = admin@artearena.com.br
+@email = superadmin@artearena.com.br
 @password = artearena
 
 ### Login

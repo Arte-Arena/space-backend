@@ -5,7 +5,7 @@ Content-Type: application/json
 {
     "tipo_pessoa": "PF",
     "nome_completo": "João da Silva5",
-    "cpf": "123.456.789-05",
+    "cpf": "859.515.450-30",
     "email": "joao@example.com",
     "celular": "99999-9999",
     "cep": "12345-678",

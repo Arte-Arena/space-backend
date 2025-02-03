@@ -1,0 +1,5 @@
+@token = 109|25ZZHba7dbJD38zdphNvwfkNuaeuZqeFKoxStGH09a146536
+
+GET http://localhost:8000/api/super-admin/get-backups HTTP/1.1
+Authorization: Bearer {{token}}
+Content-Type: application/json
