@@ -1,4 +1,4 @@
-@baseUrl = http://localhost:8000/api/vendas/orcamentos-aprovados
+@baseUrl = http://localhost:8000/api/vendas/quantidade-orcamentos-aprovados
 @token = 43|f8iBpG0cNvImhNcAFs5NadEb8JsBAWFJkXdDn6ul38e41e66
 
 ### Get User (Authenticated)

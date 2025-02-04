@@ -21,6 +21,7 @@ use App\Http\Controllers\{
     VendasController,
     ClienteCadastroShortUrlController,
     LinkController,
+    BackupController,
 };
 
 Route::post('/login', [AuthController::class, 'login']);
@@ -31,6 +32,7 @@ Route::put('/orcamento/backoffice/cliente-cadastro', [ClienteCadastroController:
 Route::get('/orcamento/backoffice/get-cliente-cadastro', [ClienteCadastroController::class, 'getClienteCadastro']);
 Route::post('/encurtador-link', [LinkController::class, 'encurta']);
 Route::post('/encurtador-link/resolve/{code}', [LinkController::class, 'resolve']);
+Route::put('/super-admin/upsert-backup', [BackupController::class, 'upsertBackup']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/validate-token', [AuthController::class, 'validateToken']);
@@ -60,7 +62,7 @@ Route::middleware(['auth:sanctum', 'role:super-admin'])->group(function () {
     Route::delete('/super-admin/delete-role-module/{roleId}/{moduleId}', [SuperAdminController::class, 'deleteRoleModule']);
     Route::put('/super-admin/upsert-role-module', [SuperAdminController::class, 'upsertRoleModule']);
     Route::put('/super-admin/upsert-config', [SuperAdminController::class, 'upsertConfig']);
-
+    Route::get('/super-admin/get-backups', [BackupController::class, 'getBackups']);
     
 });
 
@@ -110,14 +112,14 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,comercial'])->group(f
     Route::delete('/orcamento/delete-orcamento/{id}', [OrcamentoController::class, 'deleteOrcamento']);
     Route::get('/clientes-consolidados', [ClientesConsolidadosController::class, 'consolidateDataPaginated']);
     Route::get('/orcamento/get-orcamentos-aprovados', [OrcamentoController::class, 'getAllOrcamentosAprovados']);
-    Route::get('/vendas/orcamentos', [VendasController::class, 'getOrcamentos']);
-    Route::get('/vendas/orcamentos-aprovados', [VendasController::class, 'getOrcamentosAprovados']);
+    Route::get('/vendas/quantidade-orcamentos', [VendasController::class, 'getQuantidadeOrcamentos']);
+    Route::get('/vendas/quantidade-orcamentos-aprovados', [VendasController::class, 'getQuantidadeOrcamentosAprovados']);
     Route::get('/vendas/clientes-atendidos', [VendasController::class, 'getClientesAtendidos']);
     Route::get('/vendas/produtos-vendidos', [VendasController::class, 'getProdutosVendidos']);
     Route::get('/vendas/valores-vendidos', [VendasController::class, 'getValoresVendidos']);
     Route::get('/vendas/valores-vendidos-por-orcamento', [VendasController::class, 'getValoresVendidosPorOrcamento']);
+    Route::get('/vendas/orcamentos-nao-aprovados', [VendasController::class, 'getOrcamentosNaoAprovados']);
 });
-
 
 Route::middleware(['auth:sanctum', 'role:super-admin,admin,comercial,designer,producao'])->group(function () {
     Route::get('/impressao', [PedidoController::class, 'index']);
