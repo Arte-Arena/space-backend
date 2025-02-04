@@ -55,6 +55,8 @@ class VendasController extends Controller
                 'cliente_octa_number' => $orcamento->cliente_octa_number,
                 'quantidade_items_total' => (int) $quantidadeItemsTotal,
                 'valor_total' => round($valorTotal, 2),
+                'data' => $orcamento->created_at->format('Y-m-d H:i:s'),
+                'vendedor' => $orcamento->user->name,
             ];
         })->filter(function ($orcamento) {
             return !empty($orcamento['lista_produtos']);
