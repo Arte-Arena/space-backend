@@ -7,7 +7,7 @@ use App\Models\{Orcamento, OrcamentoStatus};
 
 class VendasController extends Controller
 {
-    public function getOrcamentos(Request $request)
+    public function getQuantidadeOrcamentos(Request $request)
     {
         $user = $request->user();
 
@@ -17,7 +17,7 @@ class VendasController extends Controller
     }
 
 
-    public function getOrcamentosAprovados(Request $request)
+    public function getQuantidadeOrcamentosAprovados(Request $request)
     {
         $user = $request->user();
 
@@ -28,6 +28,33 @@ class VendasController extends Controller
             ->count();
 
         return response()->json(['totalOrcamentosAprovados' => $totalOrcamentos]);
+    }
+
+    public function getOrcamentosNaoAprovados()
+    {
+        $orcamentos = Orcamento::all();
+
+        $orcamentosAprovados = OrcamentoStatus::where('status', 'aprovado')
+            ->select('orcamento_id', 'created_at')
+            ->latest('created_at')
+            ->distinct()
+            ->pluck('orcamento_id');
+
+        $orcamentosNaoAprovados = $orcamentos->reject(function ($orcamento) use ($orcamentosAprovados) {
+            return $orcamentosAprovados->contains($orcamento->id);
+        })->map(function ($orcamento) {
+            $listaProdutos = json_decode($orcamento->lista_produtos, true);
+            return [
+                'id_orcamento' => $orcamento->id,
+                'lista_produtos' => $listaProdutos,
+                'user_id' => $orcamento->user_id,
+                'cliente_octa_number' => $orcamento->cliente_octa_number,
+            ];
+        })->filter(function ($orcamento) {
+            return !empty($orcamento['lista_produtos']);
+        })->values()->toArray();
+
+        return response()->json($orcamentosNaoAprovados);
     }
 
     public function getProdutosVendidos(Request $request)

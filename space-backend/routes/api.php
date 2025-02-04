@@ -112,14 +112,14 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,comercial'])->group(f
     Route::delete('/orcamento/delete-orcamento/{id}', [OrcamentoController::class, 'deleteOrcamento']);
     Route::get('/clientes-consolidados', [ClientesConsolidadosController::class, 'consolidateDataPaginated']);
     Route::get('/orcamento/get-orcamentos-aprovados', [OrcamentoController::class, 'getAllOrcamentosAprovados']);
-    Route::get('/vendas/orcamentos', [VendasController::class, 'getOrcamentos']);
-    Route::get('/vendas/orcamentos-aprovados', [VendasController::class, 'getOrcamentosAprovados']);
+    Route::get('/vendas/quantidade-orcamentos', [VendasController::class, 'getQuantidadeOrcamentos']);
+    Route::get('/vendas/quantidade-orcamentos-aprovados', [VendasController::class, 'getQuantidadeOrcamentosAprovados']);
     Route::get('/vendas/clientes-atendidos', [VendasController::class, 'getClientesAtendidos']);
     Route::get('/vendas/produtos-vendidos', [VendasController::class, 'getProdutosVendidos']);
     Route::get('/vendas/valores-vendidos', [VendasController::class, 'getValoresVendidos']);
     Route::get('/vendas/valores-vendidos-por-orcamento', [VendasController::class, 'getValoresVendidosPorOrcamento']);
+    Route::get('/vendas/orcamentos-nao-aprovados', [VendasController::class, 'getOrcamentosNaoAprovados']);
 });
-
 
 Route::middleware(['auth:sanctum', 'role:super-admin,admin,comercial,designer,producao'])->group(function () {
     Route::get('/impressao', [PedidoController::class, 'index']);
