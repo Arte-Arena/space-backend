@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('orcamentos', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->nullable()->constrained()->onDelete('SET NULL');
-            $table->bigInteger('cliente_octa_number')->default(0);
+            $table->string('cliente_octa_number')->default(1);
             $table->string('nome_cliente')->nullable()->default(null);
             $table->json('lista_produtos')->nullable()->default(null);
             $table->text('texto_orcamento')->nullable()->default(null);

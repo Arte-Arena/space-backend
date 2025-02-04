@@ -44,11 +44,17 @@ class VendasController extends Controller
             return $orcamentosAprovados->contains($orcamento->id);
         })->map(function ($orcamento) {
             $listaProdutos = json_decode($orcamento->lista_produtos, true);
+            $quantidadeItemsTotal = array_sum(array_column($listaProdutos, 'quantidade'));
+            $valorTotal = array_reduce($listaProdutos, function ($carry, $produto) {
+                return $carry + ($produto['preco'] * $produto['quantidade']);
+            }, 0);
             return [
                 'id_orcamento' => $orcamento->id,
                 'lista_produtos' => $listaProdutos,
                 'user_id' => $orcamento->user_id,
                 'cliente_octa_number' => $orcamento->cliente_octa_number,
+                'quantidade_items_total' => (int) $quantidadeItemsTotal,
+                'valor_total' => round($valorTotal, 2),
             ];
         })->filter(function ($orcamento) {
             return !empty($orcamento['lista_produtos']);
