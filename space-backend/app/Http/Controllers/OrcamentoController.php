@@ -7,7 +7,6 @@ use App\Models\OrcamentoStatus;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Collection;
 
 class OrcamentoController extends Controller
 {
@@ -23,7 +22,9 @@ class OrcamentoController extends Controller
         $opcaoEntrega = $request->input('opcao_entrega', '');
         $prazoOpcaoEntrega = $request->input('prazo_opcao_entrega', 0);
         $precoOpcaoEntrega = $request->input('preco_opcao_entrega');
-
+        $antecipado = $request->input('antecipado');
+        $data_antecipa = $request->input('data_antecipa');
+        $taxa_antecipa = $request->input('taxa_antecipa');
 
         $orcamento = Orcamento::create([
             'user_id' => $userId,
@@ -35,12 +36,14 @@ class OrcamentoController extends Controller
             'endereco' => $endereco,
             'opcao_entrega' => $opcaoEntrega,
             'prazo_opcao_entrega' => $prazoOpcaoEntrega,
-            'preco_opcao_entrega' => $precoOpcaoEntrega
+            'preco_opcao_entrega' => $precoOpcaoEntrega,
+            'antecipado' => $antecipado,
+            'data_antecipa' => $data_antecipa,
+            'taxa_antecipa' => $taxa_antecipa,
         ]);
 
-        return response()->json(['message' => 'Orçamento atualizado ou criado com sucesso!', 'orcamento' => $orcamento], 200);
+        return response()->json(['message' => 'Orçamento criado com sucesso!', 'orcamento' => $orcamento], 200);
     }
-
 
     public function getAllOrcamentos(): JsonResponse
     {
@@ -51,7 +54,6 @@ class OrcamentoController extends Controller
     {
         return response()->json($id);
     }
-
 
     public function aprova(Request $request, Orcamento $id)
     {
