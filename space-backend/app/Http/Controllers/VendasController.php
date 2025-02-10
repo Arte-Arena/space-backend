@@ -147,12 +147,10 @@ class VendasController extends Controller
         $user = $request->user();
     }
 
-    public function getQuantidadeOrcamentosPorDia(Request $request)
+    public function getQuantidadeOrcamentosPorDia()
     {
-        $user = $request->user();
 
-        $totalOrcamentosPorData = Orcamento::where('user_id', $user->id)
-        ->selectRaw('DATE(created_at) as date, COUNT(id) as count')  // Conta os orçamentos por data
+        $totalOrcamentosPorData = Orcamento::selectRaw('DATE(created_at) as date, COUNT(id) as count')  // Conta os orçamentos por data
         ->groupBy(DB::raw('DATE(created_at)'))
         ->get();
     
@@ -219,11 +217,10 @@ class VendasController extends Controller
   
     }
 
-    public function GetOrcamentosPorStatus(Request $request) {
-        $user = $request->user();
+    public function getOrcamentosPorStatus(Request $request) {
 
-        $totalOrcamentos = Orcamento::Where('user_id', $user->id)->count();
-        $orcamentosAprovados = OrcamentoStatus::Where('user_id', $user->id)->count();
+        $totalOrcamentos = Orcamento::count();
+        $orcamentosAprovados = OrcamentoStatus::count();
 
         $orcamentosNaoAprovados = $totalOrcamentos - $orcamentosAprovados;
 
