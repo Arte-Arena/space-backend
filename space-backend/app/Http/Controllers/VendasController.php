@@ -217,11 +217,10 @@ class VendasController extends Controller
   
     }
 
-    public function GetOrcamentosPorStatus(Request $request) {
-        $user = $request->user();
+    public function getOrcamentosPorStatus(Request $request) {
 
-        $totalOrcamentos = Orcamento::Where('user_id', $user->id)->count();
-        $orcamentosAprovados = OrcamentoStatus::Where('user_id', $user->id)->count();
+        $totalOrcamentos = Orcamento::count();
+        $orcamentosAprovados = OrcamentoStatus::count();
 
         $orcamentosNaoAprovados = $totalOrcamentos - $orcamentosAprovados;
 
