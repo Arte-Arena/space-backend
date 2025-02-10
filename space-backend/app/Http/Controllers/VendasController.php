@@ -170,7 +170,7 @@ class VendasController extends Controller
         $user = $request->user();
 
         // ->join('orcamentos_status', 'orcamentos_status.orcamento_id', '=', 'orcamentos.id')
-        $orcamentosEntrega = Orcamento::where('user_id', 3)
+        $orcamentosEntrega = Orcamento::where('user_id', $user)
         ->select('created_at', 'nome_cliente', 'opcao_entrega', 'endereco')
         ->get();
                 
@@ -217,5 +217,19 @@ class VendasController extends Controller
                 
         return response()->json($orcamentos, $total);
   
+    }
+
+    public function GetOrcamentosPorStatus(Request $request) {
+        $user = $request->user();
+
+        $totalOrcamentos = Orcamento::Where('user_id', $user->id)->count();
+        $orcamentosAprovados = OrcamentoStatus::Where('user_id', $user->id)->count();
+
+        $orcamentosNaoAprovados = $totalOrcamentos - $orcamentosAprovados;
+
+        return response()->json([
+            'aprovados' => $orcamentosAprovados,
+            'naoAprovados' => $orcamentosNaoAprovados
+        ]);
     }
 }
