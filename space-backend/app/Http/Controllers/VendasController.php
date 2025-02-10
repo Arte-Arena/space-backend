@@ -147,12 +147,10 @@ class VendasController extends Controller
         $user = $request->user();
     }
 
-    public function getQuantidadeOrcamentosPorDia(Request $request)
+    public function getQuantidadeOrcamentosPorDia()
     {
-        $user = $request->user();
 
-        $totalOrcamentosPorData = Orcamento::where('user_id', $user->id)
-        ->selectRaw('DATE(created_at) as date, COUNT(id) as count')  // Conta os orçamentos por data
+        $totalOrcamentosPorData = Orcamento::selectRaw('DATE(created_at) as date, COUNT(id) as count')  // Conta os orçamentos por data
         ->groupBy(DB::raw('DATE(created_at)'))
         ->get();
     
