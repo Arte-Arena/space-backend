@@ -5,19 +5,20 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\ServerException;
 
 class FreteController extends Controller
 {
     public function getFreteMelhorEnvio(Request $request)
     {
         $url = env('FRETE_MELHORENVIO_API_URL', 'https://www.melhorenvio.com.br/api/v2/me/shipment/calculate');
+        $token = env('FRETE_MELHORENVIO_API_TOKEN');
+
         $data = [
-            'from' => [
-                'postal_code' => '04781000'
-            ],
-            'to' => [
-                'postal_code' => $request->input('cepTo')
-            ],
+            'from' => ['postal_code' => '04781000'],
+            'to' => ['postal_code' => $request->input('cepTo')],
             'products' => [
                 [
                     'id' => 'x',
@@ -29,49 +30,90 @@ class FreteController extends Controller
                     'quantity' => $request->input('qtd')
                 ]
             ],
-            'options' => [
-                'receipt' => false,
-                'own_hand' => false
-            ],
+            'options' => ['receipt' => false, 'own_hand' => false],
             'services' => '1,2,17'
         ];
 
-        if ($data === null) {
-            Log::error('Data is null in getFreteMelhorEnvio method');
+        if (empty($data)) {
+            Log::error('[Melhor Envio] Erro: Dados inválidos para requisição.');
             return response()->json(['error' => 'Invalid data'], 500);
         }
 
-        Log::debug('Data variable:', ['data' => $data]);
-        Log::info('Request', ['data' => $data]);
-
-        Log::debug('API request headers:', ['headers' => $request->headers->all()]);
-        Log::debug('API request body:', ['body' => $request->all()]);
+        // Log do request enviado
+        Log::info('[Melhor Envio] Enviando requisição para API', [
+            'url' => $url,
+            'headers' => [
+                'Accept' => 'application/json',
+                'Content-Type' => 'application/json',
+                'Authorization' => 'Bearer ' . $token
+            ],
+            'body' => $data
+        ]);
 
         $client = new Client();
+
         try {
+            $startTime = microtime(true); // Captura tempo de início da requisição
+
             $response = $client->post($url, [
                 'headers' => [
                     'Accept' => 'application/json',
                     'Content-Type' => 'application/json',
-                    'Authorization' => 'Bearer ' . env('FRETE_MELHORENVIO_API_TOKEN'),
+                    'Authorization' => 'Bearer ' . $token,
                     'User-Agent' => 'Aplicação leandro@artearena.com.br'
                 ],
                 'json' => $data
             ]);
 
-            $responseData = json_decode($response->getBody(), true);
+            $endTime = microtime(true); // Captura tempo de resposta
 
-            Log::info('Response from Melhor Envio API:', ['response' => $responseData]);
+            $responseBody = json_decode($response->getBody(), true);
 
-            return response()->json($responseData);
+            Log::info('[Melhor Envio] Resposta da API', [
+                'status_code' => $response->getStatusCode(),
+                'response_time' => ($endTime - $startTime) . ' segundos',
+                'response_body' => $responseBody
+            ]);
 
+            return response()->json($responseBody);
+
+        } catch (ClientException $e) {
+            // Captura respostas de erro 4xx (erros do cliente)
+            $this->logErrorResponse($e, '[Melhor Envio] Erro 4xx na API');
+        } catch (ServerException $e) {
+            // Captura respostas de erro 5xx (erros do servidor)
+            $this->logErrorResponse($e, '[Melhor Envio] Erro 5xx na API');
+        } catch (RequestException $e) {
+            // Captura falhas na requisição (exemplo: conexão falhou)
+            $this->logErrorResponse($e, '[Melhor Envio] Falha na requisição');
         } catch (\Exception $e) {
-            Log::error('Error in getFreteMelhorEnvio method', ['exception' => $e->getMessage()]);
-
-            return response()->json([
-                'error' => 'Erro ao consultar frete',
-                'message' => $e->getMessage()
-            ], 500);
+            // Captura qualquer outro erro
+            Log::error('[Melhor Envio] Erro inesperado', ['exception' => $e->getMessage()]);
+            return response()->json(['error' => 'Erro inesperado', 'message' => $e->getMessage()], 500);
         }
+    }
+
+    /**
+     * Método para logar erros detalhados da API
+     */
+    private function logErrorResponse($e, $logTitle)
+    {
+        $statusCode = $e->getCode();
+        $responseBody = method_exists($e, 'getResponse') && $e->getResponse()
+            ? (string) $e->getResponse()->getBody()
+            : 'Sem resposta da API';
+
+        Log::error($logTitle, [
+            'status_code' => $statusCode,
+            'error_message' => $e->getMessage(),
+            'response_body' => $responseBody
+        ]);
+
+        return response()->json([
+            'error' => 'Erro ao consultar frete',
+            'status_code' => $statusCode,
+            'message' => $e->getMessage(),
+            'response' => json_decode($responseBody, true)
+        ], 500);
     }
 }

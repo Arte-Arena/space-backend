@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\{Orcamento, OrcamentoStatus};
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class VendasController extends Controller
 {
@@ -143,5 +145,88 @@ class VendasController extends Controller
     public function getValoresVendidos(Request $request)
     {
         $user = $request->user();
+    }
+
+    public function getQuantidadeOrcamentosPorDia()
+    {
+
+        $totalOrcamentosPorData = Orcamento::selectRaw('DATE(created_at) as date, COUNT(id) as count')  // Conta os orçamentos por data
+        ->groupBy(DB::raw('DATE(created_at)'))
+        ->get();
+    
+
+
+        return response()->json([
+            'totalOrcamentos' => $totalOrcamentosPorData,
+        
+        ]);
+    
+    }
+
+    public function getQuantidadeOrcamentosEntrega(Request $request) // TERMINAR A IMPLEMENTAÇÃO
+    {
+        $user = $request->user();
+
+        // ->join('orcamentos_status', 'orcamentos_status.orcamento_id', '=', 'orcamentos.id')
+        $orcamentosEntrega = Orcamento::where('user_id', $user)
+        ->select('created_at', 'nome_cliente', 'opcao_entrega', 'endereco')
+        ->get();
+                
+        return response()->json($orcamentosEntrega);
+
+    
+    }
+
+    public function getQuantidadeOrcamentosDatas(Request $request)
+    {
+        $user = $request->user();
+        $filtro = $request->query('filtro'); // Pega o filtro da URL
+        $dias = 0;
+
+        // Define o intervalo de dias baseado no filtro
+        switch ($filtro) {
+            case "semanal":
+                $dias = 7;
+                break;
+            case "quinzenal":
+                $dias = 15;
+                break;
+            case "mensal":
+                $dias = 30;
+                break;
+            case "anual":
+                $dias = 365;
+                break;
+            default:
+                return response()->json(["error" => "Filtro inválido. Use: semanal, quinzenal, mensal ou anual."], 400);
+        }
+
+        // Calcula a data inicial para o filtro
+        $dataInicial = Carbon::now()->subDays($dias)->startOfDay();
+
+        $orcamentos = Orcamento::where('user_id', $user->id)
+        ->where('created_at', '>=', $dataInicial)
+        ->selectRaw('DATE(created_at) as date, COUNT(*) as count')
+        ->groupBy('date')
+        ->orderBy('date', 'ASC')
+        ->get();
+
+        $total = $orcamentos->sum('count');
+                
+        return response()->json($orcamentos, $total);
+  
+    }
+
+    public function getOrcamentosPorStatus(Request $request) {
+
+        $totalOrcamentos = Orcamento::count();
+        $orcamentosAprovados = OrcamentoStatus::count();
+
+        $orcamentosNaoAprovados = $totalOrcamentos - $orcamentosAprovados;
+
+        return response()->json([
+            'aprovados' => $orcamentosAprovados,
+            'naoAprovados' => $orcamentosNaoAprovados
+        ]);
     }
 }

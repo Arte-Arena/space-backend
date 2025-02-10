@@ -1,0 +1,7 @@
+@baseUrl = http://localhost:8000/api/vendas/orcamentos-por-entrega
+@token = 6|nbowlFTEXdbPwIPmmYkPBwVLh6WVQsHIldkhnOKJf4d4e3e2
+
+### Get User (Authenticated)
+GET {{baseUrl}}/
+Authorization: Bearer {{token}}
+

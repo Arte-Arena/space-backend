@@ -1,0 +1,4 @@
+### aprova orcamento
+PUT http://localhost:8000/api/vendas/orcamentos-por-status HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer 8|stofVOlMEXLbRF5X2y9sjHwAsChyJChBv7oAAQIqd0c78947
