@@ -29,7 +29,7 @@ class OrcamentoController extends Controller
         $tipo_desconto = $request->input('tipo_desconto');
         $valor_desconto = $request->input('valor_desconto');
         $percentual_desconto = $request->input('percentual_desconto');
-        $total_orcamento = $request->input('taxa_antecipa');
+        $total_orcamento = $request->input('total_orcamento');
 
         $orcamento = Orcamento::create([
             'user_id' => $userId,
