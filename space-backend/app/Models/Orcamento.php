@@ -20,6 +20,14 @@ class Orcamento extends Model
         'opcao_entrega',
         'prazo_opcao_entrega',
         'preco_opcao_entrega',
+        'antecipado',
+        'data_antecipa',
+        'taxa_antecipa',
+        'descontado',
+        'tipo_desconto',
+        'valor_desconto',
+        'percentual_desconto',
+        'total_orcamento',
     ];
 
     public function user()
