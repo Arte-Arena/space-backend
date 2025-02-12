@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\{Orcamento, OrcamentoStatus, User};
-use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class VendasController extends Controller
@@ -163,13 +162,10 @@ class VendasController extends Controller
     
     }
 
-    public function getQuantidadeOrcamentosEntrega(Request $request) // TERMINAR A IMPLEMENTAÇÃO
+    public function getQuantidadeOrcamentosEntrega() // TERMINAR A IMPLEMENTAÇÃO
     {
-        $user = $request->user();
 
-        // ->join('orcamentos_status', 'orcamentos_status.orcamento_id', '=', 'orcamentos.id')
-        $orcamentosEntrega = Orcamento::where('user_id', $user)
-        ->select('created_at', 'nome_cliente', 'opcao_entrega', 'endereco')
+        $orcamentosEntrega = Orcamento::select('created_at', 'nome_cliente', 'opcao_entrega', 'endereco')
         ->get();
                 
         return response()->json($orcamentosEntrega);
@@ -178,7 +174,7 @@ class VendasController extends Controller
     }
 
 
-    public function getOrcamentosPorStatus(Request $request) 
+    public function getOrcamentosPorStatus() 
     {
 
         $totalOrcamentos = Orcamento::count();
