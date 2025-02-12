@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\{Orcamento, OrcamentoStatus};
+use App\Models\{Orcamento, OrcamentoStatus, User};
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -178,7 +178,8 @@ class VendasController extends Controller
     }
 
 
-    public function getOrcamentosPorStatus(Request $request) {
+    public function getOrcamentosPorStatus(Request $request) 
+    {
 
         $totalOrcamentos = Orcamento::count();
         $orcamentosAprovados = OrcamentoStatus::count();
@@ -191,7 +192,8 @@ class VendasController extends Controller
         ]);
     }
 
-    public function getOrcamentosPorStatusTodos() {
+    public function getOrcamentosPorStatusTodos() 
+    {
 
         // Obtemos todos os orçamentos
         $orcamentos = Orcamento::all();
@@ -235,7 +237,8 @@ class VendasController extends Controller
     
     }
 
-    public function getFilteredOrcamentosPorDia(Request $request) {
+    public function getFilteredOrcamentosPorDia(Request $request) 
+    {
         
 
         $query = Orcamento::selectRaw('DATE(created_at) as date, COUNT(id) as count')
@@ -255,6 +258,15 @@ class VendasController extends Controller
             'totalOrcamentos' => $totalOrcamentosPorData,
         ]);
     
+    }
+
+    public function getUsersForFilter()
+    {
+        $user = User::select('name', 'id')
+        ->get();
+
+        return response()->json($user);
+
     }
 
 }
