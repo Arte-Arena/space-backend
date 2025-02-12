@@ -30,6 +30,8 @@ class OrcamentoController extends Controller
         $valor_desconto = $request->input('valor_desconto');
         $percentual_desconto = $request->input('percentual_desconto');
         $total_orcamento = $request->input('total_orcamento');
+        $brinde = $request->input('brinde');
+        $produtos_brinde = $request->input('produtos_brinde');
 
         $orcamento = Orcamento::create([
             'user_id' => $userId,
@@ -50,6 +52,8 @@ class OrcamentoController extends Controller
             'valor_desconto' => $valor_desconto,
             'percentual_desconto' => $percentual_desconto,
             'total_orcamento' => $total_orcamento,
+            'brinde' => $brinde,
+            'produtos_brinde' => $produtos_brinde,
         ]);
 
         return response()->json(['message' => 'Orçamento criado com sucesso!', 'orcamento' => $orcamento], 200);

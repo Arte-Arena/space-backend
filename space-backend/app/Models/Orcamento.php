@@ -28,6 +28,8 @@ class Orcamento extends Model
         'valor_desconto',
         'percentual_desconto',
         'total_orcamento',
+        'brinde',
+        'produtos_brinde',
     ];
 
     public function user()
