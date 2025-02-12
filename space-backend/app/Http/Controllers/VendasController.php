@@ -177,45 +177,6 @@ class VendasController extends Controller
     
     }
 
-    public function getQuantidadeOrcamentosDatas(Request $request)
-    {
-        $user = $request->user();
-        $filtro = $request->query('filtro'); // Pega o filtro da URL
-        $dias = 0;
-
-        // Define o intervalo de dias baseado no filtro
-        switch ($filtro) {
-            case "semanal":
-                $dias = 7;
-                break;
-            case "quinzenal":
-                $dias = 15;
-                break;
-            case "mensal":
-                $dias = 30;
-                break;
-            case "anual":
-                $dias = 365;
-                break;
-            default:
-                return response()->json(["error" => "Filtro inválido. Use: semanal, quinzenal, mensal ou anual."], 400);
-        }
-
-        // Calcula a data inicial para o filtro
-        $dataInicial = Carbon::now()->subDays($dias)->startOfDay();
-
-        $orcamentos = Orcamento::where('user_id', $user->id)
-        ->where('created_at', '>=', $dataInicial)
-        ->selectRaw('DATE(created_at) as date, COUNT(*) as count')
-        ->groupBy('date')
-        ->orderBy('date', 'ASC')
-        ->get();
-
-        $total = $orcamentos->sum('count');
-                
-        return response()->json($orcamentos, $total);
-  
-    }
 
     public function getOrcamentosPorStatus(Request $request) {
 
