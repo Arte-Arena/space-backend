@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\{Orcamento, OrcamentoStatus, User};
-use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class VendasController extends Controller
@@ -175,7 +174,7 @@ class VendasController extends Controller
     }
 
 
-    public function getOrcamentosPorStatus(Request $request) 
+    public function getOrcamentosPorStatus() 
     {
 
         $totalOrcamentos = Orcamento::count();
