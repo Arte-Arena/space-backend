@@ -141,6 +141,15 @@ class OrcamentoController extends Controller
                 'status_aprovacao_arte_final' => $latestStatus ? $latestStatus->status_aprovacao_arte_final : null,
                 'created_at' => $orcamento->created_at,
                 'updated_at' => $orcamento->updated_at,
+                'data_antecipa' => $orcamento->data_antecipa,
+                'taxa_antecipa' => $orcamento->taxa_antecipa,
+                'descontado' => $orcamento->descontado,
+                'tipo_desconto' => $orcamento->tipo_desconto,
+                'valor_desconto' => $orcamento->valor_desconto,
+                'percentual_desconto' => $orcamento->percentual_desconto,
+                'total_orcamento' => $orcamento->total_orcamento,
+                'brinde' => $orcamento->brinde,
+                'produtos_brinde' => $orcamento->produtos_brinde,
             ];
         }, $orcamentos);
 
@@ -206,6 +215,15 @@ class OrcamentoController extends Controller
                 'status' => $latestStatus ? $latestStatus->status : null,
                 'created_at' => $orcamento->created_at,
                 'updated_at' => $orcamento->updated_at,
+                'data_antecipa' => $orcamento->data_antecipa,
+                'taxa_antecipa' => $orcamento->taxa_antecipa,
+                'descontado' => $orcamento->descontado,
+                'tipo_desconto' => $orcamento->tipo_desconto,
+                'valor_desconto' => $orcamento->valor_desconto,
+                'percentual_desconto' => $orcamento->percentual_desconto,
+                'total_orcamento' => $orcamento->total_orcamento,
+                'brinde' => $orcamento->brinde,
+                'produtos_brinde' => $orcamento->produtos_brinde,
             ];
         }, $orcamentos);
 
