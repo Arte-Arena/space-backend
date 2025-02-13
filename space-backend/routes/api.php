@@ -121,7 +121,11 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,comercial'])->group(f
     Route::get('/vendas/orcamentos-nao-aprovados', [VendasController::class, 'getOrcamentosNaoAprovados']);
     Route::get('/vendas/orcamentos-por-dia', [VendasController::class, 'getQuantidadeOrcamentosPorDia']);
     Route::get('/vendas/orcamentos-por-status', [VendasController::class, 'GetOrcamentosPorStatus']);
+    Route::get('/vendas/orcamentos-por-status-todos', [VendasController::class, 'getOrcamentosPorStatusTodos']);
+    Route::get('/vendas/orcamentos-por-dia-filtered', [VendasController::class, 'getFilteredOrcamentosPorDia']);
+    Route::get('/vendas/orcamentos-user-names', [VendasController::class, 'getUsersForFilter']);
     // Route::get('/vendas/orcamentos-por-entrega', [VendasController::class, 'getQuantidadeOrcamentosEntrega']);
+
 
 });
 

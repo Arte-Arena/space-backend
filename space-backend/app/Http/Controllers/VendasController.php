@@ -3,8 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\{Orcamento, OrcamentoStatus};
-use Carbon\Carbon;
+use App\Models\{Orcamento, OrcamentoStatus, User};
 use Illuminate\Support\Facades\DB;
 
 class VendasController extends Controller
@@ -163,13 +162,10 @@ class VendasController extends Controller
     
     }
 
-    public function getQuantidadeOrcamentosEntrega(Request $request) // TERMINAR A IMPLEMENTAÇÃO
+    public function getQuantidadeOrcamentosEntrega() // TERMINAR A IMPLEMENTAÇÃO
     {
-        $user = $request->user();
 
-        // ->join('orcamentos_status', 'orcamentos_status.orcamento_id', '=', 'orcamentos.id')
-        $orcamentosEntrega = Orcamento::where('user_id', $user)
-        ->select('created_at', 'nome_cliente', 'opcao_entrega', 'endereco')
+        $orcamentosEntrega = Orcamento::select('created_at', 'nome_cliente', 'opcao_entrega', 'endereco')
         ->get();
                 
         return response()->json($orcamentosEntrega);
@@ -177,47 +173,9 @@ class VendasController extends Controller
     
     }
 
-    public function getQuantidadeOrcamentosDatas(Request $request)
+
+    public function getOrcamentosPorStatus() 
     {
-        $user = $request->user();
-        $filtro = $request->query('filtro'); // Pega o filtro da URL
-        $dias = 0;
-
-        // Define o intervalo de dias baseado no filtro
-        switch ($filtro) {
-            case "semanal":
-                $dias = 7;
-                break;
-            case "quinzenal":
-                $dias = 15;
-                break;
-            case "mensal":
-                $dias = 30;
-                break;
-            case "anual":
-                $dias = 365;
-                break;
-            default:
-                return response()->json(["error" => "Filtro inválido. Use: semanal, quinzenal, mensal ou anual."], 400);
-        }
-
-        // Calcula a data inicial para o filtro
-        $dataInicial = Carbon::now()->subDays($dias)->startOfDay();
-
-        $orcamentos = Orcamento::where('user_id', $user->id)
-        ->where('created_at', '>=', $dataInicial)
-        ->selectRaw('DATE(created_at) as date, COUNT(*) as count')
-        ->groupBy('date')
-        ->orderBy('date', 'ASC')
-        ->get();
-
-        $total = $orcamentos->sum('count');
-                
-        return response()->json($orcamentos, $total);
-  
-    }
-
-    public function getOrcamentosPorStatus(Request $request) {
 
         $totalOrcamentos = Orcamento::count();
         $orcamentosAprovados = OrcamentoStatus::count();
@@ -229,4 +187,82 @@ class VendasController extends Controller
             'naoAprovados' => $orcamentosNaoAprovados
         ]);
     }
+
+    public function getOrcamentosPorStatusTodos() 
+    {
+
+        // Obtemos todos os orçamentos
+        $orcamentos = Orcamento::all();
+
+        // Pegamos todos os orçamentos aprovados
+        $orcamentosAprovados = OrcamentoStatus::where('status', 'aprovado')
+            ->select('orcamento_id', 'created_at')
+            ->latest('created_at')
+            ->distinct()
+            ->pluck('orcamento_id');
+
+        // Mapeia os orçamentos, diferenciando aprovados e não aprovados
+        $orcamentosFinalizados = $orcamentos->map(function ($orcamento) use ($orcamentosAprovados) {
+            $listaProdutos = json_decode($orcamento->lista_produtos, true);
+            $quantidadeItemsTotal = array_sum(array_column($listaProdutos, 'quantidade'));
+            $valorTotal = array_reduce($listaProdutos, function ($carry, $produto) {
+                return $carry + ($produto['preco'] * $produto['quantidade']);
+            }, 0);
+
+            // Verifica se o orçamento está aprovado ou não
+            $status = $orcamentosAprovados->contains($orcamento->id) ? 'aprovado' : 'não aprovado';
+
+            return [
+                'id_orcamento' => $orcamento->id,
+                'lista_produtos' => $listaProdutos,
+                'user_id' => $orcamento->user_id,
+                'cliente_octa_number' => $orcamento->cliente_octa_number,
+                'quantidade_items_total' => (int) $quantidadeItemsTotal,
+                'valor_total' => round($valorTotal, 2),
+                'data' => $orcamento->created_at->format('Y-m-d H:i:s'),
+                'vendedor' => $orcamento->user->name,
+                'status' => $status, // Incluindo o status do orçamento (aprovado ou não aprovado)
+            ];
+        })->filter(function ($orcamento) {
+            // Filtra orçamentos com produtos
+            return !empty($orcamento['lista_produtos']);
+        })->values()->toArray();
+
+        // Retorna a resposta no formato JSON
+        return response()->json($orcamentosFinalizados);
+    
+    }
+
+    public function getFilteredOrcamentosPorDia(Request $request) 
+    {
+        
+
+        $query = Orcamento::selectRaw('DATE(created_at) as date, COUNT(id) as count')
+        ->groupBy(DB::raw('DATE(created_at)'));
+    
+        if ($request->has('vendedor_id')) {
+            $query->where('user_id', $request->vendedor_id);
+        }
+        
+        if ($request->has('data_inicio') && $request->has('data_fim')) {
+            $query->whereBetween('created_at', [$request->data_inicio, $request->data_fim]);
+        }
+        
+        $totalOrcamentosPorData = $query->get();
+        
+        return response()->json([
+            'totalOrcamentos' => $totalOrcamentosPorData,
+        ]);
+    
+    }
+
+    public function getUsersForFilter()
+    {
+        $user = User::select('name', 'id')
+        ->get();
+
+        return response()->json($user);
+
+    }
+
 }
