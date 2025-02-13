@@ -205,4 +205,23 @@ class OrcamentoController extends Controller
             'last_page' => $orcamentosPaginated->lastPage(),
         ]);
     }
+
+    public function updateOrcamentoStatus(Request $request, $orcamento_id)
+    {
+        $statusType = $request->input('status_type');
+        $statusValue = $request->input('status_value');
+        $comentarios = $request->input('comentarios'); // Opcional
+
+        OrcamentoStatus::updateOrCreate(
+            ['orcamento_id' => $orcamento_id], // Condição: orcamento_id
+            [
+                'user_id' => Auth::id(),
+                $statusType => $statusValue, // Campo de status dinâmico
+                'comentarios' => $comentarios, // Atualiza comentários, se fornecidos
+                'updated_at' => now() // Atualiza o campo updated_at
+            ]
+        );
+
+        return response()->json(['message' => 'Status do orçamento atualizado com sucesso!'], 200);
+    }
 }
