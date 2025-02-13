@@ -1,0 +1,9 @@
+PUT http://localhost:8000/api/orcamentos/345/status
+Content-Type: application/json
+Authorization: Bearer 120|xgXEkOzQ2MRQpc5eapkISZF1ie4wrEQVgu0YA7AZ20468338
+
+{
+  "status_type": "status_aprovacao_arte_arena",
+  "status_value": "aprovado",
+  "comentarios": "Aprovado pela área de artes."
+}
