@@ -127,6 +127,18 @@ class OrcamentoController extends Controller
                 'prazo_opcao_entrega' => $orcamento->prazo_opcao_entrega,
                 'preco_opcao_entrega' => $orcamento->preco_opcao_entrega,
                 'status' => $latestStatus ? $latestStatus->status : null,
+                'status_aprovacao_arte_arena' => $latestStatus ? $latestStatus->status_aprovacao_arte_arena : null,
+                'status_aprovacao_cliente' => $latestStatus ? $latestStatus->status_aprovacao_cliente : null,
+                'status_envio_pedido' => $latestStatus ? $latestStatus->status_envio_pedido : null,
+                'status_aprovacao_amostra_arte_arena' => $latestStatus ? $latestStatus->status_aprovacao_amostra_arte_arena : null,
+                'status_envio_amostra' => $latestStatus ? $latestStatus->status_envio_amostra : null,
+                'status_aprovacao_amostra_cliente' => $latestStatus ? $latestStatus->status_aprovacao_amostra_cliente : null,
+                'status_faturamento' => $latestStatus ? $latestStatus->status_faturamento : null,
+                'status_pagamento' => $latestStatus ? $latestStatus->status_pagamento : null,
+                'status_producao_esboco' => $latestStatus ? $latestStatus->status_producao_esboco : null,
+                'status_producao_arte_final' => $latestStatus ? $latestStatus->status_producao_arte_final : null,
+                'status_aprovacao_esboco' => $latestStatus ? $latestStatus->status_aprovacao_esboco : null,
+                'status_aprovacao_arte_final' => $latestStatus ? $latestStatus->status_aprovacao_arte_final : null,
                 'created_at' => $orcamento->created_at,
                 'updated_at' => $orcamento->updated_at,
             ];
@@ -206,7 +218,7 @@ class OrcamentoController extends Controller
         ]);
     }
 
-    public function updateOrcamentoStatus(Request $request, $orcamento_id)
+    public function upsertOrcamentoStatus(Request $request, $orcamento_id)
     {
         $statusType = $request->input('status_type');
         $statusValue = $request->input('status_value');
