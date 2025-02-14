@@ -314,4 +314,65 @@ class OrcamentoController extends Controller
         return response()->json(['message' => $campoRecebido ]);
 
     }
+
+    public function OrcamentoStatusChangeDesaprovado(Request $request, $id)
+    {
+        $orcamento = OrcamentoStatus::where('orcamento_id', $id)->first();
+
+        if (!$orcamento) {
+            return response()->json(['message' => 'Orçamento não encontrado'], 404);
+        }  
+
+        $campoRecebido = $request->input('campo');
+
+        if ($campoRecebido == 'status_aprovacao_cliente') {
+            $orcamento->$campoRecebido = 'aguardando_aprovação';
+        }
+
+        if ($campoRecebido == 'status_envio_pedido') {
+            $orcamento->$campoRecebido = 'nao_enviado';
+        }
+
+        if ($campoRecebido == 'status_aprovacao_amostra_arte_arena') {
+            $orcamento->$campoRecebido = 'nao_aprovada';
+        }
+
+        if ($campoRecebido == 'status_envio_amostra') {
+            $orcamento->$campoRecebido = 'nao_enviada';
+        }
+
+        if ($campoRecebido == 'status_aprovacao_amostra_cliente') {
+            $orcamento->$campoRecebido = 'nao_aprovada';
+        }
+
+        if ($campoRecebido == 'status_faturamento') {
+            $orcamento->$campoRecebido = 'em_analise';
+        }
+
+        if ($campoRecebido == 'status_pagamento') {
+            $orcamento->$campoRecebido = 'aguardando';
+        }
+
+        if ($campoRecebido == 'status_producao_esboco') {
+            $orcamento->$campoRecebido = 'aguardando_primeira_versao';
+        }
+
+        if ($campoRecebido == 'status_producao_arte_final') {
+            $orcamento->$campoRecebido = 'aguardando_primeira_versao';
+        }
+
+        if ($campoRecebido == 'status_aprovacao_esboco') {
+            $orcamento->$campoRecebido = 'nao_aprovado';
+        }
+
+        if ($campoRecebido == 'status_aprovacao_arte_final') {
+            $orcamento->$campoRecebido = 'nao_aprovada';
+        }
+
+        $orcamento->save();
+
+        return response()->json(['message' => $campoRecebido ]);
+
+    }
+
 }
