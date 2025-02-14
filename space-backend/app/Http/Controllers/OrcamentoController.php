@@ -254,4 +254,64 @@ class OrcamentoController extends Controller
 
         return response()->json(['message' => 'Status do orçamento atualizado com sucesso!'], 200);
     }
+
+    public function OrcamentoStatusChangeAprovado(Request $request, $id)
+    {
+        $orcamento = OrcamentoStatus::where('orcamento_id', $id)->first();
+
+        if (!$orcamento) {
+            return response()->json(['message' => 'Orçamento não encontrado'], 404);
+        }  
+
+        $campoRecebido = $request->input('campo');
+
+        if ($campoRecebido == 'status_aprovacao_cliente') {
+            $orcamento->$campoRecebido = 'aprovado';
+        }
+
+        if ($campoRecebido == 'status_envio_pedido') {
+            $orcamento->$campoRecebido = 'enviado';
+        }
+
+        if ($campoRecebido == 'status_aprovacao_amostra_arte_arena') {
+            $orcamento->$campoRecebido = 'aprovada';
+        }
+
+        if ($campoRecebido == 'status_envio_amostra') {
+            $orcamento->$campoRecebido = 'enviada';
+        }
+
+        if ($campoRecebido == 'status_aprovacao_amostra_cliente') {
+            $orcamento->$campoRecebido = 'aprovada';
+        }
+
+        if ($campoRecebido == 'status_faturamento') {
+            $orcamento->$campoRecebido = 'faturado';
+        }
+
+        if ($campoRecebido == 'status_pagamento') {
+            $orcamento->$campoRecebido = 'pago';
+        }
+
+        if ($campoRecebido == 'status_producao_esboco') {
+            $orcamento->$campoRecebido = 'aguardando_melhoria';
+        }
+
+        if ($campoRecebido == 'status_producao_arte_final') {
+            $orcamento->$campoRecebido = 'aguardando_melhoria';
+        }
+
+        if ($campoRecebido == 'status_aprovacao_esboco') {
+            $orcamento->$campoRecebido = 'aprovado';
+        }
+
+        if ($campoRecebido == 'status_aprovacao_arte_final') {
+            $orcamento->$campoRecebido = 'aprovada';
+        }
+
+        $orcamento->save();
+
+        return response()->json(['message' => $campoRecebido ]);
+
+    }
 }
