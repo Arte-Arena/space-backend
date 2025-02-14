@@ -265,4 +265,15 @@ class VendasController extends Controller
 
     }
 
+    public function getOrcamentoValores(Request $request)
+    {
+        $id = $request->id;
+
+        $valores = Orcamento::where('id', $id)
+        ->select('total_orcamento' , 'valor_desconto', 'taxa_antecipa', 'data_antecipa' , 'created_at' )
+        ->get();
+
+        return $valores;
+    }
+
 }

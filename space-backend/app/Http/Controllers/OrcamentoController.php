@@ -141,6 +141,15 @@ class OrcamentoController extends Controller
                 'status_aprovacao_arte_final' => $latestStatus ? $latestStatus->status_aprovacao_arte_final : null,
                 'created_at' => $orcamento->created_at,
                 'updated_at' => $orcamento->updated_at,
+                'data_antecipa' => $orcamento->data_antecipa,
+                'taxa_antecipa' => $orcamento->taxa_antecipa,
+                'descontado' => $orcamento->descontado,
+                'tipo_desconto' => $orcamento->tipo_desconto,
+                'valor_desconto' => $orcamento->valor_desconto,
+                'percentual_desconto' => $orcamento->percentual_desconto,
+                'total_orcamento' => $orcamento->total_orcamento,
+                'brinde' => $orcamento->brinde,
+                'produtos_brinde' => $orcamento->produtos_brinde,
             ];
         }, $orcamentos);
 
@@ -206,6 +215,15 @@ class OrcamentoController extends Controller
                 'status' => $latestStatus ? $latestStatus->status : null,
                 'created_at' => $orcamento->created_at,
                 'updated_at' => $orcamento->updated_at,
+                'data_antecipa' => $orcamento->data_antecipa,
+                'taxa_antecipa' => $orcamento->taxa_antecipa,
+                'descontado' => $orcamento->descontado,
+                'tipo_desconto' => $orcamento->tipo_desconto,
+                'valor_desconto' => $orcamento->valor_desconto,
+                'percentual_desconto' => $orcamento->percentual_desconto,
+                'total_orcamento' => $orcamento->total_orcamento,
+                'brinde' => $orcamento->brinde,
+                'produtos_brinde' => $orcamento->produtos_brinde,
             ];
         }, $orcamentos);
 
@@ -236,4 +254,125 @@ class OrcamentoController extends Controller
 
         return response()->json(['message' => 'Status do orçamento atualizado com sucesso!'], 200);
     }
+
+    public function OrcamentoStatusChangeAprovado(Request $request, $id)
+    {
+        $orcamento = OrcamentoStatus::where('orcamento_id', $id)->first();
+
+        if (!$orcamento) {
+            return response()->json(['message' => 'Orçamento não encontrado'], 404);
+        }  
+
+        $campoRecebido = $request->input('campo');
+
+        if ($campoRecebido == 'status_aprovacao_cliente') {
+            $orcamento->$campoRecebido = 'aprovado';
+        }
+
+        if ($campoRecebido == 'status_envio_pedido') {
+            $orcamento->$campoRecebido = 'enviado';
+        }
+
+        if ($campoRecebido == 'status_aprovacao_amostra_arte_arena') {
+            $orcamento->$campoRecebido = 'aprovada';
+        }
+
+        if ($campoRecebido == 'status_envio_amostra') {
+            $orcamento->$campoRecebido = 'enviada';
+        }
+
+        if ($campoRecebido == 'status_aprovacao_amostra_cliente') {
+            $orcamento->$campoRecebido = 'aprovada';
+        }
+
+        if ($campoRecebido == 'status_faturamento') {
+            $orcamento->$campoRecebido = 'faturado';
+        }
+
+        if ($campoRecebido == 'status_pagamento') {
+            $orcamento->$campoRecebido = 'pago';
+        }
+
+        if ($campoRecebido == 'status_producao_esboco') {
+            $orcamento->$campoRecebido = 'aguardando_melhoria';
+        }
+
+        if ($campoRecebido == 'status_producao_arte_final') {
+            $orcamento->$campoRecebido = 'aguardando_melhoria';
+        }
+
+        if ($campoRecebido == 'status_aprovacao_esboco') {
+            $orcamento->$campoRecebido = 'aprovado';
+        }
+
+        if ($campoRecebido == 'status_aprovacao_arte_final') {
+            $orcamento->$campoRecebido = 'aprovada';
+        }
+
+        $orcamento->save();
+
+        return response()->json(['message' => $campoRecebido ]);
+
+    }
+
+    public function OrcamentoStatusChangeDesaprovado(Request $request, $id)
+    {
+        $orcamento = OrcamentoStatus::where('orcamento_id', $id)->first();
+
+        if (!$orcamento) {
+            return response()->json(['message' => 'Orçamento não encontrado'], 404);
+        }  
+
+        $campoRecebido = $request->input('campo');
+
+        if ($campoRecebido == 'status_aprovacao_cliente') {
+            $orcamento->$campoRecebido = 'aguardando_aprovação';
+        }
+
+        if ($campoRecebido == 'status_envio_pedido') {
+            $orcamento->$campoRecebido = 'nao_enviado';
+        }
+
+        if ($campoRecebido == 'status_aprovacao_amostra_arte_arena') {
+            $orcamento->$campoRecebido = 'nao_aprovada';
+        }
+
+        if ($campoRecebido == 'status_envio_amostra') {
+            $orcamento->$campoRecebido = 'nao_enviada';
+        }
+
+        if ($campoRecebido == 'status_aprovacao_amostra_cliente') {
+            $orcamento->$campoRecebido = 'nao_aprovada';
+        }
+
+        if ($campoRecebido == 'status_faturamento') {
+            $orcamento->$campoRecebido = 'em_analise';
+        }
+
+        if ($campoRecebido == 'status_pagamento') {
+            $orcamento->$campoRecebido = 'aguardando';
+        }
+
+        if ($campoRecebido == 'status_producao_esboco') {
+            $orcamento->$campoRecebido = 'aguardando_primeira_versao';
+        }
+
+        if ($campoRecebido == 'status_producao_arte_final') {
+            $orcamento->$campoRecebido = 'aguardando_primeira_versao';
+        }
+
+        if ($campoRecebido == 'status_aprovacao_esboco') {
+            $orcamento->$campoRecebido = 'nao_aprovado';
+        }
+
+        if ($campoRecebido == 'status_aprovacao_arte_final') {
+            $orcamento->$campoRecebido = 'nao_aprovada';
+        }
+
+        $orcamento->save();
+
+        return response()->json(['message' => $campoRecebido ]);
+
+    }
+
 }
