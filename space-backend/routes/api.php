@@ -34,6 +34,7 @@ Route::post('/encurtador-link', [LinkController::class, 'encurta']);
 Route::post('/encurtador-link/resolve/{code}', [LinkController::class, 'resolve']);
 Route::put('/super-admin/upsert-backup', [BackupController::class, 'upsertBackup']);
 
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/validate-token', [AuthController::class, 'validateToken']);
     Route::get('/user', function (Request $request) {
@@ -111,6 +112,8 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,comercial'])->group(f
     Route::get('/orcamento/get-orcamentos-status', [OrcamentoController::class, 'getAllOrcamentosWithStatus']);
     Route::delete('/orcamento/delete-orcamento/{id}', [OrcamentoController::class, 'deleteOrcamento']);
     Route::get('/clientes-consolidados', [ClientesConsolidadosController::class, 'consolidateDataPaginated']);
+    Route::get('/search-clientes-consolidados', [ClientesConsolidadosController::class, 'searchConsolidateDataPaginated']);
+    Route::get('/search-clientes-consolidados', [ClientesConsolidadosController::class, 'searchConsolidateDataPaginated']);
     Route::get('/orcamento/get-orcamentos-aprovados', [OrcamentoController::class, 'getAllOrcamentosAprovados']);
     Route::get('/vendas/quantidade-orcamentos', [VendasController::class, 'getQuantidadeOrcamentos']);
     Route::get('/vendas/quantidade-orcamentos-aprovados', [VendasController::class, 'getQuantidadeOrcamentosAprovados']);
