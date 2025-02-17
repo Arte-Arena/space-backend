@@ -10,28 +10,44 @@ use Illuminate\Http\Request;
 class ClientesConsolidadosController extends Controller
 {
 
-    public function consolidateDataPaginated(Request $request)
+    public function searchConsolidateDataPaginated(Request $request)
     {
         $pageSize = (int) $request->get('pageSize', 20);
         $page = (int) $request->get('page', 1);
         $searchTerm = $request->get('search', '');
-
-        // Dados de CrmCliente paginados
         $crmClientes = $this->getPagedCrmClientes($searchTerm, $pageSize, $page);
-
-        // Dados de OctaWebHook paginados
         $octaWebhooks = $this->getPagedOctaWebhooks($searchTerm, $pageSize, $page);
-
-        // Consolidando os dados
-        $consolidatedData = collect($crmClientes['data'])->merge($octaWebhooks['data'])->sortByDesc('id')->values();
-
-        // Dados de paginação
+        $consolidatedData = collect($crmClientes['data'])->merge($octaWebhooks['data'])->sortByDesc('created_at')->values();
         $totalItems = $crmClientes['total'] + $octaWebhooks['total'];
         $totalPages = ceil($totalItems / $pageSize);
 
         return response()->json([
             'status' => 'success',
             'data' => $consolidatedData,
+            'pagination' => [
+                'current_page' => $page,
+                'total_pages' => $totalPages,
+                'total_items' => $totalItems,
+            ],
+        ]);
+    }
+
+    public function consolidateDataPaginated(Request $request)
+    {
+        $pageSize = (int) $request->get('pageSize', 20);
+        $page = (int) $request->get('page', 1);
+        $searchTerm = $request->get('search', '');
+
+        // Dados de OctaWebHook paginados
+        $octaWebhooks = $this->getPagedOctaWebhooks($searchTerm, $pageSize, $page);
+
+        // Dados de paginação
+        $totalItems = $octaWebhooks['total'];
+        $totalPages = ceil($totalItems / $pageSize);
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $octaWebhooks,
             'pagination' => [
                 'current_page' => $page,
                 'total_pages' => $totalPages,
@@ -52,7 +68,7 @@ class ClientesConsolidadosController extends Controller
         }
 
         $clientes = Cache::remember("crmClientes:{$searchTerm}:{$page}:{$pageSize}", now()->addMinutes(10), function () use ($query, $pageSize, $page) {
-            return $query->orderByDesc('id')->paginate($pageSize, ['*'], 'page', $page);
+            return $query->orderByDesc('created_at')->paginate($pageSize, ['*'], 'page', $page);
         });
 
         return [
@@ -72,7 +88,7 @@ class ClientesConsolidadosController extends Controller
                 ->orWhere('email', 'like', "%{$searchTerm}%");
         }
 
-        $webhooks = $query->orderByDesc('id')->paginate($pageSize, ['*'], 'page', $page);
+        $webhooks = $query->orderByDesc('created_at')->paginate($pageSize, ['*'], 'page', $page);
 
         return [
             'data' => $webhooks->items(),
