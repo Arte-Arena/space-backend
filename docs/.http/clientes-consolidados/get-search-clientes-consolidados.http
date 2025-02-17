@@ -1,6 +1,6 @@
 ### Testar a rota de clientes consolidados
 #GET https://api-homolog.spacearena.net/api/clientes-consolidados
-GET http://localhost:8000/api/clientes-consolidados
+GET http://localhost:8000/api/search-clientes-consolidados?search=Renato
 Accept: application/json
 Authorization: Bearer 121|cLTiZGrsw2SWQ2vR9znGWjtyUekRKx6hibZGZ3Ov29c161a4
 
