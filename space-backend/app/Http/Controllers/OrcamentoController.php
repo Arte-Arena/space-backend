@@ -103,7 +103,15 @@ class OrcamentoController extends Controller
         }])
             ->when($query, function ($queryBuilder) use ($query) {
                 $queryBuilder->where('nome_cliente', 'like', "%{$query}%")
-                    ->orWhere('cliente_octa_number', 'like', "%{$query}%");
+                    ->orWhere('cliente_octa_number', 'like', "%{$query}%")
+                    ->orWhere('id', 'like', "%{$query}%")
+                    ->orWhere('endereco_cep', 'like', "%{$query}%")
+                    ->orWhere('endereco', 'like', "%{$query}%")
+                    ->orWhere('total_orcamento', 'like', "%{$query}%")
+                    ->orWhere('tipo_desconto', 'like', "%{$query}%")
+                    ->orWhere('opcao_entrega', 'like', "%{$query}%")
+                    ->orWhere('valor_desconto', 'like', "%{$query}%")
+                    ->orWhere('texto_orcamento', 'like', "%{$query}%");
             })
 
             ->orderByDesc('created_at')
