@@ -66,6 +66,10 @@ class OrcamentoController extends Controller
 
     public function getOrcamento(Orcamento $id): JsonResponse
     {
+        if (!$id) {
+            return response()->json(['message' => 'Orçamento não encontrado.'], 204);
+        }
+
         return response()->json($id);
     }
 
