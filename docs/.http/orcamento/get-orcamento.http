@@ -1,4 +1,4 @@
 ### delete orcamento
-GET http://localhost:8000/api/orcamento/get-orcamento/1/ HTTP/1.1
+GET http://localhost:8000/api/orcamento/get-orcamento/164/ HTTP/1.1
 Content-Type: application/json
 Authorization: Bearer 14|ZnacPcB3bumIiIfE6ipQa08FxZSaimt4UfHGZpjy9e88f733

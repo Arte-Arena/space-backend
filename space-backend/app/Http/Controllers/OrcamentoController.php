@@ -66,6 +66,10 @@ class OrcamentoController extends Controller
 
     public function getOrcamento(Orcamento $id): JsonResponse
     {
+        if (!$id) {
+            return response()->json(['message' => 'Orçamento não encontrado.'], 204);
+        }
+
         return response()->json($id);
     }
 
@@ -103,7 +107,15 @@ class OrcamentoController extends Controller
         }])
             ->when($query, function ($queryBuilder) use ($query) {
                 $queryBuilder->where('nome_cliente', 'like', "%{$query}%")
-                    ->orWhere('cliente_octa_number', 'like', "%{$query}%");
+                    ->orWhere('cliente_octa_number', 'like', "%{$query}%")
+                    ->orWhere('id', 'like', "%{$query}%")
+                    ->orWhere('endereco_cep', 'like', "%{$query}%")
+                    ->orWhere('endereco', 'like', "%{$query}%")
+                    ->orWhere('total_orcamento', 'like', "%{$query}%")
+                    ->orWhere('tipo_desconto', 'like', "%{$query}%")
+                    ->orWhere('opcao_entrega', 'like', "%{$query}%")
+                    ->orWhere('valor_desconto', 'like', "%{$query}%")
+                    ->orWhere('texto_orcamento', 'like', "%{$query}%");
             })
 
             ->orderByDesc('created_at')
@@ -255,75 +267,20 @@ class OrcamentoController extends Controller
         return response()->json(['message' => 'Status do orçamento atualizado com sucesso!'], 200);
     }
 
-    public function OrcamentoStatusChangeAprovado(Request $request, $id)
-    {
-        $orcamento = OrcamentoStatus::where('orcamento_id', $id)->first();
-
-        if (!$orcamento) {
-            return response()->json(['message' => 'Orçamento não encontrado'], 404);
-        }  
-
-        $campoRecebido = $request->input('campo');
-
-        if ($campoRecebido == 'status_aprovacao_cliente') {
-            $orcamento->$campoRecebido = 'aprovado';
-        }
-
-        if ($campoRecebido == 'status_envio_pedido') {
-            $orcamento->$campoRecebido = 'enviado';
-        }
-
-        if ($campoRecebido == 'status_aprovacao_amostra_arte_arena') {
-            $orcamento->$campoRecebido = 'aprovada';
-        }
-
-        if ($campoRecebido == 'status_envio_amostra') {
-            $orcamento->$campoRecebido = 'enviada';
-        }
-
-        if ($campoRecebido == 'status_aprovacao_amostra_cliente') {
-            $orcamento->$campoRecebido = 'aprovada';
-        }
-
-        if ($campoRecebido == 'status_faturamento') {
-            $orcamento->$campoRecebido = 'faturado';
-        }
-
-        if ($campoRecebido == 'status_pagamento') {
-            $orcamento->$campoRecebido = 'pago';
-        }
-
-        if ($campoRecebido == 'status_producao_esboco') {
-            $orcamento->$campoRecebido = 'aguardando_melhoria';
-        }
-
-        if ($campoRecebido == 'status_producao_arte_final') {
-            $orcamento->$campoRecebido = 'aguardando_melhoria';
-        }
-
-        if ($campoRecebido == 'status_aprovacao_esboco') {
-            $orcamento->$campoRecebido = 'aprovado';
-        }
-
-        if ($campoRecebido == 'status_aprovacao_arte_final') {
-            $orcamento->$campoRecebido = 'aprovada';
-        }
-
-        $orcamento->save();
-
-        return response()->json(['message' => $campoRecebido ]);
-
-    }
-
+    // fazer upsert
     public function OrcamentoStatusChangeDesaprovado(Request $request, $id)
     {
         $orcamento = OrcamentoStatus::where('orcamento_id', $id)->first();
 
         if (!$orcamento) {
-            return response()->json(['message' => 'Orçamento não encontrado'], 404);
+            return response()->json(['message' => 'Orçamento não encontrado'], 204);
         }  
 
         $campoRecebido = $request->input('campo');
+
+        if ($campoRecebido == 'status_aprovacao_arte_arena') {
+            $orcamento->$campoRecebido = 'nao_aprovado';
+        }
 
         if ($campoRecebido == 'status_aprovacao_cliente') {
             $orcamento->$campoRecebido = 'aguardando_aprovação';
@@ -372,6 +329,63 @@ class OrcamentoController extends Controller
         $orcamento->save();
 
         return response()->json(['message' => $campoRecebido ]);
+
+    }
+
+    public function OrcamentoStatusChangeAprovado(Request $request, $id)
+    {
+        $orcamento = OrcamentoStatus::where('orcamento_id', $id)->first();
+
+        if (!$orcamento) {
+            $orcamentoExistente = Orcamento::find($id);
+
+            if (!$orcamentoExistente) {
+                return response()->json(['message' => 'Orçamento não encontrado'], 204);
+            }
+
+            // Criar um novo registro em OrcamentoStatus (UPSERT)
+            $orcamento = new OrcamentoStatus();
+            $orcamento->orcamento_id = $id;
+            $orcamento->status_aprovacao_arte_arena = 'nao_aprovado';
+            $orcamento->status_aprovacao_cliente = 'aguardando_aprovação';
+            $orcamento->status_envio_pedido = 'nao_enviado';
+            $orcamento->status_aprovacao_amostra_arte_arena = 'nao_aprovada';
+            $orcamento->status_envio_amostra = 'nao_enviada';
+            $orcamento->status_aprovacao_amostra_cliente = 'nao_aprovada';
+            $orcamento->status_faturamento = 'em_analise';
+            $orcamento->status_pagamento = 'aguardando';
+            $orcamento->status_producao_esboco = 'aguardando_primeira_versao';
+            $orcamento->status_producao_arte_final = 'aguardando_primeira_versao';
+            $orcamento->status_aprovacao_esboco = 'nao_aprovado';
+            $orcamento->status_aprovacao_arte_final = 'nao_aprovada';
+
+            $orcamento->save();
+        }  
+
+        // Atualizar o campo recebido na requisição
+        $campoRecebido = $request->input('campo');
+        $valoresPermitidos = [
+            'status_aprovacao_cliente' => 'aprovado',
+            'status_envio_pedido' => 'enviado',
+            'status_aprovacao_amostra_arte_arena' => 'aprovada',
+            'status_envio_amostra' => 'enviada',
+            'status_aprovacao_amostra_cliente' => 'aprovada',
+            'status_faturamento' => 'faturado',
+            'status_pagamento' => 'pago',
+            'status_producao_esboco' => 'aguardando_melhoria',
+            'status_producao_arte_final' => 'aguardando_melhoria',
+            'status_aprovacao_esboco' => 'aprovado',
+            'status_aprovacao_arte_final' => 'aprovada',
+        ];
+
+        if (isset($valoresPermitidos[$campoRecebido])) {
+            $orcamento->$campoRecebido = $valoresPermitidos[$campoRecebido];
+            $orcamento->save();
+        } else {
+            return response()->json(['message' => 'Campo inválido'], 400);
+        }
+
+        return response()->json(['message' => "Campo atualizado: {$campoRecebido}"]);
 
     }
 
