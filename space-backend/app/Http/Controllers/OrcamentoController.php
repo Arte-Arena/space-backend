@@ -415,4 +415,18 @@ class OrcamentoController extends Controller
 
     }
 
+    public function getSecondOrcamentosEtapas($id) 
+    {
+        $segunda_etapa = OrcamentoStatusEtapa::where('orcamento_id', $id)->orderBy('id')
+        ->skip(1)
+        ->first();
+
+        if(!$segunda_etapa) {
+            return response()->json('');
+        }
+
+        return response()->json($segunda_etapa);
+
+    }
+
 }
