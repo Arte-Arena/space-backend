@@ -76,7 +76,6 @@ class FreteController extends Controller
             ]);
 
             return response()->json($responseBody);
-
         } catch (ClientException $e) {
             // Captura respostas de erro 4xx (erros do cliente)
             $this->logErrorResponse($e, '[Melhor Envio] Erro 4xx na API');
@@ -91,6 +90,116 @@ class FreteController extends Controller
             Log::error('[Melhor Envio] Erro inesperado', ['exception' => $e->getMessage()]);
             return response()->json(['error' => 'Erro inesperado', 'message' => $e->getMessage()], 500);
         }
+    }
+
+    public function getFreteLalamove(Request $request)
+    {
+        $latitude = $request->input('latitude');
+        $longitude = $request->input('longitude');
+        $endereco = $request->input('endereco');
+        $veiculo = $request->input('veiculo');
+
+        $transporte = array(
+            "CarroSedan" => array("CAR"),
+            "CarroCompacto" => array("HATCHBACK"),
+            "LalaGo" => array("LALAGO"),
+            "LalaPro" => array("LALAPRO"),
+            "Carreto" => array("TRUCK330"),
+            "Fiorino" => array("UV_FIORINO"),
+            "Van" => array("VAN")
+        );
+
+        if (!isset($transporte[$veiculo])) {
+            return response()->json(['error' => 'Tipo de veiculo não suportado'], 400);
+        }
+
+        $key = env("KEY_LALAMOVIE");
+        $secret = env("SECRET_LALAMOVIE");
+
+        $time = time() * 1000;
+
+        $baseURL = 'https://rest.sandbox.lalamove.com'; // URL to Lalamove Sandbox API
+        $method = 'POST';
+        $path = '/v3/quotations';
+        $region = 'BR';
+
+        // Please, find information about body structure and passed values here https://developers.lalamove.com/#get-quotation
+        $body = '{
+                "data" : {
+                    "serviceType": "' . $transporte[$veiculo][0] . '",
+                    "specialRequests": [],
+                    "language": "pt_BR", 
+                    "stops": [
+                    {
+                        "coordinates": {
+                            "lat": "-23.687686",
+                            "lng": "-46.707986" 
+                        },
+                        "address": "Avenida Dr. Luís Arrobas Martins nº 335 Bairro: Interlagos Zona sul - Cidade: São Paulo - SP CEP: 04781-000 P" 
+                    },
+                    {
+                        "coordinates": {
+                            "lat": "' . $latitude . '",
+                            "lng": "' . $longitude . '"
+                        },
+                        "address":  "' . $endereco . '"
+                    }]
+                }  
+            }';
+
+        $rawSignature = "{$time}\r\n{$method}\r\n{$path}\r\n\r\n{$body}";
+        $signature = hash_hmac("sha256", $rawSignature, $secret);
+        $startTime = microtime(true);
+        $token = $key . ':' . $time . ':' . $signature;
+
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => $baseURL . $path,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 3,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HEADER => false, // Enable this option if you want to see what headers Lalamove API returning in response
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'POST',
+            CURLOPT_POSTFIELDS => $body,
+            CURLOPT_HTTPHEADER => array(
+                "Content-type: application/json; charset=utf-8",
+                "Authorization: hmac " . $token, // A unique Signature Hash has to be generated for EVERY API call at the time of making such call.
+                "Accept: application/json",
+                "Market: " . $region // Please note to which city are you trying to make API call
+            ),
+        ));
+
+        $response = curl_exec($curl);
+        $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        curl_close($curl);
+
+
+
+        Log::info('[Lalamovie] Request', [
+            'time' => $time,
+            'method' => $method,
+            'path' => $path,
+            'region' => $region,
+            'body' => $body,
+            'headers' => [
+                'Content-type' => 'application/json; charset=utf-8',
+                'Authorization' => 'hmac ' . $token,
+                'Accept' => 'application/json',
+                'Market' => $region,
+            ],
+        ]);
+
+        Log::info('[Lalamovie] Resposta da API', [
+            'status_code' => $httpCode,
+            'response_time' => floor((microtime(true) - $startTime) * 1000) . ' milliseconds',
+            'response_body' => $response,
+            'authorization' => 'hmac ' . $token,
+        ]);
+
+        return json_decode($response, true);
     }
 
     /**
