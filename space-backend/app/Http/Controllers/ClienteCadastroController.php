@@ -90,4 +90,42 @@ class ClienteCadastroController extends Controller
 
         return response()->json($response->json());
     }
+
+    // fazer o get de clientes cadastrados
+
+    public function searchClientsTiny(Request $request)
+    {
+
+        // puxar por query params o item de pesquisa.
+        try {
+            $apiUrl = 'https://api.tiny.com.br/api2/contatos.pesquisa.php';
+            $token = env('TINY_TOKEN');
+            $pesquisa = 'Ativo';  // Valor da pesquisa
+            $formato = 'JSON';
+
+            // Preparando os dados para a requisição
+            $data = [
+                'token' => $token,
+                'pesquisa' => $pesquisa,
+                'formato' => $formato
+            ];
+
+            // Enviando a requisição POST para a API do Tiny
+            $response = Http::asForm()->post($apiUrl, $data);
+
+            // Logando a resposta para debugging
+            Log::info('Resposta da API de Pesquisa:', $response->json());
+
+            // Retornando os dados recebidos da API
+            return response()->json($response->json());
+        } catch (\Exception $e) {
+            // Caso ocorra algum erro, retornando mensagem de erro
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro ao buscar dados de cliente',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+
+    }
 }
