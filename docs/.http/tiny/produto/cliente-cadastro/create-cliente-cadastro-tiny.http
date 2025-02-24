@@ -1,11 +1,14 @@
 
-PUT http://localhost:8000/api/orcamento/backoffice/cliente-cadastro
+POST http://localhost:8000/api/orcamento/backoffice/cliente-cadastro
 Content-Type: application/json
+Accept: application/json
 
 {
-    "tipo_pessoa": "PF",
-    "nome_completo": "João da Silva5",
-    "cpf": "859.515.450-30",
+    "tipo_pessoa": "F",
+    "nome": "João da Silva5",
+    "cpf_cnpj": "859.515.450-30",
+    "rg": "",
+    "ie": "",
     "email": "joao@example.com",
     "celular": "99999-9999",
     "cep": "12345-678",
@@ -22,5 +25,8 @@ Content-Type: application/json
     "bairro_cobranca": "Jardins",
     "cidade_cobranca": "São Paulo",
     "uf_cobranca": "SP",
-    "orcamento_id": "164"
+    "orcamento_id": "164",
+    "situacao": "A",
+    "obs": "",
+    "contribuinte": ""
 }
