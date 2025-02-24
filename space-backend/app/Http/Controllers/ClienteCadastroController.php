@@ -72,6 +72,8 @@ class ClienteCadastroController extends Controller
             ]
         ];
 
+        Log::info($contato);
+
         $contatoJson = json_encode($contato, JSON_UNESCAPED_UNICODE);
 
         Log::info($contatoJson);
