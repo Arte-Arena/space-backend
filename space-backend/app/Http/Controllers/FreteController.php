@@ -113,8 +113,8 @@ class FreteController extends Controller
             return response()->json(['error' => 'Tipo de veiculo não suportado'], 400);
         }
 
-        $key = env("KEY_LALAMOVIE");
-        $secret = env("SECRET_LALAMOVIE");
+        $key = env("FRETE_LALAMOVE_KEY");
+        $secret = env("FRETE_LALAMOVE_SECRET");
 
         $time = time() * 1000;
 
