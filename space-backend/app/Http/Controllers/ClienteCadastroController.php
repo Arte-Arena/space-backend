@@ -6,6 +6,7 @@ use App\Models\{ClienteCadastro, Orcamento};
 use Illuminate\Http\Request;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class ClienteCadastroController extends Controller
@@ -16,7 +17,7 @@ class ClienteCadastroController extends Controller
         Log::info('Dados recebidos para Tiny API:', $clienteData);
 
         $apiUrl = 'https://api.tiny.com.br/api2/contato.incluir.php';
-        $token = "teste";
+        $token = env('TINY_TOKEN');
         $contato = [
             "contatos" => [
                 [
@@ -262,5 +263,58 @@ class ClienteCadastroController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
+    }
+
+    public function createClienteCadastro(Request $request) {
+        
+        $apiUrl = 'https://api.tiny.com.br/api2/contato.incluir.php';
+        $token = env('TINY_TOKEN');
+        $contato = [
+            "contatos" => [
+                [
+                    "contato" => [
+                        "sequencia" => "1", // Valor fixo, você pode ajustar se necessário
+                        // "codigo" => "", // Valor fixo, você pode ajustar se necessário
+                        "nome" => $request['nome'] ?? "Contato Teste 2",
+                        "tipo_pessoa" => $request['tipo_pessoa'] ?? "F",
+                        "cpf_cnpj" => $request['cpf_cnpj'] ?? "50182958051", // Use cpf ou cnpj, se disponível
+                        "ie" => $request['ie'] ?? "",
+                        "rg" => $request['rg'] ?? "1234567890",
+                        "endereco" => $request['endereco'] ?? "Rua Teste",
+                        "numero" => $request['numero'] ?? "123",
+                        "complemento" => $request['complemento'] ?? "sala 2",
+                        "bairro" => $request['bairro'] ?? "Teste",
+                        "cep" => $request['cep'] ?? "95700-000",
+                        "cidade" => $request['cidade'] ?? "Bento Gonçalves",
+                        "uf" => $request['uf'] ?? "RS",
+                        "celular" => $request['celular'] ?? "",
+                        "email" => $request['email'] ?? "teste@teste.com.br",
+                        "situacao" => "A",
+                        "obs" => "teste de obs",
+                        "contribuinte" => "1"
+                    ]
+                ]
+            ]
+        ];
+        $contatoJson = json_encode($contato, JSON_UNESCAPED_UNICODE);
+
+        Log::info($contatoJson);
+
+        // Montando os parâmetros para a requisição
+        $data = [
+            'token' => $token,
+            'formato' => 'JSON',
+            'contato' => $contatoJson
+        ];
+
+        // Enviando a requisição para a API
+        $response = Http::asForm()->post($apiUrl, $data);
+
+        // Logando a resposta para debugging
+        Log::info('Resposta da API Tiny:', $response->json());
+
+        return response()->json($response->json());
+
+
     }
 }
