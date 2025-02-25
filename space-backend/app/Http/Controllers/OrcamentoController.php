@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Orcamento;
 use App\Models\OrcamentoStatus;
+use App\Models\OrcamentoStatusEtapa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\JsonResponse;
@@ -270,11 +271,19 @@ class OrcamentoController extends Controller
     // fazer upsert
     public function OrcamentoStatusChangeDesaprovado(Request $request, $id)
     {
-        $orcamento = OrcamentoStatus::where('orcamento_id', $id)->first();
 
+        // temos que ver como vamos usar a tabela de de status_etapa porque precisamos saber um histotico de Ids dele onde podemos saber qual o ultimo sttus antes daquele.
+        $orcamento = OrcamentoStatus::where('orcamento_id', $id)->first();
+        // $etapa = OrcamentoStatusEtapa::where('orcamento_id', $id)->first();
+        
         if (!$orcamento) {
             return response()->json(['message' => 'Orçamento não encontrado'], 204);
         }  
+        
+        // if($etapa){
+        //      se ja existir um campo anterior ele deixa como o ultimo campo colocado 
+        // }
+
 
         $campoRecebido = $request->input('campo');
 
@@ -335,8 +344,18 @@ class OrcamentoController extends Controller
     public function OrcamentoStatusChangeAprovado(Request $request, $id)
     {
         $orcamento = OrcamentoStatus::where('orcamento_id', $id)->first();
+        $etapa = OrcamentoStatusEtapa::where('orcamento_id', $id)->first();
+        
+        if(!$etapa){
+            $campoRecebido = $request->input('campo');
+            $etapa = new OrcamentoStatusEtapa();
+            $etapa->etapa = $campoRecebido;
+            $etapa->orcamento_id = $id;
+            $etapa->save();
+        }
 
         if (!$orcamento) {
+        
             $orcamentoExistente = Orcamento::find($id);
 
             if (!$orcamentoExistente) {
@@ -358,12 +377,13 @@ class OrcamentoController extends Controller
             $orcamento->status_producao_arte_final = 'aguardando_primeira_versao';
             $orcamento->status_aprovacao_esboco = 'nao_aprovado';
             $orcamento->status_aprovacao_arte_final = 'nao_aprovada';
-
             $orcamento->save();
         }  
 
-        // Atualizar o campo recebido na requisição
         $campoRecebido = $request->input('campo');
+        
+        
+        // Atualizar o campo recebido na requisição
         $valoresPermitidos = [
             'status_aprovacao_cliente' => 'aprovado',
             'status_envio_pedido' => 'enviado',
@@ -377,6 +397,12 @@ class OrcamentoController extends Controller
             'status_aprovacao_esboco' => 'aprovado',
             'status_aprovacao_arte_final' => 'aprovada',
         ];
+        
+        // atauliza o campo de etapa adicionando sempre um id nvo pra trackear os status que foram passados.
+        $etapa = new OrcamentoStatusEtapa();
+        $etapa->etapa = $campoRecebido;
+        $etapa->orcamento_id = $id;
+        $etapa->save();
 
         if (isset($valoresPermitidos[$campoRecebido])) {
             $orcamento->$campoRecebido = $valoresPermitidos[$campoRecebido];
@@ -386,6 +412,20 @@ class OrcamentoController extends Controller
         }
 
         return response()->json(['message' => "Campo atualizado: {$campoRecebido}"]);
+
+    }
+
+    public function getSecondOrcamentosEtapas($id) 
+    {
+        $segunda_etapa = OrcamentoStatusEtapa::where('orcamento_id', $id)->orderBy('id')
+        ->skip(1)
+        ->first();
+
+        if(!$segunda_etapa) {
+            return response()->json('');
+        }
+
+        return response()->json($segunda_etapa);
 
     }
 
