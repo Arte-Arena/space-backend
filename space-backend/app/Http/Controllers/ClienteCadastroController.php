@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\{ClienteCadastro, Orcamento};
+use App\Models\{ClienteCadastro, Orcamento, Pedido, User};
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -93,6 +93,24 @@ class ClienteCadastroController extends Controller
     {        
         // Log::info($request);
 
+        // pega o id do vendedor no nosso banco e relacionar com os ids do tiny por pessoa. 
+        $vendedor = User::where('id', $request['vendedor_id'])->select('id')->first();
+        $vendedoresTiny = [
+            '29' => 707100035,
+            '43' => 709683645,
+            '28' => 705062240,
+            '1' => 704446840,
+        ];
+
+        $idVendedorTiny = $vendedoresTiny[$vendedor] ?? null;
+
+        if (!$idVendedorTiny) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Vendedor não encontrado no sistema Tiny'
+            ], 400);
+        }
+
         // PEGAR O VALOR DE FRETE
         $texto_orcamento = $request['texto_orcamento'];
         $pattern_frete = '/Frete:\s*(R\$ [\d,.]+)/';
@@ -154,7 +172,7 @@ class ClienteCadastroController extends Controller
                 "valor_desconto" => $request['valor_desconto'],
                 "obs" => $brinde,
                 "numero_pedido_ecommerce" => $request['id'],
-                "id_vendedor" => $request['id_vendedor'], // Substituir por um ID válido
+                "id_vendedor" => $idVendedorTiny, // Substituir por um ID válido
                 "data_pedido" => date('d/m/Y'),
                 "parcelas" => [],
                 "outras_despesas" => $request['taxa_antecipa'],
@@ -184,10 +202,30 @@ class ClienteCadastroController extends Controller
 
         Log::info('Resposta da API Tiny Pedidos:', $response->json());
 
-        // se retornar positivo temos que trocar algum dos status para que o botão no frontend consiga validar.
+        $data = json_decode($response, true);
+
+        // Captura os valores
+        $id = $data['retorno']['registros']['registro']['id'];
+        $numero = $data['retorno']['registros']['registro']['numero'];
         // ou caastrar o id do pedido no orcamento e passar todos os dados do orcamento para o pedido ou visse versa
         
-        return response()->json($response->json());
+        // vai fazer a inserção no nosso banco
+        $pedido = Pedido::create([
+            'user_id' => $vendedor,
+            'numero_pedido' => $numero,
+            'observacoes' => $brinde,
+            'pedido_status_id' => $request['id'],
+            'pedido_situacao' => "Aberto",
+        ]);
+
+
+        return response()->json([
+            'message' => 'Pedido criado com sucesso!',
+            'id_pedido' => $id,
+            'conta' => $pedido,
+            'data' => $response->json()
+        ]);
+
     }
 
     // fazer o get de clientes cadastrados
