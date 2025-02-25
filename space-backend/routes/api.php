@@ -29,6 +29,7 @@ Route::post('/octa-webhook', [ChatOctaController::class, 'webhook']);
 Route::get('/super-admin/get-config', [SuperAdminController::class, 'getConfig']);
 Route::get('/url/resolve/{id}', [ClienteCadastroShortUrlController::class, 'resolveShortUrl']);
 Route::post('/orcamento/backoffice/cliente-cadastro', [ClienteCadastroController::class, 'createClienteCadastro']);
+Route::post('/orcamento/backoffice/pedido-cadastro', [ClienteCadastroController::class, 'createPedidoTiny']);// tem que colocar numa das validações
 Route::get('/orcamento/backoffice/get-cliente-cadastro', [ClienteCadastroController::class, 'getClienteCadastro']);
 Route::get('/orcamento/backoffice/search-cliente-cadastro', [ClienteCadastroController::class, 'searchClientsTiny']);
 Route::post('/encurtador-link', [LinkController::class, 'encurta']);
