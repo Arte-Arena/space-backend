@@ -19,7 +19,7 @@ class ClienteCadastroShortUrlController extends Controller
         ]);
 
         return response()->json([
-            'caminho' => "/s/{$shortUrl->code}",
+            'caminho' => "/{$shortUrl->code}",
         ]);
     }
 
