@@ -1,0 +1,6 @@
+### Enviar um contato fictício
+POST http://localhost:8000/api/orcamento/backoffice/cliente-cadastro
+Accept: application/json
+Authorization: Bearer 20|RISqvzVumkmJai3FbMTdVZVk6PlsHLGkAs6XLZblc908b789
+Content-Type: application/json
+
