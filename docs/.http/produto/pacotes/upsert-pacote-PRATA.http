@@ -1,0 +1,27 @@
+### upsert-pacote
+PUT http://localhost:8000/api/produto/pacote/uniforme/ HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer 127|SwAK1za7lMED7SACGQ6LhScICB72f7OFSZenABi209d587de
+
+{
+    "nome": "Prata",
+    "tipo_de_tecido_camisa": "Dryfit Sport Star Liso",
+    "tipo_de_tecido_calcao": "Dryfit Sport Star Liso",
+    "permite_gola_customizada": false,
+    "tipo_gola": ["Careca", "V"],
+    "permite_nome_de_jogador": false,
+    "permite_escudo": false,
+    "tipo_de_escudo_na_camisa": ["Sublimado"],
+    "tipo_de_escudo_no_calcao": ["Sublimado"],
+    "patrocinio_ilimitado": false,
+    "patrocinio_numero_maximo": 2,
+    "tamanhos_permitidos": ["PP", "P", "M", "G", "GG", "XG", "XXG", "XXXG"],
+    "numero_fator_protecao_uv_camisa": 25,
+    "numero_fator_protecao_uv_calcao": 25,
+    "tipo_de_tecido_meiao": "Helanca Profissional",
+    "punho_personalizado": false,
+    "etiqueta_de_produto_autentico": false,
+    "logo_totem_em_patch_3d": false,
+    "selo_de_produto_oficial": false,
+    "selo_de_protecao_uv": false
+}

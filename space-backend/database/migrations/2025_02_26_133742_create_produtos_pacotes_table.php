@@ -13,7 +13,9 @@ return new class extends Migration
     {
         Schema::create('produtos_pacotes', function (Blueprint $table) {
             $table->id();
-            $table->enum('tipo_de_tecido', ['Dryfit Liso', 'DryFit CambPro']);
+            $table->string('nome', 255);
+            $table->enum('tipo_de_tecido_camisa', ['Dryfit Liso', 'Dryfit Sport Star Liso', 'DryFit Camb Pro']);
+            $table->enum('tipo_de_tecido_calcao', ['Dryfit Liso', 'Dryfit Sport Star Liso', 'DryFit Camb Pro']);
             $table->boolean('permite_gola_customizada');
             $table->json('tipo_gola')->nullable();
             $table->boolean('permite_nome_de_jogador');
