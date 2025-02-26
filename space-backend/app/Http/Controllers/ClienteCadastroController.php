@@ -103,8 +103,8 @@ class ClienteCadastroController extends Controller
             '43' => 709683645,
             '28' => 705062240,
             '1' => 704446840,
-            '3' => 704446840,
             '2' => 704446840,
+            '3' => 704446840,
             '4' => 704446840,            
             '5' => 704446840,
         ];
@@ -207,23 +207,26 @@ class ClienteCadastroController extends Controller
             'pedido' => $pedidoJson
         ];
 
-        // $response = Http::asForm()->post($apiUrl, $data);
+        $response = Http::asForm()->post($apiUrl, $data);
 
-        // Log::info('Resposta da API Tiny Pedidos:', $response->json());
+        Log::info('Resposta da API Tiny Pedidos:', $response->json());
 
-        // $data = json_decode($response, true);
+        $data = json_decode($response, true);
 
         // Captura os valores
-        // $id = $data['retorno']['registros']['registro']['id'];
-        // $numero = $data['retorno']['registros']['registro']['numero'];
+        $id = $data['retorno']['registros']['registro']['id'];
+        $numero = $data['retorno']['registros']['registro']['numero'];
         // ou caastrar o id do pedido no orcamento e passar todos os dados do orcamento para o pedido ou visse versa
         
+        Log::info('id orcamento: ' . $id_orcamento);
+
         // vai fazer a inserção no nosso banco
         $pedido = Pedido::create([
             'user_id' => $vendedor->id,
             'orcamento_id' => $id_orcamento,
-            // 'numero_pedido' => $numero,
+            'numero_pedido' => $numero,
             // 'pedido_situacao' => "Aberto",
+            'pedido_situacao' => "Cancelado",
         ]);
 
         Log::info($pedido);
@@ -231,10 +234,10 @@ class ClienteCadastroController extends Controller
 
         return response()->json([
             'message' => 'Pedido criado com sucesso!',
-            // 'id_pedido' => $id,
-            // 'numero_pedido' => $numero,
+            'id_pedido' => $id,
+            'numero_pedido' => $numero,
             'conta' => $pedido,
-            // 'data' => $response->json()
+            'data' => $response->json()
         ]);
 
     }

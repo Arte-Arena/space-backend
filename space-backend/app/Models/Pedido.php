@@ -24,6 +24,7 @@ class Pedido extends Model
         'url_trello',
         'situacao',
         'prioridade',
+        'orcamento_id',
     ];
 
     public function user()
