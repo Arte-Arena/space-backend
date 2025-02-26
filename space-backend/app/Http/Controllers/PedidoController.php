@@ -92,4 +92,22 @@ class PedidoController extends Controller
         $pedido->delete();
         return response()->json(['message' => 'Pedido deleted successfully']);
     }
+
+    public function createCodRastramento(Request $request) 
+    {
+        $request['cod_rastreamento'];
+        $id = $request['id'];
+
+        $pedido = Pedido::find($id);
+
+        if (!$pedido) {
+            return response()->json(['message' => 'Pedido não encontrado'], 404);
+        }
+
+        $pedido->cod_rastreamento = $request->cod_rastreamento;
+        $pedido->save();
+
+        return response()->json(['message' => 'Código de rastreamento atualizado com sucesso']);
+    
+    }
 }
