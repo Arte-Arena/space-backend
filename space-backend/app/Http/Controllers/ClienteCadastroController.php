@@ -178,14 +178,14 @@ class ClienteCadastroController extends Controller
                 "valor_frete" => $resultados['frete'],
                 "valor_desconto" => $request['valor_desconto'],
                 "obs" => $brinde,
-                "obs_internas" => "TESTE SPACE",
+                // "obs_internas" => "TESTE SPACE",
                 "numero_pedido_ecommerce" => $request['id'],
                 "id_vendedor" => $idVendedorTiny, // Substituir por um ID válido
                 "data_pedido" => date('d/m/Y'),
                 "parcelas" => [],
                 "outras_despesas" => $request['taxa_antecipa'],
-                // "situacao" => "aberto",
-                "situacao" => "cancelado",
+                "situacao" => "aberto",
+                // "situacao" => "cancelado",
                 "nome_transportador" => $request['transportadora'],
                 "intermediador" => [
                     "nome" => "",
@@ -225,8 +225,8 @@ class ClienteCadastroController extends Controller
             'user_id' => $vendedor->id,
             'orcamento_id' => $id_orcamento,
             'numero_pedido' => $numero,
-            // 'pedido_situacao' => "Aberto",
-            'pedido_situacao' => "Cancelado",
+            'pedido_situacao' => "Aberto",
+            // 'pedido_situacao' => "Cancelado",
         ]);
 
         Log::info($pedido);
