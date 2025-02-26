@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('pedidos', function (Blueprint $table) {
-            $table->integer('orcamento_id')->nullable()->default(null);
+            $table->unsignedBigInteger('orcamento_id'); 
+            $table->foreign('orcamento_id')->references('id')->on('orcamentos');
         });
     }
 
@@ -22,7 +23,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('pedidos', function (Blueprint $table) {
-            $table->dropColumn('orcamento_id');
+            $table->unsignedBigInteger('orcamento_id'); 
+            $table->foreign('orcamento_id')->references('id')->on('orcamentos'); 
         });
     }
 };

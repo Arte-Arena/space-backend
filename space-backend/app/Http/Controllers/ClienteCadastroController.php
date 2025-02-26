@@ -91,7 +91,8 @@ class ClienteCadastroController extends Controller
 
     public function createPedidoTiny(Request $request)
     {        
-        // Log::info($request);
+        Log::info($request);
+        $id_orcamento = $request['id'];
 
         // pega o id do vendedor no nosso banco e relacionar com os ids do tiny por pessoa. 
         $vendedor = User::where('id', $request['id_vendedor'])->select('id')->first();
@@ -220,12 +221,13 @@ class ClienteCadastroController extends Controller
         // vai fazer a inserção no nosso banco
         $pedido = Pedido::create([
             'user_id' => $vendedor->id,
+            'orcamento_id' => $id_orcamento,
             // 'numero_pedido' => $numero,
-            'pedido_status_id' => $request['id'],
             // 'pedido_situacao' => "Aberto",
         ]);
 
-        // log::info($response->json(), $pedido);
+        Log::info($pedido);
+        // Log::Info($response);
 
         return response()->json([
             'message' => 'Pedido criado com sucesso!',
