@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Pedido extends Model
 {
-
     protected $table = 'pedidos';
 
     protected $fillable = [
@@ -31,4 +30,11 @@ class Pedido extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    // Corrigindo a relação: Pedido pertence a um Orcamento
+    public function orcamento()
+    {
+        return $this->belongsTo(Orcamento::class, 'orcamento_id', 'id');
+    }    
 }
+

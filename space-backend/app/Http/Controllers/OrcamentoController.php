@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Orcamento;
 use App\Models\OrcamentoStatus;
 use App\Models\OrcamentoStatusEtapa;
+use App\Models\Pedido;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\JsonResponse;
@@ -188,31 +189,39 @@ class OrcamentoController extends Controller
         return response()->json(['message' => 'Orçamento excluido com sucesso!']);
     }
 
+
+    private function getPedidosPorOrcamentoId($orcamentoId) 
+    {
+        $pedidos = Pedido::where('pedido_status_id', $orcamentoId)->get();
+        return $pedidos;
+    }
+
     public function getAllOrcamentosAprovados(Request $request)
     {
         $query = $request->input('q', '');
         $perPage = $request->get('per_page', 15);
 
-        $orcamentosPaginated = Orcamento::whereHas('status', function ($query) {
-            $query->orderByDesc('created_at')
-                ->limit(1)
-                ->where('status', 'aprovado'); // Filtra apenas status "aprovado"
+        $orcamentosPaginated = Orcamento::whereHas('status', function ($subQuery) {
+            $subQuery->where('status', 'aprovado') // Filtra apenas status "aprovado"
+                ->orderByDesc('created_at') // Ordena pelo status mais recente
+                ->limit(1);
         })
-            ->with(['status' => function ($query) {
-                $query->orderByDesc('created_at')->limit(1); // Apenas o status mais recente
-            }])
-            ->when($query, function ($queryBuilder) use ($query) {
-                $queryBuilder->where('nome_cliente', 'like', "%{$query}%")
-                    ->orWhere('cliente_octa_number', 'like', "%{$query}%");
-            })
-            ->orderByDesc('created_at')
-            ->orderByDesc('updated_at')
-            ->paginate($perPage);
-
+        ->with(['status' => function ($subQuery) {
+            $subQuery->orderByDesc('created_at')->limit(1); // Apenas o status mais recente
+        }])
+        ->when($query, function ($queryBuilder) use ($query) {
+            $queryBuilder->where('nome_cliente', 'like', "%{$query}%")
+                ->orWhere('cliente_octa_number', 'like', "%{$query}%");
+        })
+        ->orderByDesc('created_at')
+        ->orderByDesc('updated_at')
+        ->paginate($perPage);
+        
         $orcamentos = $orcamentosPaginated->items();
 
         $transformedOrcamentos = array_map(function ($orcamento) {
             $latestStatus = $orcamento->status->first(); // Obtenha o status mais recente
+            $pedidos = $this->getPedidosPorOrcamentoId($orcamento->id);
             return [
                 'id' => $orcamento->id,
                 'user_id' => $orcamento->user_id,
@@ -237,6 +246,7 @@ class OrcamentoController extends Controller
                 'total_orcamento' => $orcamento->total_orcamento,
                 'brinde' => $orcamento->brinde,
                 'produtos_brinde' => $orcamento->produtos_brinde,
+                'pedidos' => $pedidos,
             ];
         }, $orcamentos);
 
