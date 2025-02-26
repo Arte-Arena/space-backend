@@ -91,19 +91,26 @@ class ClienteCadastroController extends Controller
 
     public function createPedidoTiny(Request $request)
     {        
-        // Log::info($request);
+        Log::info($request);
+        $id_orcamento = $request['id'];
 
         // pega o id do vendedor no nosso banco e relacionar com os ids do tiny por pessoa. 
-        $vendedor = User::where('id', $request['vendedor_id'])->select('id')->first();
+        $vendedor = User::where('id', $request['id_vendedor'])->select('id')->first();
+        $vendedorId = $vendedor ? $vendedor->id : null;
+
         $vendedoresTiny = [
             '29' => 707100035,
             '43' => 709683645,
             '28' => 705062240,
             '1' => 704446840,
+            '2' => 704446840,
+            '3' => 704446840,
+            '4' => 704446840,            
+            '5' => 704446840,
         ];
 
-        $idVendedorTiny = $vendedoresTiny[$vendedor] ?? null;
-
+        $idVendedorTiny = $vendedorId !== null ? ($vendedoresTiny[$vendedorId] ?? null) : null;
+        
         if (!$idVendedorTiny) {
             return response()->json([
                 'success' => false,
@@ -171,12 +178,14 @@ class ClienteCadastroController extends Controller
                 "valor_frete" => $resultados['frete'],
                 "valor_desconto" => $request['valor_desconto'],
                 "obs" => $brinde,
+                // "obs_internas" => "TESTE SPACE",
                 "numero_pedido_ecommerce" => $request['id'],
                 "id_vendedor" => $idVendedorTiny, // Substituir por um ID válido
                 "data_pedido" => date('d/m/Y'),
                 "parcelas" => [],
                 "outras_despesas" => $request['taxa_antecipa'],
-                "situacao" => "Aberto",
+                "situacao" => "aberto",
+                // "situacao" => "cancelado",
                 "nome_transportador" => $request['transportadora'],
                 "intermediador" => [
                     "nome" => "",
@@ -209,19 +218,24 @@ class ClienteCadastroController extends Controller
         $numero = $data['retorno']['registros']['registro']['numero'];
         // ou caastrar o id do pedido no orcamento e passar todos os dados do orcamento para o pedido ou visse versa
         
+        Log::info('id orcamento: ' . $id_orcamento);
+
         // vai fazer a inserção no nosso banco
         $pedido = Pedido::create([
-            'user_id' => $vendedor,
+            'user_id' => $vendedor->id,
+            'orcamento_id' => $id_orcamento,
             'numero_pedido' => $numero,
-            'observacoes' => $brinde,
-            'pedido_status_id' => $request['id'],
             'pedido_situacao' => "Aberto",
+            // 'pedido_situacao' => "Cancelado",
         ]);
 
+        Log::info($pedido);
+        // Log::Info($response);
 
         return response()->json([
             'message' => 'Pedido criado com sucesso!',
             'id_pedido' => $id,
+            'numero_pedido' => $numero,
             'conta' => $pedido,
             'data' => $response->json()
         ]);
