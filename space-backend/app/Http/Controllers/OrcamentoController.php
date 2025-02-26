@@ -9,6 +9,7 @@ use App\Models\Pedido;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
 
 class OrcamentoController extends Controller
 {
@@ -192,7 +193,7 @@ class OrcamentoController extends Controller
 
     private function getPedidosPorOrcamentoId($orcamentoId) 
     {
-        $pedidos = Pedido::where('pedido_status_id', $orcamentoId)->get();
+        $pedidos = Pedido::where('orcamento_id', $orcamentoId)->get();
         return $pedidos;
     }
 
