@@ -399,7 +399,6 @@ class OrcamentoController extends Controller
         ];
         
         // atauliza o campo de etapa adicionando sempre um id nvo pra trackear os status que foram passados.
-        $etapa = new OrcamentoStatusEtapa();
         $etapa->etapa = $campoRecebido;
         $etapa->orcamento_id = $id;
         $etapa->save();
@@ -415,18 +414,23 @@ class OrcamentoController extends Controller
 
     }
 
-    public function getSecondOrcamentosEtapas($id) 
+    public function getAllOrcamentosEtapas()
     {
-        $segunda_etapa = OrcamentoStatusEtapa::where('orcamento_id', $id)->orderBy('id')
-        ->skip(1)
-        ->first();
-
-        if(!$segunda_etapa) {
-            return response()->json('');
+        $orcamentos_etapas = OrcamentoStatusEtapa::join('orcamentos_status', 'orcamentos_status.orcamento_id', '=', 'orcamentos_status_etapa.orcamento_id')
+            ->join('orcamentos', 'orcamentos.id', '=', 'orcamentos_status_etapa.orcamento_id')
+            ->orderBy('orcamentos_status_etapa.id')
+            ->get([
+                'orcamentos_status_etapa.*',
+                'orcamentos_status.*',
+                'orcamentos.*'
+            ]);
+    
+        if($orcamentos_etapas->isEmpty()) {
+            return response()->json(['message' => 'Nenhum dado encontrado'], 404);
         }
-
-        return response()->json($segunda_etapa);
-
+    
+        return response()->json($orcamentos_etapas);
     }
+    
 
 }
