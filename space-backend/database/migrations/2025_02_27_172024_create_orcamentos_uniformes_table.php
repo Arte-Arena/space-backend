@@ -19,6 +19,7 @@ return new class extends Migration
             $table->integer('quantidade_jogadores');
             $table->json('configuracoes');
             $table->timestamps();
+            $table->unique(['orcamento_id', 'esboco']);
         });
     }
 
