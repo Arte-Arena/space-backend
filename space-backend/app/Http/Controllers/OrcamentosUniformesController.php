@@ -47,4 +47,9 @@ class OrcamentosUniformesController extends Controller
         $orcamentosUniforme->delete();
         return response()->json(null, 204);
     }
+
+    public function getUniforms($orcamento_id)
+    {
+        return OrcamentosUniformes::where('orcamento_id', $orcamento_id)->get();
+    }
 }
