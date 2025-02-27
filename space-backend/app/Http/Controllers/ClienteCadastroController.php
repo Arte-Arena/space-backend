@@ -84,13 +84,55 @@ class ClienteCadastroController extends Controller
 
         $response = Http::asForm()->post($apiUrl, $data);
 
+        // limpa o cpf/cnpj, tira tudo que não for numero
+        $cpf_cnpj = preg_replace('/\D/', '', $request['cpf_cnpj']);
+
+        // se menor que tantos numero = cpf se maior = cnpj
+        if (strlen($cpf_cnpj) <= 11) {
+            $cpf = $cpf_cnpj;
+            $cnpj = null;
+        } else {
+            $cnpj = $cpf_cnpj;
+            $cpf = null;
+        }
+
         Log::info('Resposta da API Tiny:', $response->json());
 
-        return response()->json($response->json());
+        $data = json_decode($response, true);
+
+        $cliente = ClienteCadastro::create([
+            "sequencia" => "1",
+            "nome_completo" => $request['nome'],
+            "tipo_pessoa" => $request['tipo_pessoa'],
+            "rg" => $request['rg'],
+            "cpf" => $cpf,
+            "razao_social" => $request['razao_social'],
+            "inscricao_estadual" => $request['inscricao_estadual'],
+            "cnpj" => $cnpj,
+            "ie" => $request['ie'],
+            "endereco" => $request['endereco'],
+            "numero" => $request['numero'],
+            "complemento" => $request['complemento'],
+            "bairro" => $request['bairro'],
+            "cep" => $request['cep'],
+            "cidade" => $request['cidade'],
+            "uf" => $request['uf'],
+            "cep_cobranca" => $request['cep_cobranca'],
+            "bairro_cobranca" => $request['bairro_cobranca'],
+            "numero_cobranca" => $request['numero_cobranca'],
+            "complemento_cobranca" => $request['complemento_cobranca'],
+            "endereco_cobranca" => $request['endereco_cobranca'],
+            "cidade_cobranca" => $request['cidade_cobranca'],
+            "uf_cobranca" => $request['uf_cobranca'],
+            "celular" => $request['celular'],
+            "email" => $request['email'],
+        ]);
+
+        return response()->json($response->json(), $cliente);
     }
 
     public function createPedidoTiny(Request $request)
-    {        
+    {
         Log::info($request);
         $id_orcamento = $request['id'];
 
@@ -105,12 +147,12 @@ class ClienteCadastroController extends Controller
             '1' => 704446840,
             '2' => 704446840,
             '3' => 704446840,
-            '4' => 704446840,            
+            '4' => 704446840,
             '5' => 704446840,
         ];
 
         $idVendedorTiny = $vendedorId !== null ? ($vendedoresTiny[$vendedorId] ?? null) : null;
-        
+
         if (!$idVendedorTiny) {
             return response()->json([
                 'success' => false,
@@ -125,7 +167,7 @@ class ClienteCadastroController extends Controller
         if (preg_match($pattern_frete, $texto_orcamento, $match)) {
             // Extrai o valor numérico do frete e substitui a vírgula por ponto
             $valorFrete = str_replace(',', '.', $match[1]);
-            
+
             // Armazena o valor do frete formatado como número
             $resultados['frete'] = (float)$valorFrete;
         }
@@ -164,7 +206,7 @@ class ClienteCadastroController extends Controller
 
         // Log do resultado
         Log::info($itens);
-        
+
         $pedido = [
             "pedido" => [
                 "cliente" => [
@@ -193,12 +235,12 @@ class ClienteCadastroController extends Controller
                 ],
             ]
         ];
-    
+
         $apiUrl = 'https://api.tiny.com.br/api2/pedido.incluir.php';
         $token = env('TINY_TOKEN');
-    
+
         $pedidoJson = json_encode($pedido, JSON_UNESCAPED_UNICODE);
-    
+
         Log::info($pedidoJson);
 
         $data = [
@@ -217,7 +259,7 @@ class ClienteCadastroController extends Controller
         $id = $data['retorno']['registros']['registro']['id'];
         $numero = $data['retorno']['registros']['registro']['numero'];
         // ou caastrar o id do pedido no orcamento e passar todos os dados do orcamento para o pedido ou visse versa
-        
+
         Log::info('id orcamento: ' . $id_orcamento);
 
         // vai fazer a inserção no nosso banco
@@ -239,7 +281,6 @@ class ClienteCadastroController extends Controller
             'conta' => $pedido,
             'data' => $response->json()
         ]);
-
     }
 
     // fazer o get de clientes cadastrados
@@ -277,6 +318,5 @@ class ClienteCadastroController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
-
     }
 }
