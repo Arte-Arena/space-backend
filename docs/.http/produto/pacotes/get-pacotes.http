@@ -1,5 +1,8 @@
 ### get-pacote
-GET http://localhost:8000/api/produto/pacote/uniforme/ HTTP/1.1
+
+
+# GET http://localhost:8000/api/produto/pacote/uniforme/ HTTP/1.1
+GET https://api.spacearena.net/api/produto/pacote/uniforme/ HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer 71|oXvYj3vL399LVYOM2WNxvqcA32eqohzBPsGbMM4Sa6f7f38e
+Authorization: Bearer 122|F67qRzAO1OLMtHOgxZfrBCnUIvDXsV1UFGz51bB3d2ae4e58
 
