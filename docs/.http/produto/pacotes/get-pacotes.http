@@ -1,0 +1,5 @@
+### get-pacote
+GET http://localhost:8000/api/produto/pacote/uniforme/ HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer 71|oXvYj3vL399LVYOM2WNxvqcA32eqohzBPsGbMM4Sa6f7f38e
+

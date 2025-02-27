@@ -52,4 +52,9 @@ class Orcamento extends Model
         );
     }
 
+    public function pedido()
+    {
+        return $this->hasOne(Pedido::class, 'orcamento_id', 'id');
+    }
+
 }

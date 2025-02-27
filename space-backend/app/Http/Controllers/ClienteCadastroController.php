@@ -41,6 +41,21 @@ class ClienteCadastroController extends Controller
 
     public function createClienteCadastro(Request $request)
     {
+
+        Log::info($request);
+
+        $cpf = preg_replace('/\D/', '', $request['cpf']);
+        $cnpj = preg_replace('/\D/', '', $request['cnpj']);
+
+        if($request['tipo_pessoa'] == 'J'){
+            $tipo_pessoa = 'PJ';
+            $cpf_cnpj = $cnpj;
+        }
+        else {
+            $tipo_pessoa = 'PF';
+            $cpf_cnpj = $cpf;
+        }
+
         $apiUrl = 'https://api.tiny.com.br/api2/contato.incluir.php';
         $token = env('TINY_TOKEN');
         $contato = [
@@ -50,7 +65,7 @@ class ClienteCadastroController extends Controller
                         "sequencia" => "1",
                         "nome" => $request['nome'],
                         "tipo_pessoa" => $request['tipo_pessoa'],
-                        "cpf_cnpj" => $request['cpf_cnpj'],
+                        "cpf_cnpj" => $cpf_cnpj,
                         "ie" => $request['ie'],
                         "rg" => $request['rg'],
                         "endereco" => $request['endereco'],
@@ -74,7 +89,7 @@ class ClienteCadastroController extends Controller
 
         $contatoJson = json_encode($contato, JSON_UNESCAPED_UNICODE);
 
-        Log::info($contatoJson);
+        // Log::info($contatoJson);
 
         $data = [
             'token' => $token,
@@ -83,26 +98,70 @@ class ClienteCadastroController extends Controller
         ];
 
         $response = Http::asForm()->post($apiUrl, $data);
-
+        
         Log::info('Resposta da API Tiny:', $response->json());
 
-        return response()->json($response->json());
+        $data = json_decode($response, true);
+
+        // limpa o cpf/cnpj, tira tudo que não for numero
+
+
+        Log::info("cpf cnpj: " . $tipo_pessoa);
+
+        $cliente = ClienteCadastro::create([
+            "sequencia" => "1",
+            "nome_completo" => $request['nome'],
+            "tipo_pessoa" => $tipo_pessoa,
+            "rg" => $request['rg'],
+            "cpf" => $cpf,
+            "razao_social" => $request['razao_social'],
+            "inscricao_estadual" => $request['inscricao_estadual'],
+            "cnpj" => $cnpj,
+            "ie" => $request['ie'],
+            "endereco" => $request['endereco'],
+            "numero" => $request['numero'],
+            "complemento" => $request['complemento'],
+            "bairro" => $request['bairro'],
+            "cep" => $request['cep'],
+            "cidade" => $request['cidade'],
+            "uf" => $request['uf'],
+            "cep_cobranca" => $request['cep_cobranca'],
+            "bairro_cobranca" => $request['bairro_cobranca'],
+            "numero_cobranca" => $request['numero_cobranca'],
+            "complemento_cobranca" => $request['complemento_cobranca'],
+            "endereco_cobranca" => $request['endereco_cobranca'],
+            "cidade_cobranca" => $request['cidade_cobranca'],
+            "uf_cobranca" => $request['uf_cobranca'],
+            "celular" => $request['celular'],
+            "email" => $request['email'],
+        ]);
+
+        return response()->json([$response->json(), $cliente], 200);
+        // return response()->json($cliente);
+
     }
 
     public function createPedidoTiny(Request $request)
-    {        
-        // Log::info($request);
+    {
+        Log::info($request);
+        $id_orcamento = $request['id'];
 
         // pega o id do vendedor no nosso banco e relacionar com os ids do tiny por pessoa. 
-        $vendedor = User::where('id', $request['vendedor_id'])->select('id')->first();
+        $vendedor = User::where('id', $request['id_vendedor'])->select('id')->first();
+        $vendedorId = $vendedor ? $vendedor->id : null;
+
         $vendedoresTiny = [
             '29' => 707100035,
             '43' => 709683645,
             '28' => 705062240,
             '1' => 704446840,
+            '2' => 704446840,
+            '3' => 704446840,
+            '4' => 704446840,
+            '5' => 704446840,
         ];
 
-        $idVendedorTiny = $vendedoresTiny[$vendedor] ?? null;
+        $idVendedorTiny = $vendedorId !== null ? ($vendedoresTiny[$vendedorId] ?? null) : null;
 
         if (!$idVendedorTiny) {
             return response()->json([
@@ -118,7 +177,7 @@ class ClienteCadastroController extends Controller
         if (preg_match($pattern_frete, $texto_orcamento, $match)) {
             // Extrai o valor numérico do frete e substitui a vírgula por ponto
             $valorFrete = str_replace(',', '.', $match[1]);
-            
+
             // Armazena o valor do frete formatado como número
             $resultados['frete'] = (float)$valorFrete;
         }
@@ -157,7 +216,7 @@ class ClienteCadastroController extends Controller
 
         // Log do resultado
         Log::info($itens);
-        
+
         $pedido = [
             "pedido" => [
                 "cliente" => [
@@ -171,12 +230,14 @@ class ClienteCadastroController extends Controller
                 "valor_frete" => $resultados['frete'],
                 "valor_desconto" => $request['valor_desconto'],
                 "obs" => $brinde,
+                // "obs_internas" => "TESTE SPACE",
                 "numero_pedido_ecommerce" => $request['id'],
                 "id_vendedor" => $idVendedorTiny, // Substituir por um ID válido
                 "data_pedido" => date('d/m/Y'),
                 "parcelas" => [],
                 "outras_despesas" => $request['taxa_antecipa'],
-                "situacao" => "Aberto",
+                "situacao" => "aberto",
+                // "situacao" => "cancelado",
                 "nome_transportador" => $request['transportadora'],
                 "intermediador" => [
                     "nome" => "",
@@ -184,12 +245,12 @@ class ClienteCadastroController extends Controller
                 ],
             ]
         ];
-    
+
         $apiUrl = 'https://api.tiny.com.br/api2/pedido.incluir.php';
         $token = env('TINY_TOKEN');
-    
+
         $pedidoJson = json_encode($pedido, JSON_UNESCAPED_UNICODE);
-    
+
         Log::info($pedidoJson);
 
         $data = [
@@ -208,24 +269,28 @@ class ClienteCadastroController extends Controller
         $id = $data['retorno']['registros']['registro']['id'];
         $numero = $data['retorno']['registros']['registro']['numero'];
         // ou caastrar o id do pedido no orcamento e passar todos os dados do orcamento para o pedido ou visse versa
-        
+
+        Log::info('id orcamento: ' . $id_orcamento);
+
         // vai fazer a inserção no nosso banco
         $pedido = Pedido::create([
-            'user_id' => $vendedor,
+            'user_id' => $vendedor->id,
+            'orcamento_id' => $id_orcamento,
             'numero_pedido' => $numero,
-            'observacoes' => $brinde,
-            'pedido_status_id' => $request['id'],
             'pedido_situacao' => "Aberto",
+            // 'pedido_situacao' => "Cancelado",
         ]);
 
+        Log::info($pedido);
+        // Log::Info($response);
 
         return response()->json([
             'message' => 'Pedido criado com sucesso!',
             'id_pedido' => $id,
+            'numero_pedido' => $numero,
             'conta' => $pedido,
             'data' => $response->json()
         ]);
-
     }
 
     // fazer o get de clientes cadastrados
@@ -263,6 +328,5 @@ class ClienteCadastroController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
-
     }
 }

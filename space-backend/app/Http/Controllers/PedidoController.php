@@ -6,13 +6,14 @@ use App\Models\Pedido;
 use App\Http\Resources\PedidoResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class PedidoController extends Controller
 {
     public function getAllPedidos()
     {
         $pedidos = Pedido::paginate(50);
-        return PedidoResource::collection($pedidos);
+        return response()->json($pedidos);
     }
     public function upsertPedido(Request $request)
     {
@@ -91,5 +92,36 @@ class PedidoController extends Controller
         }
         $pedido->delete();
         return response()->json(['message' => 'Pedido deleted successfully']);
+    }
+
+    public function createCodRastramento(Request $request) 
+    {
+        $request['codigo_rastreamento'];
+        $id = $request['pedido_id'];
+
+        Log::info($request);
+
+        $pedido = Pedido::find($id);
+
+        if (!$pedido) {
+            return response()->json(['message' => 'Pedido não encontrado'], 404);
+        }
+
+        $pedido->codigo_rastreamento = $request['codigo_rastreamento'];;
+        $pedido->save();
+
+        Log::info($pedido);
+
+        return response()->json(['message' => 'Código de rastreamento atualizado com sucesso']);
+    
+    }
+
+    public function getPedidoOrcamento(Request $request, $id) 
+    {
+        $pedido = Pedido::where('orcamento_id', $id)->first();
+        if (!$pedido) {
+            return response()->json(['error' => 'Pedido not found'], 404);
+        }
+        return response()->json($pedido);
     }
 }
