@@ -1,7 +1,9 @@
 ### upsert-pacote
+# PUT https://api-homolog.spacearena.net/api/produto/pacote/uniforme/ HTTP/1.1
 PUT http://localhost:8000/api/produto/pacote/uniforme/ HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer 127|SwAK1za7lMED7SACGQ6LhScICB72f7OFSZenABi209d587de
+Authorization: Bearer 71|oXvYj3vL399LVYOM2WNxvqcA32eqohzBPsGbMM4Sa6f7f38e
+
 
 {
     "nome": "Profissional",
