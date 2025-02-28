@@ -1,21 +1,24 @@
 ### upsert-pacote
-PUT http://localhost:8000/api/produto/pacote/uniforme/1 HTTP/1.1
+### upsert-pacote
+# PUT https://api-homolog.spacearena.net/api/produto/pacote/uniforme/ HTTP/1.1
+PUT http://localhost:8000/api/produto/pacote/uniforme/ HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer 127|SwAK1za7lMED7SACGQ6LhScICB72f7OFSZenABi209d587de
+Authorization: Bearer 71|oXvYj3vL399LVYOM2WNxvqcA32eqohzBPsGbMM4Sa6f7f38e
 
 {
-    "nome": "Prata",
-    "tipo_de_tecido": "Dryfit Sport Star Liso",
-    "permite_gola_customizada": false,
-    "tipo_gola": ["Careca", "V"],
-    "permite_nome_de_jogador": false,
-    "permite_escudo": false,
+    "nome": "Ouro",
+    "tipo_de_tecido_camisa": "Dryfit Sport Star Liso",
     "tipo_de_escudo_na_camisa": ["Sublimado"],
-    "tipo_de_escudo_no_calcao": ["Sublimado"],
+    "permite_gola_customizada": false,
+    "tipo_gola": ["Careca", "V", "Bayard"],
     "patrocinio_ilimitado": false,
     "patrocinio_numero_maximo": 2,
     "tamanhos_permitidos": ["PP", "P", "M", "G", "GG", "XG", "XXG", "XXXG"],
+    "permite_nome_de_jogador": true,
     "numero_fator_protecao_uv_camisa": 25,
+    "tipo_de_tecido_calcao": "Dryfit Sport Star Liso",
+    "permite_escudo": false,
+    "tipo_de_escudo_no_calcao": ["Sublimado"],
     "numero_fator_protecao_uv_calcao": 25,
     "tipo_de_tecido_meiao": "Helanca Profissional",
     "punho_personalizado": false,
