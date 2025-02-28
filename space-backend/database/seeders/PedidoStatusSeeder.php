@@ -44,5 +44,17 @@ class PedidoStatusSeeder extends Seeder
                 'fila' => 'I',
             ]);
         }
+
+        $statusEntrega = [
+            'Em Transporte',
+            'Entregue',
+        ];
+
+        for ($i = 0; $i < count($statusEntrega); $i++) {
+            PedidoStatus::create([
+                'nome'  => $statusProduction[$i],
+                'fila' => 'E',
+            ]);
+        }
     }
 }
