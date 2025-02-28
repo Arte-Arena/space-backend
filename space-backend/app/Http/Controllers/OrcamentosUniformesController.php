@@ -17,9 +17,18 @@ class OrcamentosUniformesController extends Controller
     {
         $request->validate([
             'orcamento_id' => 'required|exists:orcamentos,id',
-            'esboco' => 'required|string|max:1',
+            'esboco' => [
+                'required',
+                'string',
+                'max:1',
+                Rule::unique('orcamentos_uniformes')->where(function ($query) use ($request) {
+                    return $query->where('orcamento_id', $request->orcamento_id);
+                })
+            ],
             'quantidade_jogadores' => 'required|integer|min:1',
             'configuracoes' => 'present|array',
+        ], [
+            'esboco.unique' => 'Já existe um uniforme com este esboço para o orçamento especificado.'
         ]);
 
         return OrcamentosUniformes::create($request->all());
