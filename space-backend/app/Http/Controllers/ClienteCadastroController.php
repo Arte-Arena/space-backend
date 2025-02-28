@@ -270,13 +270,15 @@ class ClienteCadastroController extends Controller
         $numero = $data['retorno']['registros']['registro']['numero'];
         // ou caastrar o id do pedido no orcamento e passar todos os dados do orcamento para o pedido ou visse versa
 
-        Log::info('id orcamento: ' . $id_orcamento);
+
+        Log::info('id tiny: ' . $id);
 
         // vai fazer a inserção no nosso banco
         $pedido = Pedido::create([
             'user_id' => $vendedor->id,
             'orcamento_id' => $id_orcamento,
             'numero_pedido' => $numero,
+            'tiny_pedido_id' => $id,
             'pedido_situacao' => "Aberto",
             // 'pedido_situacao' => "Cancelado",
         ]);
@@ -291,6 +293,14 @@ class ClienteCadastroController extends Controller
             'conta' => $pedido,
             'data' => $response->json()
         ]);
+    }
+
+    public function getPedidoCadastro(Request $request) 
+    {
+        // pega o id do tiny pelo pedido
+        // faz a chamda no tiny
+        // retorna pro usuario
+        return null;
     }
 
     // fazer o get de clientes cadastrados
