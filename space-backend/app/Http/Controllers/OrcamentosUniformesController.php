@@ -19,7 +19,7 @@ class OrcamentosUniformesController extends Controller
             'orcamento_id' => 'required|exists:orcamentos,id',
             'esboco' => 'required|string|max:1',
             'quantidade_jogadores' => 'required|integer|min:1',
-            'configuracoes' => 'required|array',
+            'configuracoes' => 'present|array',
         ]);
 
         return OrcamentosUniformes::create($request->all());
