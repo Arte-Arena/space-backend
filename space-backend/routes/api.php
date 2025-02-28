@@ -23,6 +23,7 @@ use App\Http\Controllers\{
     LinkController,
     BackupController,
     ProdutoPacoteUniformeController,
+    OrcamentosUniformesController,
 };
 
 Route::post('/login', [AuthController::class, 'login']);
@@ -36,8 +37,7 @@ Route::get('/orcamento/backoffice/search-cliente-cadastro', [ClienteCadastroCont
 Route::post('/encurtador-link', [LinkController::class, 'encurta']);
 Route::post('/encurtador-link/resolve/{code}', [LinkController::class, 'resolve']);
 Route::put('/super-admin/upsert-backup', [BackupController::class, 'upsertBackup']);
-
-
+Route::get('/orcamento/uniformes/{orcamento_id}', [OrcamentosUniformesController::class, 'getUniforms']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/validate-token', [AuthController::class, 'validateToken']);
@@ -142,11 +142,9 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,comercial'])->group(f
     Route::get('/orcamento/get-orcamentos', [OrcamentoController::class, 'getAllOrcamentos']);
     Route::get('/orcamento/orcamentos-last-status/{id}', [OrcamentoController::class, 'getAllOrcamentosEtapas']);
     Route::put('/pedidos/pedido-codigo-rastreamento', [PedidoController::class, 'createCodRastramento']);
+    Route::post('/orcamento/uniformes', [OrcamentosUniformesController::class, 'store']);
     Route::get('/pedidos/get-pedido-orcamento/{id}', [PedidoController::class, 'getPedidoOrcamento']);
     Route::get('/pedidos/get-pedidos', [PedidoController::class, 'getAllPedidos']);
-
-
-
 });
 
 Route::middleware(['auth:sanctum', 'role:super-admin,admin,comercial,designer,producao'])->group(function () {
