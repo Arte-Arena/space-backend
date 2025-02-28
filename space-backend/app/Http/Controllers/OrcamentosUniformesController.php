@@ -20,6 +20,46 @@ class OrcamentosUniformesController extends Controller
             'esboco' => 'required|string|max:1',
             'quantidade_jogadores' => 'required|integer|min:1',
             'configuracoes' => 'required|array',
+        ]);
+
+        return OrcamentosUniformes::create($request->all());
+    }
+
+    public function show(OrcamentosUniformes $orcamentosUniforme)
+    {
+        return $orcamentosUniforme;
+    }
+
+    public function update(Request $request, OrcamentosUniformes $orcamentosUniforme)
+    {
+        $request->validate([
+            'orcamento_id' => 'exists:orcamentos,id',
+            'esboco' => 'string|max:1',
+            'quantidade_jogadores' => 'integer|min:1',
+            'configuracoes' => 'array'
+        ]);
+
+        $orcamentosUniforme->update($request->all());
+        return $orcamentosUniforme;
+    }
+
+    public function destroy(OrcamentosUniformes $orcamentosUniforme)
+    {
+        $orcamentosUniforme->delete();
+        return response()->json(null, 204);
+    }
+
+    public function getUniforms($orcamento_id)
+    {
+        return OrcamentosUniformes::where('orcamento_id', $orcamento_id)->get();
+    }
+
+    public function updateConfiguracoes(Request $request, $id)
+    {
+        $orcamentosUniforme = OrcamentosUniformes::findOrFail($id);
+        
+        $request->validate([
+            'configuracoes' => 'required|array',
             'configuracoes.*.genero' => ['required', Rule::in(['M', 'F', 'I'])],
             'configuracoes.*.nome_jogador' => 'required|string|max:100',
             'configuracoes.*.numero' => 'required|string|max:10',
@@ -59,35 +99,7 @@ class OrcamentosUniformesController extends Controller
             ]
         ]);
 
-        return OrcamentosUniformes::create($request->all());
-    }
-
-    public function show(OrcamentosUniformes $orcamentosUniforme)
-    {
+        $orcamentosUniforme->update(['configuracoes' => $request->configuracoes]);
         return $orcamentosUniforme;
-    }
-
-    public function update(Request $request, OrcamentosUniformes $orcamentosUniforme)
-    {
-        $request->validate([
-            'orcamento_id' => 'exists:orcamentos,id',
-            'esboco' => 'string|max:1',
-            'quantidade_jogadores' => 'integer|min:1',
-            'configuracoes' => 'array'
-        ]);
-
-        $orcamentosUniforme->update($request->all());
-        return $orcamentosUniforme;
-    }
-
-    public function destroy(OrcamentosUniformes $orcamentosUniforme)
-    {
-        $orcamentosUniforme->delete();
-        return response()->json(null, 204);
-    }
-
-    public function getUniforms($orcamento_id)
-    {
-        return OrcamentosUniformes::where('orcamento_id', $orcamento_id)->get();
     }
 }
