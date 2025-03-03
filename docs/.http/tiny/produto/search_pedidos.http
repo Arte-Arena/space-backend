@@ -1,2 +1,2 @@
-GET https://api.tiny.com.br/api2/pedidos.pesquisa.php?token=teste&formato=json&pesquisa=
+GET https://api.tiny.com.br/api2/pedidos.pesquisa.php?token=teste&formato=json&numero=22980
 

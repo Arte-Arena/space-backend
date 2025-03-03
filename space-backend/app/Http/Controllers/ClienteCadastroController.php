@@ -296,14 +296,14 @@ class ClienteCadastroController extends Controller
                 'id_pedido' => $idTiny,
                 'numero_pedido' => $numero,
                 'conta' => $pedido,
-                'data' => $response->json()
+                'data' => $data
             ]);
         }
 
         if($data['retorno']['status'] !== 'Erro'){
             return response()->json([
                 'message' => 'Erro ao cadastrar pedido!',
-                'Erro' => $data['retorno'],
+                'Erro' => $data,
             ], 500);
         }
 
