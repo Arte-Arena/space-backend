@@ -25,6 +25,7 @@ class Pedido extends Model
         'situacao',
         'prioridade',
         'orcamento_id',
+        'tiny_pedido_id',
     ];
 
     public function user()

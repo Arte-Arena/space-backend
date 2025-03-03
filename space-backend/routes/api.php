@@ -30,8 +30,9 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/octa-webhook', [ChatOctaController::class, 'webhook']);
 Route::get('/super-admin/get-config', [SuperAdminController::class, 'getConfig']);
 Route::get('/url/resolve/{id}', [ClienteCadastroShortUrlController::class, 'resolveShortUrl']);
-Route::post('/orcamento/backoffice/cliente-cadastro', [ClienteCadastroController::class, 'createClienteCadastro']);
 Route::post('/orcamento/backoffice/pedido-cadastro', [ClienteCadastroController::class, 'createPedidoTiny']);// tem que colocar numa das validações
+Route::get('/orcamento/backoffice/get-pedido-cadastro', [ClienteCadastroController::class, 'getPedidoCadastro']);
+Route::post('/orcamento/backoffice/cliente-cadastro', [ClienteCadastroController::class, 'createClienteCadastro']);
 Route::get('/orcamento/backoffice/get-cliente-cadastro', [ClienteCadastroController::class, 'getClienteCadastro']);
 Route::get('/orcamento/backoffice/search-cliente-cadastro', [ClienteCadastroController::class, 'searchClientsTiny']);
 Route::post('/encurtador-link', [LinkController::class, 'encurta']);
@@ -146,6 +147,9 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,comercial'])->group(f
     Route::post('/orcamento/uniformes', [OrcamentosUniformesController::class, 'store']);
     Route::get('/pedidos/get-pedido-orcamento/{id}', [PedidoController::class, 'getPedidoOrcamento']);
     Route::get('/pedidos/get-pedidos', [PedidoController::class, 'getAllPedidos']);
+    Route::put('/pedidos/pedido-envio-recebimento-aprovado/{id}', [PedidoController::class, 'pedidoStatusChangeAprovadoEntrega']);
+
+
 });
 
 Route::middleware(['auth:sanctum', 'role:super-admin,admin,comercial,designer,producao'])->group(function () {

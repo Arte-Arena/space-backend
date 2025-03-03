@@ -1,0 +1,2 @@
+GET https://api.tiny.com.br/api2/pdv.pedido.obter.php?token=teste&id=709740634
+Content-Type: application/x-www-form-urlencoded
