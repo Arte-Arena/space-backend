@@ -47,11 +47,10 @@ class ClienteCadastroController extends Controller
         $cpf = preg_replace('/\D/', '', $request['cpf']);
         $cnpj = preg_replace('/\D/', '', $request['cnpj']);
 
-        if($request['tipo_pessoa'] == 'J'){
+        if ($request['tipo_pessoa'] == 'J') {
             $tipo_pessoa = 'PJ';
             $cpf_cnpj = $cnpj;
-        }
-        else {
+        } else {
             $tipo_pessoa = 'PF';
             $cpf_cnpj = $cpf;
         }
@@ -98,7 +97,7 @@ class ClienteCadastroController extends Controller
         ];
 
         $response = Http::asForm()->post($apiUrl, $data);
-        
+
         Log::info('Resposta da API Tiny:', $response->json());
 
         $data = json_decode($response, true);
@@ -270,15 +269,13 @@ class ClienteCadastroController extends Controller
         $numero = $data['retorno']['registros']['registro']['numero'];
         // ou caastrar o id do pedido no orcamento e passar todos os dados do orcamento para o pedido ou visse versa
 
-
-        Log::info('id tiny: ' . $id);
+        Log::info('id orcamento: ' . $id_orcamento);
 
         // vai fazer a inserção no nosso banco
         $pedido = Pedido::create([
             'user_id' => $vendedor->id,
             'orcamento_id' => $id_orcamento,
             'numero_pedido' => $numero,
-            'tiny_pedido_id' => $id,
             'pedido_situacao' => "Aberto",
             // 'pedido_situacao' => "Cancelado",
         ]);
@@ -295,7 +292,7 @@ class ClienteCadastroController extends Controller
         ]);
     }
 
-    public function getPedidoCadastro(Request $request) 
+    public function getPedidoCadastro(Request $request)
     {
         // pega o id do tiny pelo pedido
         // faz a chamda no tiny
