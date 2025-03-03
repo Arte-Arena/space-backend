@@ -235,8 +235,8 @@ class ClienteCadastroController extends Controller
                 "data_pedido" => date('d/m/Y'),
                 "parcelas" => [],
                 "outras_despesas" => $request['taxa_antecipa'],
-                "situacao" => "aberto",
-                // "situacao" => "cancelado",
+                // "situacao" => "aberto",
+                "situacao" => "cancelado",
                 "nome_transportador" => $request['transportadora'],
                 "intermediador" => [
                     "nome" => "",
@@ -263,33 +263,50 @@ class ClienteCadastroController extends Controller
         Log::info('Resposta da API Tiny Pedidos:', $response->json());
 
         $data = json_decode($response, true);
+        
+        Log::info($response);
 
         // Captura os valores
-        $id = $data['retorno']['registros']['registro']['id'];
-        $numero = $data['retorno']['registros']['registro']['numero'];
-        // ou caastrar o id do pedido no orcamento e passar todos os dados do orcamento para o pedido ou visse versa
+        if($data['retorno']['status'] !== 'Erro'){
 
-        Log::info('id orcamento: ' . $id_orcamento);
+            $idTiny = $data['retorno']['registros']['registro']['id'];
+            $numero = $data['retorno']['registros']['registro']['numero'];
+            // ou caastrar o id do pedido no orcamento e passar todos os dados do orcamento para o pedido ou visse versa
+            
+            Log::info('id orcamento: ' . $id_orcamento);
+            Log::info('id do tiny: ' . $idTiny);
+            Log::info('numero pedido: ' . $numero);
+            
+            
+            // vai fazer a inserção no nosso banco
+            $pedido = Pedido::create([
+                'user_id' => $vendedor->id,
+                'orcamento_id' => $id_orcamento,
+                'numero_pedido' => $numero,
+                'tiny_pedido_id' => $idTiny,
+                'pedido_situacao' => "Aberto",
+                // 'pedido_situacao' => "Cancelado",
+            ]);
+            
+            Log::info($pedido);
+            // Log::Info($response);
+            
+            return response()->json([
+                'message' => 'Pedido criado com sucesso!',
+                'id_pedido' => $idTiny,
+                'numero_pedido' => $numero,
+                'conta' => $pedido,
+                'data' => $response->json()
+            ]);
+        }
 
-        // vai fazer a inserção no nosso banco
-        $pedido = Pedido::create([
-            'user_id' => $vendedor->id,
-            'orcamento_id' => $id_orcamento,
-            'numero_pedido' => $numero,
-            'pedido_situacao' => "Aberto",
-            // 'pedido_situacao' => "Cancelado",
-        ]);
+        if($data['retorno']['status'] !== 'Erro'){
+            return response()->json([
+                'message' => 'Erro ao cadastrar pedido!',
+                'Erro' => $data['retorno'],
+            ], 500);
+        }
 
-        Log::info($pedido);
-        // Log::Info($response);
-
-        return response()->json([
-            'message' => 'Pedido criado com sucesso!',
-            'id_pedido' => $id,
-            'numero_pedido' => $numero,
-            'conta' => $pedido,
-            'data' => $response->json()
-        ]);
     }
 
     public function getPedidoCadastro(Request $request)
