@@ -15,6 +15,16 @@ class OrcamentoStatus extends Model
         'user_id',
         'status',
         'comentarios',
+        'link_trello',
+        'forma_pagamento',
+        'tipo_faturamento',
+        'qtd_parcelas',
+        'data_faturamento',
+        'data_faturamento_2',
+        'data_faturamento_3',
+        'valor_faturamento',
+        'valor_faturamento_2',
+        'valor_faturamento_3',
         'status_aprovacao_arte_arena',
         'status_aprovacao_cliente',
         'status_envio_pedido',
@@ -26,7 +36,8 @@ class OrcamentoStatus extends Model
         'status_producao_esboco',
         'status_producao_arte_final',
         'status_aprovacao_esboco',
-        'status_aprovacao_arte_final'
+        'status_aprovacao_arte_final',
+        'data_entrega',
     ];
 
     protected $casts = [
