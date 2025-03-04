@@ -28,6 +28,7 @@ class OrcamentoController extends Controller
         $antecipado = $request->input('antecipado');
         $data_antecipa = $request->input('data_antecipa');
         $taxa_antecipa = $request->input('taxa_antecipa');
+        $prazo_producao = $request->input('prazo_producao');
         $descontado = $request->input('descontado');
         $tipo_desconto = $request->input('tipo_desconto');
         $valor_desconto = $request->input('valor_desconto');
@@ -50,6 +51,7 @@ class OrcamentoController extends Controller
             'antecipado' => $antecipado,
             'data_antecipa' => $data_antecipa,
             'taxa_antecipa' => $taxa_antecipa,
+            'prazo_producao' => $prazo_producao,
             'descontado' => $descontado,
             'tipo_desconto' => $tipo_desconto,
             'valor_desconto' => $valor_desconto,
