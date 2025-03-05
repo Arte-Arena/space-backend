@@ -28,6 +28,7 @@ class OrcamentoController extends Controller
         $antecipado = $request->input('antecipado');
         $data_antecipa = $request->input('data_antecipa');
         $taxa_antecipa = $request->input('taxa_antecipa');
+        $prazo_producao = $request->input('prazo_producao');
         $descontado = $request->input('descontado');
         $tipo_desconto = $request->input('tipo_desconto');
         $valor_desconto = $request->input('valor_desconto');
@@ -50,6 +51,7 @@ class OrcamentoController extends Controller
             'antecipado' => $antecipado,
             'data_antecipa' => $data_antecipa,
             'taxa_antecipa' => $taxa_antecipa,
+            'prazo_producao' => $prazo_producao,
             'descontado' => $descontado,
             'tipo_desconto' => $tipo_desconto,
             'valor_desconto' => $valor_desconto,
@@ -78,11 +80,36 @@ class OrcamentoController extends Controller
 
     public function aprova(Request $request, Orcamento $id)
     {
+        // Log::info($request);
+
+
+        $dataFaturamento = $request->input('data_faturamento');
+        $dataFaturaFormatada = date('Y-m-d H:i:s', strtotime($dataFaturamento));
+        $dataFaturamento2 = $request->input('data_faturamento_2');
+        $dataFaturaFormatada2 = date('Y-m-d H:i:s', strtotime($dataFaturamento2));
+        $dataFaturamento3 = $request->input('data_faturamento_3');
+        $dataFaturaFormatada3 = date('Y-m-d H:i:s', strtotime($dataFaturamento3));
+
+        $dataEntrega = $request->input('data_entrega');
+        $dataEntregaFormatada = date('Y-m-d H:i:s', strtotime($dataEntrega));
+
+
         OrcamentoStatus::create([
             'orcamento_id' => $id->id,
             'user_id' => Auth::id(),
             'status' => 'aprovado',
+            'forma_pagamento' => $request->input('forma_pagamento'),
+            'tipo_faturamento' => $request->input('tipo_faturamento'),
+            'qtd_parcelas' => $request->input('qtd_parcelas'),
+            'data_faturamento' => $dataFaturaFormatada,
+            'data_faturamento_2' => $dataFaturaFormatada2,
+            'data_faturamento_3' => $dataFaturaFormatada3,
+            'valor_faturamento' => $request->input('valor_faturamento'),
+            'valor_faturamento_2' => $request->input('valor_faturamento_2'),
+            'valor_faturamento_3' => $request->input('valor_faturamento_3'),
+            'link_trello' => $request->input('link_trello'),
             'comentarios' => $request->input('comentarios'),
+            'data_entrega' => $dataEntregaFormatada,
         ]);
 
         return response()->json(['message' => 'Orçamento aprovado!'], 200);
@@ -191,7 +218,7 @@ class OrcamentoController extends Controller
     }
 
 
-    private function getPedidosPorOrcamentoId($orcamentoId) 
+    private function getPedidosPorOrcamentoId($orcamentoId)
     {
         $pedidos = Pedido::where('orcamento_id', $orcamentoId)->get();
         return $pedidos;
@@ -207,17 +234,17 @@ class OrcamentoController extends Controller
                 ->orderByDesc('created_at') // Ordena pelo status mais recente
                 ->limit(1);
         })
-        ->with(['status' => function ($subQuery) {
-            $subQuery->orderByDesc('created_at')->limit(1); // Apenas o status mais recente
-        }])
-        ->when($query, function ($queryBuilder) use ($query) {
-            $queryBuilder->where('nome_cliente', 'like', "%{$query}%")
-                ->orWhere('cliente_octa_number', 'like', "%{$query}%");
-        })
-        ->orderByDesc('created_at')
-        ->orderByDesc('updated_at')
-        ->paginate($perPage);
-        
+            ->with(['status' => function ($subQuery) {
+                $subQuery->orderByDesc('created_at')->limit(1); // Apenas o status mais recente
+            }])
+            ->when($query, function ($queryBuilder) use ($query) {
+                $queryBuilder->where('nome_cliente', 'like', "%{$query}%")
+                    ->orWhere('cliente_octa_number', 'like', "%{$query}%");
+            })
+            ->orderByDesc('created_at')
+            ->orderByDesc('updated_at')
+            ->paginate($perPage);
+
         $orcamentos = $orcamentosPaginated->items();
 
         $transformedOrcamentos = array_map(function ($orcamento) {
@@ -286,11 +313,11 @@ class OrcamentoController extends Controller
         // temos que ver como vamos usar a tabela de de status_etapa porque precisamos saber um histotico de Ids dele onde podemos saber qual o ultimo sttus antes daquele.
         $orcamento = OrcamentoStatus::where('orcamento_id', $id)->first();
         // $etapa = OrcamentoStatusEtapa::where('orcamento_id', $id)->first();
-        
+
         if (!$orcamento) {
             return response()->json(['message' => 'Orçamento não encontrado'], 204);
-        }  
-        
+        }
+
         // if($etapa){
         //      se ja existir um campo anterior ele deixa como o ultimo campo colocado 
         // }
@@ -348,16 +375,15 @@ class OrcamentoController extends Controller
 
         $orcamento->save();
 
-        return response()->json(['message' => $campoRecebido ]);
-
+        return response()->json(['message' => $campoRecebido]);
     }
 
     public function OrcamentoStatusChangeAprovado(Request $request, $id)
     {
         $orcamento = OrcamentoStatus::where('orcamento_id', $id)->first();
         $etapa = OrcamentoStatusEtapa::where('orcamento_id', $id)->first();
-        
-        if(!$etapa){
+
+        if (!$etapa) {
             $campoRecebido = $request->input('campo');
             $etapa = new OrcamentoStatusEtapa();
             $etapa->etapa = $campoRecebido;
@@ -366,7 +392,7 @@ class OrcamentoController extends Controller
         }
 
         if (!$orcamento) {
-        
+
             $orcamentoExistente = Orcamento::find($id);
 
             if (!$orcamentoExistente) {
@@ -389,11 +415,11 @@ class OrcamentoController extends Controller
             $orcamento->status_aprovacao_esboco = 'nao_aprovado';
             $orcamento->status_aprovacao_arte_final = 'nao_aprovada';
             $orcamento->save();
-        }  
+        }
 
         $campoRecebido = $request->input('campo');
-        
-        
+
+
         // Atualizar o campo recebido na requisição
         $valoresPermitidos = [
             'status_aprovacao_cliente' => 'aprovado',
@@ -408,7 +434,7 @@ class OrcamentoController extends Controller
             'status_aprovacao_esboco' => 'aprovado',
             'status_aprovacao_arte_final' => 'aprovada',
         ];
-        
+
         // atauliza o campo de etapa adicionando sempre um id nvo pra trackear os status que foram passados.
         $etapa = new OrcamentoStatusEtapa();
         $etapa->etapa = $campoRecebido;
@@ -423,21 +449,18 @@ class OrcamentoController extends Controller
         }
 
         return response()->json(['message' => "Campo atualizado: {$campoRecebido}"]);
-
     }
 
-    public function getSecondOrcamentosEtapas($id) 
+    public function getSecondOrcamentosEtapas($id)
     {
         $segunda_etapa = OrcamentoStatusEtapa::where('orcamento_id', $id)->orderBy('id')
-        ->skip(1)
-        ->first();
+            ->skip(1)
+            ->first();
 
-        if(!$segunda_etapa) {
+        if (!$segunda_etapa) {
             return response()->json('');
         }
 
         return response()->json($segunda_etapa);
-
     }
-
 }

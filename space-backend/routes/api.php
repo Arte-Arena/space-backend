@@ -23,21 +23,23 @@ use App\Http\Controllers\{
     LinkController,
     BackupController,
     ProdutoPacoteUniformeController,
+    OrcamentosUniformesController,
 };
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/octa-webhook', [ChatOctaController::class, 'webhook']);
 Route::get('/super-admin/get-config', [SuperAdminController::class, 'getConfig']);
 Route::get('/url/resolve/{id}', [ClienteCadastroShortUrlController::class, 'resolveShortUrl']);
-Route::post('/orcamento/backoffice/cliente-cadastro', [ClienteCadastroController::class, 'createClienteCadastro']);
 Route::post('/orcamento/backoffice/pedido-cadastro', [ClienteCadastroController::class, 'createPedidoTiny']);// tem que colocar numa das validações
+Route::get('/orcamento/backoffice/get-pedido-cadastro', [ClienteCadastroController::class, 'getPedidoCadastro']);
+Route::post('/orcamento/backoffice/cliente-cadastro', [ClienteCadastroController::class, 'createClienteCadastro']);
 Route::get('/orcamento/backoffice/get-cliente-cadastro', [ClienteCadastroController::class, 'getClienteCadastro']);
 Route::get('/orcamento/backoffice/search-cliente-cadastro', [ClienteCadastroController::class, 'searchClientsTiny']);
 Route::post('/encurtador-link', [LinkController::class, 'encurta']);
 Route::post('/encurtador-link/resolve/{code}', [LinkController::class, 'resolve']);
 Route::put('/super-admin/upsert-backup', [BackupController::class, 'upsertBackup']);
-
-
+Route::get('/orcamento/uniformes/{orcamento_id}', [OrcamentosUniformesController::class, 'getUniforms']);
+Route::put('/orcamento/uniformes/{id}/configuracoes', [OrcamentosUniformesController::class, 'updateConfiguracoes']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/validate-token', [AuthController::class, 'validateToken']);
@@ -95,7 +97,7 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin'])->group(function ()
     Route::get('/url/{id}', [ClienteCadastroShortUrlController::class, 'createShortUrl']);
 });
 
-Route::middleware(['auth:sanctum', 'role:super-admin,admin,comercial'])->group(function () {
+Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,designer'])->group(function () {
     Route::get('/chat-octa', [ChatOctaController::class, 'getAllChatOcta']);
     Route::put('/chat-octa', [ChatOctaController::class, 'upsertChatOcta']);
     Route::put('/produto', [ProdutoController::class, 'upsertProduto']);
@@ -115,7 +117,7 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,comercial'])->group(f
     Route::post('/orcamento/create-orcamento', [OrcamentoController::class, 'createOrcamento']);
     Route::get('/orcamento/get-orcamentos', [OrcamentoController::class, 'getAllOrcamentos']);
     Route::get('/orcamento/get-orcamento/{id}', [OrcamentoController::class, 'getOrcamento']);
-    Route::put('/orcamento/status/aprova/{id}', [OrcamentoController::class, 'aprova']);
+    Route::post('/orcamento/status/aprova/{id}', [OrcamentoController::class, 'aprova']);
     Route::put('/orcamento/status/reprova/{id}', [OrcamentoController::class, 'reprova']);
     Route::get('/orcamento/get-orcamentos-status', [OrcamentoController::class, 'getAllOrcamentosWithStatus']);
     Route::delete('/orcamento/delete-orcamento/{id}', [OrcamentoController::class, 'deleteOrcamento']);
@@ -134,17 +136,17 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,comercial'])->group(f
     Route::get('/vendas/orcamentos-por-status-todos', [VendasController::class, 'getOrcamentosPorStatusTodos']);
     Route::get('/vendas/orcamentos-por-dia-filtered', [VendasController::class, 'getFilteredOrcamentosPorDia']);
     Route::get('/vendas/orcamentos-user-names', [VendasController::class, 'getUsersForFilter']);
-    Route::get('/vendas/orcamentos-valores/{id}', [VendasController::class, 'getOrcamentoValores']); //pega os valores e datas para o aprovar orçamento.
-    // Route::get('/vendas/orcamentos-por-entrega', [VendasController::class, 'getQuantidadeOrcamentosEntrega']);
     Route::put('/orcamentos/{orcamento_id}/status', [OrcamentoController::class, 'upsertOrcamentoStatus']);
     Route::put('/orcamentos/orcamentos-status-change-aprovado/{id}', [OrcamentoController::class, 'OrcamentoStatusChangeAprovado']);
     Route::put('/orcamentos/orcamentos-status-change-desaprovado/{id}', [OrcamentoController::class, 'OrcamentoStatusChangeDesaprovado']);
     Route::get('/orcamento/get-orcamentos', [OrcamentoController::class, 'getAllOrcamentos']);
     Route::get('/orcamento/orcamentos-last-status/{id}', [OrcamentoController::class, 'getAllOrcamentosEtapas']);
     Route::put('/pedidos/pedido-codigo-rastreamento', [PedidoController::class, 'createCodRastramento']);
+    Route::post('/orcamento/uniformes', [OrcamentosUniformesController::class, 'store']);
     Route::get('/pedidos/get-pedido-orcamento/{id}', [PedidoController::class, 'getPedidoOrcamento']);
     Route::get('/pedidos/get-pedidos', [PedidoController::class, 'getAllPedidos']);
-
+    Route::put('/pedidos/pedido-envio-recebimento-aprovado/{id}', [PedidoController::class, 'pedidoStatusChangeAprovadoEntrega']);
+    // Route::get('/vendas/orcamentos-por-entrega', [VendasController::class, 'getQuantidadeOrcamentosEntrega']);
 
 
 });

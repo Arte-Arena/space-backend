@@ -94,7 +94,7 @@ class PedidoController extends Controller
         return response()->json(['message' => 'Pedido deleted successfully']);
     }
 
-    public function createCodRastramento(Request $request) 
+    public function createCodRastramento(Request $request)
     {
         $request['codigo_rastreamento'];
         $id = $request['pedido_id'];
@@ -113,15 +113,43 @@ class PedidoController extends Controller
         Log::info($pedido);
 
         return response()->json(['message' => 'Código de rastreamento atualizado com sucesso']);
-    
     }
 
-    public function getPedidoOrcamento(Request $request, $id) 
+    public function getPedidoOrcamento(Request $request, $id)
     {
         $pedido = Pedido::where('orcamento_id', $id)->first();
         if (!$pedido) {
             return response()->json(['error' => 'Pedido not found'], 404);
         }
         return response()->json($pedido);
+    }
+
+    public function pedidoStatusChangeAprovadoEntrega(Request $request, $id)
+    {
+        $pedido = Pedido::find($id);
+        
+        if (!$pedido) {
+            return response()->json(['message' => 'Pedido não encontrado'], 204);
+        }
+
+        Log::info($request);
+        
+        $campo = $request['campo'];
+        
+        if($campo == "envio"){
+            $status = 14;
+        }
+        else if($campo == "recebimento"){
+            $status = 15;
+        }
+        else{
+            return response()->json(['message' => 'Campo do status não encontrado'], 500);
+        }
+
+
+        $pedido->pedido_status_id = $status;
+        $pedido->save();
+
+        return response()->json(['message' => 'Pedido atualizado com sucesso'], 200);
     }
 }

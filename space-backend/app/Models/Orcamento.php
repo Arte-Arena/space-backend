@@ -23,6 +23,7 @@ class Orcamento extends Model
         'antecipado',
         'data_antecipa',
         'taxa_antecipa',
+        'prazo_producao',
         'descontado',
         'tipo_desconto',
         'valor_desconto',

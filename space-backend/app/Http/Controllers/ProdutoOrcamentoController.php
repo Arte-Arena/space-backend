@@ -9,7 +9,7 @@ class ProdutoOrcamentoController extends Controller
 {
     public function getAllProdutosOrcamento()
     {
-        return Cache::rememberForever('produtos_orcamentos', function () {
+        return Cache::remember('produtos_orcamentos', 60, function () {
             return ProdutoOrcamento::all();
         });
     }
