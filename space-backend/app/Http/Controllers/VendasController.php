@@ -20,10 +20,7 @@ class VendasController extends Controller
 
     public function getQuantidadeOrcamentosAprovados(Request $request)
     {
-        $user = $request->user();
-
-        $totalOrcamentos = OrcamentoStatus::where('user_id', $user->id)
-            ->where('status', 'aprovado')
+        $totalOrcamentos = OrcamentoStatus::where('status', 'aprovado')
             ->latest('created_at')
             ->distinct('orcamento_id')
             ->count();
