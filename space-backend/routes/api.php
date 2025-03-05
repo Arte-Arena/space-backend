@@ -97,7 +97,7 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin'])->group(function ()
     Route::get('/url/{id}', [ClienteCadastroShortUrlController::class, 'createShortUrl']);
 });
 
-Route::middleware(['auth:sanctum', 'role:super-admin,admin,comercial'])->group(function () {
+Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,designer'])->group(function () {
     Route::get('/chat-octa', [ChatOctaController::class, 'getAllChatOcta']);
     Route::put('/chat-octa', [ChatOctaController::class, 'upsertChatOcta']);
     Route::put('/produto', [ProdutoController::class, 'upsertProduto']);
