@@ -127,22 +127,20 @@ class PedidoController extends Controller
     public function pedidoStatusChangeAprovadoEntrega(Request $request, $id)
     {
         $pedido = Pedido::find($id);
-        
+
         if (!$pedido) {
             return response()->json(['message' => 'Pedido não encontrado'], 204);
         }
 
         Log::info($request);
-        
+
         $campo = $request['campo'];
-        
-        if($campo == "envio"){
+
+        if ($campo == "envio") {
             $status = 14;
-        }
-        else if($campo == "recebimento"){
+        } else if ($campo == "recebimento") {
             $status = 15;
-        }
-        else{
+        } else {
             return response()->json(['message' => 'Campo do status não encontrado'], 500);
         }
 

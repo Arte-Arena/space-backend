@@ -31,6 +31,7 @@ class Orcamento extends Model
         'total_orcamento',
         'brinde',
         'produtos_brinde',
+        'prev_entrega',
     ];
 
     public function user()
