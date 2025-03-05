@@ -336,8 +336,10 @@ class OrcamentoController extends Controller
                 $subQuery->orderByDesc('created_at')->limit(1); // Apenas o status mais recente
             }])
             ->when($query, function ($queryBuilder) use ($query) {
-                $queryBuilder->where('nome_cliente', 'like', "%{$query}%")
-                    ->orWhere('cliente_octa_number', 'like', "%{$query}%");
+                $queryBuilder->where(function ($q) use ($query) {
+                    $q->where('nome_cliente', 'like', "%{$query}%")
+                        ->orWhere('cliente_octa_number', 'like', "%{$query}%");
+                });
             })
             ->orderByDesc('created_at')
             ->orderByDesc('updated_at')
@@ -347,7 +349,7 @@ class OrcamentoController extends Controller
 
         $transformedOrcamentos = array_map(function ($orcamento) {
             $latestStatus = $orcamento->status->first(); // Obtenha o status mais recente
-            $pedidos = $this->getPedidosPorOrcamentoId($orcamento->id);
+            // $pedidos = $this->getPedidosPorOrcamentoId($orcamento->id);
             return [
                 'id' => $orcamento->id,
                 'user_id' => $orcamento->user_id,
@@ -372,7 +374,7 @@ class OrcamentoController extends Controller
                 'total_orcamento' => $orcamento->total_orcamento,
                 'brinde' => $orcamento->brinde,
                 'produtos_brinde' => $orcamento->produtos_brinde,
-                'pedidos' => $pedidos,
+                // 'pedidos' => $pedidos,
             ];
         }, $orcamentos);
 
