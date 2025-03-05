@@ -351,7 +351,7 @@ class OrcamentoController extends Controller
 
         $transformedOrcamentos = array_map(function ($orcamento) {
             $latestStatus = $orcamento->status->first(); // Obtenha o status mais recente
-            // $pedidos = $this->getPedidosPorOrcamentoId($orcamento->id);
+            $pedidos = $this->getPedidosPorOrcamentoId($orcamento->id);
             return [
                 'id' => $orcamento->id,
                 'user_id' => $orcamento->user_id,
@@ -376,7 +376,7 @@ class OrcamentoController extends Controller
                 'total_orcamento' => $orcamento->total_orcamento,
                 'brinde' => $orcamento->brinde,
                 'produtos_brinde' => $orcamento->produtos_brinde,
-                // 'pedidos' => $pedidos,
+                'pedidos' => $pedidos,
             ];
         }, $orcamentos);
 
