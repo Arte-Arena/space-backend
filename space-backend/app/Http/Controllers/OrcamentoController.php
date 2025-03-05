@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Http;
 
 class OrcamentoController extends Controller
 {
@@ -61,7 +62,104 @@ class OrcamentoController extends Controller
             'produtos_brinde' => $produtos_brinde,
         ]);
 
-        return response()->json(['message' => 'Orçamento criado com sucesso!', 'orcamento' => $orcamento], 200);
+        $items = [];
+        $listaProdutosArray = is_string($listaProdutos) ? json_decode($listaProdutos, true) : $listaProdutos;
+        
+        if (is_array($listaProdutosArray)) {
+            foreach ($listaProdutosArray as $index => $produto) {
+                $items[] = [
+                    'id' => isset($produto['id']) ? (string)$produto['id'] : (string)($index + 1),
+                    'currency_id' => 'BRL',
+                    'title' => isset($produto['nome']) ? $produto['nome'] : "Produto {$index}",
+                    'category_id' => 'entertainment',
+                    'quantity' => isset($produto['quantidade']) ? (int)$produto['quantidade'] : 1,
+                    'unit_price' => isset($produto['preco']) ? (float)$produto['preco'] : 0
+                ];
+            }
+        }
+
+        if ($precoOpcaoEntrega > 0) {
+            $items[] = [
+                'id' => 'frete-' . $orcamento->id,
+                'currency_id' => 'BRL',
+                'title' => "Frete - " . $opcaoEntrega,
+                'category_id' => 'entertainment',
+                'quantity' => 1,
+                'unit_price' => (float)$precoOpcaoEntrega
+            ];
+        }
+
+        $streetNumber = '';
+        $streetName = $endereco;
+
+        if (!empty($endereco)) {
+            preg_match('/\d+/', $endereco, $matches);
+            if (!empty($matches)) {
+                $streetNumber = $matches[0];
+                $streetName = trim(preg_replace('/\d+/', '', $endereco));
+            }
+        }
+
+        $payload = [
+            'auto_return' => 'all',
+            'back_urls' => [
+                'success' => 'https://httpbin.org/get?status=pago',
+                'failure' => 'https://httpbin.org/get?status=recusado',
+                'pending' => 'https://httpbin.org/get?status=pendente'
+            ],
+            'redirect_urls' => [
+                'success' => 'https://httpbin.org/get?status=redirectsuccess',
+                'failure' => 'https://httpbin.org/get?status=redirectrecusado',
+                'pending' => 'https://httpbin.org/get?status=redirectpendente'
+            ],
+            'notification_url' => 'https://webhook.site/d69d1102-b677-44f6-ae6d-104a7e813b93',
+            'expires' => false,
+            'external_reference' => "Pedido - {$orcamento->id}",
+            'items' => $items,
+            'payment_methods' => [
+                'default_installments' => null,
+                'default_payment_method_id' => null,
+                'excluded_payment_types' => [],
+                'installments' => null
+            ],
+            'shipments' => [
+                'receiver_address' => [
+                    'zip_code' => $enderecoCep,
+                    'street_name' => $streetName,
+                    'street_number' => $streetNumber
+                ]
+            ]
+        ];
+
+
+        $checkoutLink = null;
+        try {
+            $response = Http::withHeaders([
+                'Content-Type' => 'application/json',
+                'Authorization' => 'Bearer ' . env('MERCADO_PAGO_ACCESS_TOKEN'),
+                'x-platform-id' => env('MERCADO_PAGO_CLIENT_PLATAFORM_ID')
+            ])->post('https://api.mercadolibre.com/checkout/preferences', $payload);
+
+            if ($response->successful()) {
+                $responseData = $response->json();
+                $checkoutLink = $responseData['init_point'] ?? null;
+                
+                Log::info('Mercado Pago API response:', $responseData);
+            } else {
+                Log::error('Mercado Pago API error:', [
+                    'status' => $response->status(),
+                    'body' => $response->body()
+                ]);
+            }
+        } catch (\Exception $e) {
+            Log::error('Mercado Pago API exception: ' . $e->getMessage());
+        }
+
+        return response()->json([
+            'message' => 'Orçamento criado com sucesso!',
+            'orcamento' => $orcamento,
+            'checkout_link' => $checkoutLink
+        ], 200);
     }
 
     public function getAllOrcamentos(): JsonResponse
