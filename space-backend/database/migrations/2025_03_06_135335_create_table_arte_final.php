@@ -16,10 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('SET NULL');
             $table->string('numero_pedido')->nullable();
             $table->dateTime('data_prevista')->nullable();
-            $table->json('lista_produtos')->nullable()->default(null);
-            $table->string('pedido_produto_categoria')->nullable();
-            $table->string('pedido_material')->nullable();
-            $table->decimal('medida_linear', 10, 2)->nullable();
+            $table->json('lista_produtos');
             $table->text('observacoes')->nullable();
             $table->string('rolo')->nullable();
             $table->foreignId('designer_id')->nullable()->constrained('users')->onDelete('SET NULL');

@@ -168,7 +168,7 @@ class PedidoController extends Controller
                 'numero_pedido' => $numero,
                 'orcamento_id' => $id_orcamento,
                 'pedido_situacao' => "Aberto",
-                'lista_produtos' => $itens,
+                // 'lista_produtos' => $itens,
                 // 'pedido_situacao' => "Cancelado",
             ]);
 
