@@ -17,8 +17,7 @@ class PedidoArteFinal extends Model
     public $timestamps = true;
 
     protected $fillable = [
-        'user_id', 'numero_pedido', 'data_prevista', 'lista_produtos', 'pedido_produto_categoria',
-        'pedido_material', 'medida_linear', 'observacoes', 'rolo', 'designer_id',
+        'user_id', 'numero_pedido', 'data_prevista', 'lista_produtos' => '{}', 'observacoes', 'rolo', 'designer_id',
         'pedido_status_id', 'pedido_tipo_id', 'estagio', 'url_trello', 'situacao',
         'prioridade', 'orcamento_id'
     ];
