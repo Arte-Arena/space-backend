@@ -131,47 +131,30 @@ class PedidoArteFinalController extends Controller
         return response()->json(['message' => 'Pedido atualizado com sucesso'], 200);
     }
 
-    private function putMaterialsInPedido($materials, $id)
+    public function putProdutosPedido($produtos, $brindes, $id)
     {
-        if (!$materials || !$id) {
+        if (!$produtos || !$brindes || !$id) {
             return response()->json(['Erro' => "material ou id do pedido incorretos"]);
         }
 
         $pedido = PedidoArteFinal::find($id);
 
-        $pedido->pedido_material = $materials;
-        $pedido->save();
-
-        return response()->json(['message' => "Sucesso"]);
-    }
-
-    private function putCategoriaInPedido($categoria, $id)
-    {
-        if (!$categoria || !$id) {
-            return response()->json(['Erro' => "categoria ou id do pedido incorretos"]);
+        if (!$pedido) {
+            return response()->json(['Erro' => "pedido não encontrado id incorreto"]);
         }
 
-        $pedido = PedidoArteFinal::find($id);
+        $produtos = is_string($produtos) ? json_decode($produtos, true) : $produtos;
+        $brindes = is_string($brindes) ? json_decode($brindes, true) : $brindes;
 
-        $pedido->pedido_produto_categoria = $categoria;
-        $pedido->save();
-
-        return response()->json(['message' => "Sucesso"]);
-    }
-
-    private function putMedidaLinearInPedido($medida_linear, $id)
-    {
-        if (!$medida_linear || !$id) {
-            return response()->json(['Erro' => "medida_linear ou id do pedido incorretos"]);
+        if (!is_array($produtos) || !is_array($brindes)) {
+            return response()->json(['Erro' => "Formato inválido para produtos ou brindes"], 400);
         }
 
-        $pedido = PedidoArteFinal::find($id);
+        $lista_produtos = array_merge($produtos, $brindes);
 
-        $pedido->medida_linear = $medida_linear;
+        $pedido->lista_produtos = json_encode($lista_produtos);
         $pedido->save();
 
         return response()->json(['message' => "Sucesso"]);
     }
-
-
 }

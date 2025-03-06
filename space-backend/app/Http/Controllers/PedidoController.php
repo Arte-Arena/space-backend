@@ -172,8 +172,14 @@ class PedidoController extends Controller
                 // 'pedido_situacao' => "Cancelado",
             ]);
 
-            Log::info($pedido);
-            // Log::Info($response);
+            // insere os produtos juntamente do brinde
+            $pedido_id = $pedidoArteFinal->id;
+            $responsePedidoProdutos = 
+            $this->putProdutosPedido($request['lista_produtos'], $request['produtos_brinde'],$pedido_id);
+
+
+            Log::info("Pedido: " . $pedido);
+            Log::Info("Produtos Pedido: " . $responsePedidoProdutos);
             
             return response()->json([
                 'message' => 'Pedido criado com sucesso!',
@@ -191,6 +197,33 @@ class PedidoController extends Controller
             ], 500);
         }
 
+    }
+
+    private function putProdutosPedido($produtos, $brindes, $id)
+    {
+        if (!$produtos || !$brindes || !$id) {
+            return response()->json(['Erro' => "material ou id do pedido incorretos"]);
+        }
+
+        $pedido = PedidoArteFinal::find($id);
+
+        if (!$pedido) {
+            return response()->json(['Erro' => "pedido não encontrado id incorreto"]);
+        }
+
+        $produtos = is_string($produtos) ? json_decode($produtos, true) : $produtos;
+        $brindes = is_string($brindes) ? json_decode($brindes, true) : $brindes;
+
+        if (!is_array($produtos) || !is_array($brindes)) {
+            return response()->json(['Erro' => "Formato inválido para produtos ou brindes"], 400);
+        }
+
+        $lista_produtos = array_merge($produtos, $brindes);
+
+        $pedido->lista_produtos = json_encode($lista_produtos);
+        $pedido->save();
+
+        return response()->json(['message' => "Sucesso"]);
     }
 
     public function getAllPedidos()
