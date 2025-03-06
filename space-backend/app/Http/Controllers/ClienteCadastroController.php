@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\{ClienteCadastro, Orcamento, Pedido, User};
+use App\Models\{ClienteCadastro, Orcamento, Pedido, PedidoArteFinal, User};
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -288,6 +288,16 @@ class ClienteCadastroController extends Controller
                 // 'pedido_situacao' => "Cancelado",
             ]);
             
+            $pedidoArteFinal = PedidoArteFinal::create([
+                'user_id' => $vendedor->id,
+                'orcamento_id' => $id_orcamento,
+                'numero_pedido' => $numero,
+                'orcamento_id' => $id_orcamento,
+                'pedido_situacao' => "Aberto",
+                'lista_produtos' => $itens,
+                // 'pedido_situacao' => "Cancelado",
+            ]);
+
             Log::info($pedido);
             // Log::Info($response);
             
