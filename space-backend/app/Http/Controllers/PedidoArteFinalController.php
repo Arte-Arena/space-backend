@@ -94,26 +94,6 @@ class PedidoController extends Controller
         return response()->json(['message' => 'Pedido deleted successfully']);
     }
 
-    // public function createCodRastramento(Request $request)
-    // {
-    //     $request['codigo_rastreamento'];
-    //     $id = $request['pedido_id'];
-
-    //     Log::info($request);
-
-    //     $pedido = PedidoArteFinal::find($id);
-
-    //     if (!$pedido) {
-    //         return response()->json(['message' => 'Pedido não encontrado'], 404);
-    //     }
-
-    //     $pedido->codigo_rastreamento = $request['codigo_rastreamento'];;
-    //     $pedido->save();
-
-    //     Log::info($pedido);
-
-    //     return response()->json(['message' => 'Código de rastreamento atualizado com sucesso']);
-    // }
 
     public function getPedidoOrcamento(Request $request, $id)
     {
