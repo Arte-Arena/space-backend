@@ -565,4 +565,22 @@ class OrcamentoController extends Controller
 
         return response()->json($segunda_etapa);
     }
+
+    public function getAllOrcamentosEtapas()
+    {
+        $orcamentos_etapas = OrcamentoStatusEtapa::join('orcamentos_status', 'orcamentos_status.orcamento_id', '=', 'orcamentos_status_etapa.orcamento_id')
+            ->join('orcamentos', 'orcamentos.id', '=', 'orcamentos_status_etapa.orcamento_id')
+            ->orderBy('orcamentos_status_etapa.id')
+            ->get([
+                'orcamentos_status_etapa.*',
+                'orcamentos_status.*',
+                'orcamentos.*'
+            ]);
+    
+        if($orcamentos_etapas->isEmpty()) {
+            return response()->json(['message' => 'Nenhum dado encontrado'], 404);
+        }
+    
+        return response()->json($orcamentos_etapas);
+    }
 }

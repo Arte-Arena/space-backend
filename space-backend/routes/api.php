@@ -136,6 +136,7 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,de
     Route::get('/vendas/orcamentos-por-status-todos', [VendasController::class, 'getOrcamentosPorStatusTodos']);
     Route::get('/vendas/orcamentos-por-dia-filtered', [VendasController::class, 'getFilteredOrcamentosPorDia']);
     Route::get('/vendas/orcamentos-user-names', [VendasController::class, 'getUsersForFilter']);
+    Route::get('/orcamento/orcamentos-last-status', [OrcamentoController::class, 'getAllOrcamentosEtapas']);
     Route::put('/orcamentos/{orcamento_id}/status', [OrcamentoController::class, 'upsertOrcamentoStatus']);
     Route::put('/orcamentos/orcamentos-status-change-aprovado/{id}', [OrcamentoController::class, 'OrcamentoStatusChangeAprovado']);
     Route::put('/orcamentos/orcamentos-status-change-desaprovado/{id}', [OrcamentoController::class, 'OrcamentoStatusChangeDesaprovado']);
@@ -148,11 +149,10 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,de
     Route::put('/pedidos/pedido-envio-recebimento-aprovado/{id}', [PedidoController::class, 'pedidoStatusChangeAprovadoEntrega']);
     Route::post('/orcamento/backoffice/pedido-cadastro', [PedidoController::class, 'createPedidoTiny']);
     Route::get('/orcamento/backoffice/get-pedido-cadastro', [PedidoController::class, 'getPedidoCadastro']);
-
     Route::get('/pedidos/get-pedidos-arte-final', [PedidoArteFinalController::class, 'getAllPedidos']);
     Route::get('/pedidos/get-pedido-arte-final-orcamento/{id}', [PedidoArteFinalController::class, 'getPedidoOrcamento']);
-    Route::get('/pedido-arte-final', [PedidoArteFinalController::class, 'getAllPedidos']);
-    Route::put('/pedido-arte-final', [PedidoArteFinalController::class, 'upsertPedido']);
+    Route::get('/pedido-arte-final', [PedidoArteFinalController::class, 'getAllPedidosArteFinal']);
+    Route::put('/pedido-arte-final', [PedidoArteFinalController::class, 'upsertPedidoArteFinal']);
     // Route::get('/vendas/orcamentos-por-entrega', [VendasController::class, 'getQuantidadeOrcamentosEntrega']);
 
 

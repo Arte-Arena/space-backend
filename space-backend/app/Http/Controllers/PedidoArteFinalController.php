@@ -10,12 +10,12 @@ use Illuminate\Support\Facades\Log;
 
 class PedidoArteFinalController extends Controller
 {
-    public function getAllPedidos()
+    public function getAllPedidosArteFinal()
     {
         $pedidos = PedidoArteFinal::paginate(50);
         return response()->json($pedidos);
     }
-    public function upsertPedido(Request $request)
+    public function upsertPedidoArteFinal(Request $request)
     {
         $pedidoId = $request->input('pedido_id');
         $pedidoUserId = Auth::id();
