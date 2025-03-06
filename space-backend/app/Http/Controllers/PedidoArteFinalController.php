@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
-class PedidoController extends Controller
+class PedidoArteFinalController extends Controller
 {
     public function getAllPedidos()
     {
