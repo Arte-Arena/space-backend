@@ -10,17 +10,21 @@ use Illuminate\Support\Facades\Log;
 
 class PedidoArteFinalController extends Controller
 {
-    public function getAllPedidos()
+    public function getAllPedidosArteFinal()
     {
         $pedidos = PedidoArteFinal::paginate(50);
         return response()->json($pedidos);
     }
-    public function upsertPedido(Request $request)
+    public function upsertPedidoArteFinal(Request $request)
     {
+
+        Log::info("request: " . $request);
+        
         $pedidoId = $request->input('pedido_id');
         $pedidoUserId = Auth::id();
         $pedidoNumero = $request->input('pedido_numero');
-        $pedidoDataPrevista = $request->input('pedido_data_prevista');
+        $pedidoPrazoArteFinal = $request->input('prazo_arte_final');
+        $pedidoPrazoConfeccao = $request->input('prazo_confeccao');
         $pedidoProdutoCategoria = $request->input('pedido_produto_categoria');
         $pedidoMaterial = $request->input('pedido_material');
         $pedidoMedidaLinear = $request->input('pedido_medida_linear');
@@ -33,6 +37,7 @@ class PedidoArteFinalController extends Controller
         $pedidoUrlTrello = $request->input('pedido_url_trello');
         $pedidoSituacao = $request->input('pedido_situacao');
         $pedidoPrioridade = $request->input('pedido_prioridade');
+        $PedidoListaProdutos = $request->input('lista_produtos');
 
         $pedido = PedidoArteFinal::find($pedidoId);
 
@@ -40,7 +45,9 @@ class PedidoArteFinalController extends Controller
             $pedido = PedidoArteFinal::create([
                 'user_id' => $pedidoUserId,
                 'numero_pedido' => $pedidoNumero,
-                'data_prevista' => $pedidoDataPrevista,
+                'prazo_confeccao' => $pedidoPrazoConfeccao,
+                'lista_produtos' => $PedidoListaProdutos,
+                'prazo_arte_final' => $pedidoPrazoArteFinal,
                 'pedido_produto_categoria' => $pedidoProdutoCategoria,
                 'pedido_material' => $pedidoMaterial,
                 'medida_linear' => $pedidoMedidaLinear,
@@ -57,7 +64,9 @@ class PedidoArteFinalController extends Controller
         } else {
             $pedido->user_id = $pedidoUserId;
             $pedido->numero_pedido = $pedidoNumero;
-            $pedido->data_prevista = $pedidoDataPrevista;
+            $pedido->prazo_confeccao = $pedidoPrazoConfeccao;
+            $pedido->prazo_arte_final = $pedidoPrazoArteFinal;
+            $pedido->lista_produtos = $PedidoListaProdutos;
             $pedido->pedido_produto_categoria = $pedidoProdutoCategoria;
             $pedido->pedido_material = $pedidoMaterial;
             $pedido->medida_linear = $pedidoMedidaLinear;
@@ -75,7 +84,7 @@ class PedidoArteFinalController extends Controller
         return response()->json(['message' => 'Pedido atualizado ou criada com sucesso!', 'conta' => $pedido], 200);
     }
 
-    public function getPedido($id)
+    public function getPedidoArteFinal($id)
     {
         $pedido = PedidoArteFinal::find($id);
         if (!$pedido) {
@@ -84,7 +93,7 @@ class PedidoArteFinalController extends Controller
         return new PedidoResource($pedido);
     }
 
-    public function deletePedido($id)
+    public function deletePedidoArteFinal($id)
     {
         $pedido = PedidoArteFinal::find($id);
         if (!$pedido) {
@@ -94,67 +103,4 @@ class PedidoArteFinalController extends Controller
         return response()->json(['message' => 'Pedido deleted successfully']);
     }
 
-
-    public function getPedidoOrcamento(Request $request, $id)
-    {
-        $pedido = PedidoArteFinal::where('orcamento_id', $id)->first();
-        if (!$pedido) {
-            return response()->json(['error' => 'Pedido not found'], 404);
-        }
-        return response()->json($pedido);
-    }
-
-    public function pedidoStatusChangeAprovadoEntrega(Request $request, $id)
-    {
-        $pedido = PedidoArteFinal::find($id);
-
-        if (!$pedido) {
-            return response()->json(['message' => 'Pedido não encontrado'], 204);
-        }
-
-        Log::info($request);
-
-        $campo = $request['campo'];
-
-        if ($campo == "envio") {
-            $status = 14;
-        } else if ($campo == "recebimento") {
-            $status = 15;
-        } else {
-            return response()->json(['message' => 'Campo do status não encontrado'], 500);
-        }
-
-
-        $pedido->pedido_status_id = $status;
-        $pedido->save();
-
-        return response()->json(['message' => 'Pedido atualizado com sucesso'], 200);
-    }
-
-    public function putProdutosPedido($produtos, $brindes, $id)
-    {
-        if (!$produtos || !$brindes || !$id) {
-            return response()->json(['Erro' => "material ou id do pedido incorretos"]);
-        }
-
-        $pedido = PedidoArteFinal::find($id);
-
-        if (!$pedido) {
-            return response()->json(['Erro' => "pedido não encontrado id incorreto"]);
-        }
-
-        $produtos = is_string($produtos) ? json_decode($produtos, true) : $produtos;
-        $brindes = is_string($brindes) ? json_decode($brindes, true) : $brindes;
-
-        if (!is_array($produtos) || !is_array($brindes)) {
-            return response()->json(['Erro' => "Formato inválido para produtos ou brindes"], 400);
-        }
-
-        $lista_produtos = array_merge($produtos, $brindes);
-
-        $pedido->lista_produtos = json_encode($lista_produtos);
-        $pedido->save();
-
-        return response()->json(['message' => "Sucesso"]);
-    }
 }
