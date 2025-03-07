@@ -147,31 +147,28 @@ class VendasController extends Controller
     {
 
         $totalOrcamentosPorData = Orcamento::selectRaw('DATE(created_at) as date, COUNT(id) as count')  // Conta os orçamentos por data
-        ->groupBy(DB::raw('DATE(created_at)'))
-        ->get();
-    
+            ->groupBy(DB::raw('DATE(created_at)'))
+            ->get();
+
 
 
         return response()->json([
             'totalOrcamentos' => $totalOrcamentosPorData,
-        
+
         ]);
-    
     }
 
     public function getQuantidadeOrcamentosEntrega() // TERMINAR A IMPLEMENTAÇÃO
     {
 
         $orcamentosEntrega = Orcamento::select('created_at', 'nome_cliente', 'opcao_entrega', 'endereco')
-        ->get();
-                
-        return response()->json($orcamentosEntrega);
+            ->get();
 
-    
+        return response()->json($orcamentosEntrega);
     }
 
 
-    public function getOrcamentosPorStatus() 
+    public function getOrcamentosPorStatus()
     {
 
         $totalOrcamentos = Orcamento::count();
@@ -185,7 +182,7 @@ class VendasController extends Controller
         ]);
     }
 
-    public function getOrcamentosPorStatusTodos() 
+    public function getOrcamentosPorStatusTodos()
     {
 
         // Obtemos todos os orçamentos
@@ -227,40 +224,45 @@ class VendasController extends Controller
 
         // Retorna a resposta no formato JSON
         return response()->json($orcamentosFinalizados);
-    
     }
 
-    public function getFilteredOrcamentosPorDia(Request $request) 
+    public function getFilteredOrcamentosPorDia(Request $request)
     {
-        
+
 
         $query = Orcamento::selectRaw('DATE(created_at) as date, COUNT(id) as count')
-        ->groupBy(DB::raw('DATE(created_at)'));
-    
+            ->groupBy(DB::raw('DATE(created_at)'));
+
         if ($request->has('vendedor_id')) {
             $query->where('user_id', $request->vendedor_id);
         }
-        
+
         if ($request->has('data_inicio') && $request->has('data_fim')) {
             $query->whereBetween('created_at', [$request->data_inicio, $request->data_fim]);
         }
-        
+
         $totalOrcamentosPorData = $query->get();
-        
+
         return response()->json([
             'totalOrcamentos' => $totalOrcamentosPorData,
         ]);
-    
     }
 
     public function getUsersForFilter()
     {
         $user = User::select('name', 'id')
-        ->get();
+            ->get();
 
         return response()->json($user);
-
     }
 
+    public function getTotalOrcamentoPedido()
+    {
+        $pedidos = DB::table('pedidos')
+            ->join('orcamentos', 'pedidos.orcamento_id', '=', 'orcamentos.id')
+            ->select('pedidos.*', 'orcamentos.total_orcamento')
+            ->get();
 
+        return response()->json($pedidos);
+    }
 }
