@@ -105,16 +105,15 @@ class OrcamentoController extends Controller
         $payload = [
             'auto_return' => 'all',
             'back_urls' => [
-                'success' => 'https://httpbin.org/get?status=pago',
-                'failure' => 'https://httpbin.org/get?status=recusado',
-                'pending' => 'https://httpbin.org/get?status=pendente'
+                'success' => 'https://artearena.com.br/',
+                'failure' => 'https://artearena.com.br/',
+                'pending' => 'https://artearena.com.br/'
             ],
             'redirect_urls' => [
-                'success' => 'https://httpbin.org/get?status=redirectsuccess',
-                'failure' => 'https://httpbin.org/get?status=redirectrecusado',
-                'pending' => 'https://httpbin.org/get?status=redirectpendente'
+                'success' => 'https://artearena.com.br/',
+                'failure' => 'https://artearena.com.br/',
+                'pending' => 'https://artearena.com.br/'
             ],
-            'notification_url' => 'https://webhook.site/d69d1102-b677-44f6-ae6d-104a7e813b93',
             'expires' => false,
             'external_reference' => "Pedido - {$orcamento->id}",
             'items' => $items,
