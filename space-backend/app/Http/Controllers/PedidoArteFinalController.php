@@ -19,7 +19,7 @@ class PedidoArteFinalController extends Controller
     {
 
         Log::info("request: " . $request);
-        
+
         $pedidoId = $request->input('pedido_id');
         $pedidoUserId = Auth::id();
         $pedidoNumero = $request->input('pedido_numero');
@@ -46,7 +46,7 @@ class PedidoArteFinalController extends Controller
                 'user_id' => $pedidoUserId,
                 'numero_pedido' => $pedidoNumero,
                 'prazo_confeccao' => $pedidoPrazoConfeccao,
-                'lista_produtos' => $PedidoListaProdutos,
+                'lista_produtos' => $PedidoListaProdutos ?? [],
                 'prazo_arte_final' => $pedidoPrazoArteFinal,
                 'pedido_produto_categoria' => $pedidoProdutoCategoria,
                 'pedido_material' => $pedidoMaterial,
@@ -90,7 +90,7 @@ class PedidoArteFinalController extends Controller
         if (!$pedido) {
             return response()->json(['error' => 'Pedido not found'], 404);
         }
-        return new PedidoResource($pedido);
+        return response()->json($pedido);
     }
 
     public function deletePedidoArteFinal($id)

@@ -1,0 +1,4 @@
+### Buscar todos os pedidos de arte final
+GET http://localhost:8000/api/producao/get-pedidos-arte-final
+Content-Type: application/json
+Authorization: Bearer 24|zuBmga302KdqLIOEFT7VCuLeiY4CwteYVzyFtPaq1b4df5f9
