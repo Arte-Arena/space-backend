@@ -148,13 +148,11 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,de
     Route::put('/pedidos/pedido-envio-recebimento-aprovado/{id}', [PedidoController::class, 'pedidoStatusChangeAprovadoEntrega']);
     Route::post('/orcamento/backoffice/pedido-cadastro', [PedidoController::class, 'createPedidoTiny']);
     Route::get('/orcamento/backoffice/get-pedido-cadastro', [PedidoController::class, 'getPedidoCadastro']);
-    Route::get('/pedidos/get-pedidos-arte-final', [PedidoArteFinalController::class, 'getAllPedidos']);
-    Route::get('/pedidos/get-pedido-arte-final-orcamento/{id}', [PedidoArteFinalController::class, 'getPedidoOrcamento']);
-    Route::get('/pedido-arte-final', [PedidoArteFinalController::class, 'getAllPedidos']);
-    Route::put('/pedido-arte-final', [PedidoArteFinalController::class, 'upsertPedido']);
+    Route::get('/producao/get-pedidos-arte-final', [PedidoArteFinalController::class, 'getAllPedidosArteFinal']);
+    Route::get('/producao/pedido-arte-final', [PedidoArteFinalController::class, 'getAllPedidosArteFinal']);
+    Route::put('/producao/pedido-arte-final', [PedidoArteFinalController::class, 'upsertPedidoArteFinal']);
     Route::get('/vendas/pedido-total', [VendasController::class, 'getTotalOrcamentoPedido']);
     // Route::get('/vendas/orcamentos-por-entrega', [VendasController::class, 'getQuantidadeOrcamentosEntrega']);
-
 
 });
 
