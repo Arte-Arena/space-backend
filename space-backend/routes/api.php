@@ -22,11 +22,12 @@ use App\Http\Controllers\{
     ClienteCadastroShortUrlController,
     LinkController,
     BackupController,
+    MaterialController,
     ProdutoPacoteUniformeController,
     OrcamentosUniformesController,
     PedidoArteFinalController,
+    ProdutoCategoriaController,
 };
-use App\Models\PedidoArteFinal;
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/octa-webhook', [ChatOctaController::class, 'webhook']);
@@ -103,6 +104,8 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,de
     Route::put('/produto', [ProdutoController::class, 'upsertProduto']);
     Route::get('/produto', [ProdutoController::class, 'getAllProdutos']);
     Route::get('/produto-orcamento-query', [ProdutoController::class, 'getAllProdutosOrcamento']);
+    Route::get('/produto-categoria', [ProdutoCategoriaController::class, 'getAllProdutosCategorias']); // categorias
+    Route::get('/produto-categoria', [MaterialController::class, 'getAllMaterial']); // material
     // Route::get('/produto-personalizad', [ProdutosPersonalizadController::class, 'getAllProdutosPersonalizad']);
     Route::get('/produto-orcamento-consolidado', [ProdutoOrcamentoController::class, 'getAllProdutosOrcamento']);
     Route::get('/produto/pacote/uniforme', [ProdutoPacoteUniformeController::class, 'getPacotesUniforme']);
@@ -152,6 +155,7 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,de
     Route::get('/producao/pedido-arte-final/{id}', [PedidoArteFinalController::class, 'getPedidoArteFinal']);
     Route::put('/producao/pedido-arte-final', [PedidoArteFinalController::class, 'upsertPedidoArteFinal']);
     Route::get('/vendas/pedido-total', [VendasController::class, 'getTotalOrcamentoPedido']);
+    // 
     // Route::get('/vendas/orcamentos-por-entrega', [VendasController::class, 'getQuantidadeOrcamentosEntrega']);
 
 });
