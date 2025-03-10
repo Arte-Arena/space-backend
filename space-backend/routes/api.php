@@ -159,7 +159,8 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,de
     Route::get('/producao/pedido-arte-final/{id}', [PedidoArteFinalController::class, 'getPedidoArteFinal']);
     Route::put('/producao/pedido-arte-final', [PedidoArteFinalController::class, 'upsertPedidoArteFinal']);
     Route::get('/vendas/pedido-total', [VendasController::class, 'getTotalOrcamentoPedido']);
-    // 
+    Route::put('/producao/atribuir-designer/{id}', [PedidoArteFinalController::class, 'atribuirDesigner']);
+
     // Route::get('/vendas/orcamentos-por-entrega', [VendasController::class, 'getQuantidadeOrcamentosEntrega']);
 
 });

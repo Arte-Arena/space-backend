@@ -12,7 +12,9 @@ class PedidoArteFinalController extends Controller
 {
     public function getAllPedidosArteFinal()
     {
-        $pedidos = PedidoArteFinal::paginate(50);
+        $pedidos = PedidoArteFinal::with(['designer' => function ($query) {
+            $query->select('id', 'name'); // Supondo que o nome do designer está na coluna 'name'
+        }])->paginate(50);
         return response()->json($pedidos);
     }
     public function upsertPedidoArteFinal(Request $request)
@@ -101,6 +103,17 @@ class PedidoArteFinalController extends Controller
         }
         $pedido->delete();
         return response()->json(['message' => 'Pedido deleted successfully']);
+    }
+
+    public function atribuirDesigner(Request $request, $id) 
+    {
+        $pedido = PedidoArteFinal::find($id);
+        if (!$pedido) {
+            return response()->json(['error' => 'Pedido not found'], 500);
+        }
+        $pedido->designer_id = $request['designer_id'];
+        $pedido->save();
+        return response()->json(['message' => 'Pedido atualizado com sucesso!'], 200);
     }
 
 }

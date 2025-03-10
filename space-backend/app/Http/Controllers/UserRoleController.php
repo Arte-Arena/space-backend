@@ -28,7 +28,7 @@ class UserRoleController extends Controller
         ];
 
         if (!in_array($roleName, $roles)) {
-            return response()->json(['message' => 'Role não encontrada.'], 404);
+            return response()->json(['message' => 'Role não encontrada.'], 500);
         }
 
         $roleId = array_search($roleName, $roles);
