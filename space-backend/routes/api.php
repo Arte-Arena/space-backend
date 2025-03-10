@@ -99,6 +99,7 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin'])->group(function ()
 });
 
 Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,designer'])->group(function () {
+    Route::post('/payment/generate-checkout', [MercadoPagoController::class, 'generateCheckoutLink']);
     Route::get('/chat-octa', [ChatOctaController::class, 'getAllChatOcta']);
     Route::put('/chat-octa', [ChatOctaController::class, 'upsertChatOcta']);
     Route::put('/produto', [ProdutoController::class, 'upsertProduto']);
