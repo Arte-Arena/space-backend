@@ -27,7 +27,7 @@ use App\Http\Controllers\{
     OrcamentosUniformesController,
     PedidoArteFinalController,
     ProdutoCategoriaController,
-    MercadoPagoController
+    UserRoleController,
 };
 
 Route::post('/login', [AuthController::class, 'login']);
@@ -89,7 +89,6 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin'])->group(function ()
     Route::put('/cliente', [ContaController::class, 'upsertConta']);
     Route::delete('/cliente/{id}', [ContaController::class, 'deleteConta']);
     Route::get('/cliente-and-recorrentes', [ContaController::class, 'getAllContasAndRecorrentes']);
-    
     Route::get('/conta', [ContaController::class, 'getAllContas']);
     Route::get('/conta/{id}', [ContaController::class, 'getConta']);
     Route::put('/conta', [ContaController::class, 'upsertConta']);
@@ -100,7 +99,6 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin'])->group(function ()
 });
 
 Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,designer'])->group(function () {
-    Route::post('/payment/generate-checkout', [MercadoPagoController::class, 'generateCheckoutLink']);
     Route::get('/chat-octa', [ChatOctaController::class, 'getAllChatOcta']);
     Route::put('/chat-octa', [ChatOctaController::class, 'upsertChatOcta']);
     Route::put('/produto', [ProdutoController::class, 'upsertProduto']);
@@ -108,6 +106,7 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,de
     Route::get('/produto-orcamento-query', [ProdutoController::class, 'getAllProdutosOrcamento']);
     Route::get('/produto-categoria', [ProdutoCategoriaController::class, 'getAllProdutosCategorias']); // categorias
     Route::get('/material', [MaterialController::class, 'getAllMaterial']); // material
+    Route::get('/user-role/get-users-by-role', [UserRoleController::class, 'getUsersByRole']); // UserRole
     // Route::get('/produto-personalizad', [ProdutosPersonalizadController::class, 'getAllProdutosPersonalizad']);
     Route::get('/produto-orcamento-consolidado', [ProdutoOrcamentoController::class, 'getAllProdutosOrcamento']);
     Route::get('/produto/pacote/uniforme', [ProdutoPacoteUniformeController::class, 'getPacotesUniforme']);
