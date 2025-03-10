@@ -1,0 +1,5 @@
+### Buscar tipos de pedido
+GET http://localhost:8000/api/producao/get-pedido-tipos
+Content-Type: application/json
+Authorization: Bearer 26|nvkUfsIpTMUDQpUcuwyn5wB8n2OJpXkNzQP1aFBX57492b2b
+
