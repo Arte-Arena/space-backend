@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Material extends Model
 {
-    protected $table = 'materiais';
+    protected $table = 'materials';
     protected $fillable = ['descricao'];
     public $timestamps = false;
 }
