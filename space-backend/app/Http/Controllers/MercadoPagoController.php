@@ -12,9 +12,14 @@ class MercadoPagoController extends Controller
     public function generateCheckoutLink(Request $request)
     {
         $valor = $request->input('valor');
+        $orcamentoId = $request->input('orcamento_id');
 
         if (!$valor || !is_numeric($valor)) {
             return response()->json(['error' => 'Valor inválido'], 400);
+        }
+
+        if (!$orcamentoId) {
+            return response()->json(['error' => 'ID do orçamento é obrigatório'], 400);
         }
 
         $items = [
@@ -41,7 +46,7 @@ class MercadoPagoController extends Controller
             ],
             'notification_url' => 'https://api-homolog.spacearena.net/api/webhooks/mercadopago?source_news=webhooks',
             'expires' => false,
-            'external_reference' => 'Pagamento-' . time(),
+            'external_reference' => 'Pagamento-' . time() . '-' . $orcamentoId,
             'items' => $items,
             'payment_methods' => [
                 'default_installments' => null,
@@ -84,23 +89,52 @@ class MercadoPagoController extends Controller
 
         try {
             $data = $request->all();
-            
-            // Validação básica do webhook
-            if (!isset($data['type']) || !isset($data['data']['id'])) {
+
+            if (!isset($data['type']) || !isset($data['data']['id']) || !isset($data['action'])) {
                 return response()->json(['error' => 'Payload inválido'], 400);
             }
 
-            // Por enquanto apenas logamos os dados recebidos
-            // Implementação completa será feita quando você especificar os dados que serão recebidos
-            Log::info('Notificação MercadoPago', [
-                'type' => $data['type'],
-                'data_id' => $data['data']['id']
+            if ($data['type'] !== 'payment' || $data['action'] !== 'payment.created') {
+                return response()->json(['message' => 'Evento ignorado'], 200);
+            }
+
+            $paymentId = $data['data']['id'];
+
+            $response = Http::withHeaders([
+                'Content-Type' => 'application/json',
+                'Authorization' => 'Bearer ' . env('MERCADO_PAGO_ACCESS_TOKEN')
+            ])->get("https://api.mercadopago.com/v1/payments/{$paymentId}");
+
+            if (!$response->successful()) {
+                Log::error('Erro ao buscar detalhes do pagamento:', [
+                    'status' => $response->status(),
+                    'body' => $response->body()
+                ]);
+                return response()->json(['error' => 'Erro ao buscar detalhes do pagamento'], 500);
+            }
+
+            $paymentData = $response->json();
+
+            $externalReference = $paymentData['external_reference'];
+            $orcamentoId = $this->extractOrcamentoId($externalReference);
+
+            ContasPagamento::create([
+                'orcamento_id' => $orcamentoId,
+                'id_api_externa' => $paymentData['id'],
+                'plataforma' => 'MERCADO_PAGO',
+                'valor' => $paymentData['transaction_amount']
             ]);
 
-            return response()->json(['message' => 'Webhook recebido com sucesso'], 200);
+            return response()->json(['message' => 'Pagamento processado com sucesso'], 201);
         } catch (\Exception $e) {
             Log::error('Erro ao processar webhook do MercadoPago: ' . $e->getMessage());
             return response()->json(['error' => 'Erro interno'], 500);
         }
+    }
+
+    private function extractOrcamentoId($externalReference)
+    {
+        $parts = explode('-', $externalReference);
+        return end($parts);
     }
 }
