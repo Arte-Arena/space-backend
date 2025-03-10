@@ -44,6 +44,9 @@ Route::put('/super-admin/upsert-backup', [BackupController::class, 'upsertBackup
 Route::get('/orcamento/uniformes/{orcamento_id}', [OrcamentosUniformesController::class, 'getUniforms']);
 Route::put('/orcamento/uniformes/{id}/configuracoes', [OrcamentosUniformesController::class, 'updateConfiguracoes']);
 
+Route::post('/webhooks/mercadopago', [MercadoPagoController::class, 'webhook']);
+Route::post('/webhooks/bancointer', [BancoInterController::class, 'webhook']);
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/validate-token', [AuthController::class, 'validateToken']);
     Route::get('/user', function (Request $request) {
