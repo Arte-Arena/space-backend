@@ -1,0 +1,5 @@
+### Buscar um pedido de arte final específico
+GET http://localhost:8000/api/user-role/get-users-by-role?role=Designer
+Content-Type: application/json
+Authorization: Bearer 25|Ecx3lAONzvb1fH9i2UtNX6XcuwMQbuhPgOPsy23v2b2c10f3
+

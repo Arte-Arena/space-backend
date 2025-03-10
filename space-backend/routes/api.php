@@ -27,7 +27,8 @@ use App\Http\Controllers\{
     OrcamentosUniformesController,
     PedidoArteFinalController,
     ProdutoCategoriaController,
-    MercadoPagoController
+    MercadoPagoController,
+    UserRoleController
 };
 
 Route::post('/login', [AuthController::class, 'login']);
@@ -108,6 +109,7 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,de
     Route::get('/produto-orcamento-query', [ProdutoController::class, 'getAllProdutosOrcamento']);
     Route::get('/produto-categoria', [ProdutoCategoriaController::class, 'getAllProdutosCategorias']); // categorias
     Route::get('/material', [MaterialController::class, 'getAllMaterial']); // material
+    Route::get('/user-role/get-users-by-role', [UserRoleController::class, 'getUsersByRole']); // UserRole
     // Route::get('/produto-personalizad', [ProdutosPersonalizadController::class, 'getAllProdutosPersonalizad']);
     Route::get('/produto-orcamento-consolidado', [ProdutoOrcamentoController::class, 'getAllProdutosOrcamento']);
     Route::get('/produto/pacote/uniforme', [ProdutoPacoteUniformeController::class, 'getPacotesUniforme']);
