@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ContasPagamento;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -73,6 +74,32 @@ class MercadoPagoController extends Controller
         } catch (\Exception $e) {
             Log::error('Mercado Pago API exception: ' . $e->getMessage());
             return response()->json(['error' => 'Erro ao processar pagamento'], 500);
+        }
+    }
+
+    public function webhook(Request $request)
+    {
+        Log::info('Webhook MercadoPago recebido', ['data' => $request->all()]);
+
+        try {
+            $data = $request->all();
+            
+            // Validação básica do webhook
+            if (!isset($data['type']) || !isset($data['data']['id'])) {
+                return response()->json(['error' => 'Payload inválido'], 400);
+            }
+
+            // Por enquanto apenas logamos os dados recebidos
+            // Implementação completa será feita quando você especificar os dados que serão recebidos
+            Log::info('Notificação MercadoPago', [
+                'type' => $data['type'],
+                'data_id' => $data['data']['id']
+            ]);
+
+            return response()->json(['message' => 'Webhook recebido com sucesso'], 200);
+        } catch (\Exception $e) {
+            Log::error('Erro ao processar webhook do MercadoPago: ' . $e->getMessage());
+            return response()->json(['error' => 'Erro interno'], 500);
         }
     }
 }
