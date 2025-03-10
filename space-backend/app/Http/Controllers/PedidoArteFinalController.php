@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\PedidoResource;
 use App\Models\PedidoArteFinal;
+use App\Models\PedidoStatus;
+use App\Models\PedidoTipo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -101,6 +103,20 @@ class PedidoArteFinalController extends Controller
         }
         $pedido->delete();
         return response()->json(['message' => 'Pedido deleted successfully']);
+    }
+
+    public function getAllStatusPedido()
+    {
+        $status = PedidoStatus::all();
+        $status->makeHidden(['created_at', 'updated_at']);
+        return response()->json($status);   
+    }
+
+    public function getAllTiposPedido()
+    {
+        $status = PedidoTipo::all();
+        $status->makeHidden(['created_at', 'updated_at']);
+        return response()->json($status);   
     }
 
 }

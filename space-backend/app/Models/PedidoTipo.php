@@ -9,6 +9,11 @@ class PedidoTipo extends Model
 {
     protected $table = 'pedidos_tipos';
 
+    protected $fillable = [
+        'id',
+        'nome',
+    ];
+
     public function pedido(): HasMany
     {
         return $this->hasMany(Pedido::class);

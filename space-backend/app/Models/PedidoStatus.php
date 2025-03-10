@@ -9,6 +9,12 @@ class PedidoStatus extends Model
 {
     protected $table = 'pedidos_status';
 
+    protected $fillable = [
+        'id',
+        'nome',
+        'fila',
+    ];
+
     public function pedido(): HasMany
     {
         return $this->hasMany(Pedido::class);
