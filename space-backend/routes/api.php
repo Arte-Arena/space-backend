@@ -27,6 +27,7 @@ use App\Http\Controllers\{
     OrcamentosUniformesController,
     PedidoArteFinalController,
     ProdutoCategoriaController,
+    MercadoPagoController
 };
 
 Route::post('/login', [AuthController::class, 'login']);
