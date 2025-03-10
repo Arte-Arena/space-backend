@@ -119,4 +119,15 @@ class PedidoArteFinalController extends Controller
         return response()->json($status);   
     }
 
+    public function atribuirDesigner(Request $request, $id) 
+    {
+        $pedido = PedidoArteFinal::find($id);
+        if (!$pedido) {
+            return response()->json(['error' => 'Pedido not found'], 500);
+        }
+        $pedido->designer_id = $request['designer_id'];
+        $pedido->save();
+        return response()->json(['message' => 'Pedido atualizado com sucesso!'], 200);
+    }
+    
 }
