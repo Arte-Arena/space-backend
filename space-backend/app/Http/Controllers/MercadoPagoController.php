@@ -39,6 +39,7 @@ class MercadoPagoController extends Controller
                 'failure' => 'https://artearena.com.br/',
                 'pending' => 'https://artearena.com.br/'
             ],
+            'notification_url' => 'https://api-homolog.spacearena.net/api/webhooks/mercadopago?source_news=webhooks',
             'expires' => false,
             'external_reference' => 'Pagamento-' . time(),
             'items' => $items,
