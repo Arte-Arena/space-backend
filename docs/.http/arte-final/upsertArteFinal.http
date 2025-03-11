@@ -1,0 +1,40 @@
+### Criar ou atualizar um pedido de arte final
+PUT http://localhost:8000/api/producao/pedido-arte-final
+Content-Type: application/json
+Authorization: Bearer 24|zuBmga302KdqLIOEFT7VCuLeiY4CwteYVzyFtPaq1b4df5f9
+
+{
+    "tiny": "709844553",
+    "pedido_id": 1,
+    "id_vendedor": 3,
+    "pedido_numero": "12345",
+    "prazo_arte_final": "2025-03-10",
+    "prazo_confeccao": "2025-03-20",
+    "pedido_produto_categoria": "Impressão Digital",
+    "pedido_material": "Papel Couchê",
+    "pedido_medida_linear": "70",
+    "pedido_observacoes": "Revisar antes de imprimir",
+    "pedido_rolo": 1,
+    "pedido_designer_id": 2,
+    "pedido_status_id": 1,
+    "pedido_tipo_id": 3,
+    "pedido_estagio": "Criação",
+    "pedido_url_trello": "https://trello.com/c/exemplo",
+    "pedido_situacao": "Em andamento",
+    "pedido_prioridade": "Alta",
+    "lista_produtos": [
+        {
+            "id": 568429796,
+            "nome": "Wind banner Personalizado - 3 metros - Faca",
+            "peso": "1.72",
+            "prazo": 20,
+            "preco": 290,
+            "altura": "30.00",
+            "largura": "40.00",
+            "created_at": null,
+            "quantidade": 1,
+            "updated_at": null,
+            "comprimento": "70.00"
+        }
+    ]
+}
