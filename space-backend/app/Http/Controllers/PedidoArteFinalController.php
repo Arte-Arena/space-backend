@@ -19,6 +19,13 @@ class PedidoArteFinalController extends Controller
     }
     public function upsertPedidoArteFinal(Request $request)
     {
+        
+        // precisa do id do tiny 
+        // precisa primeiro fazer a parte de criação do pedido no tiny
+        // depois de status ser ok pode criar
+        
+        // se tiver pedido_id e id do tiny, atualiza no tiny 
+        // se for status ok, atualiza no banco.
 
         Log::info("request: " . $request);
 
@@ -48,8 +55,8 @@ class PedidoArteFinalController extends Controller
                 'user_id' => $pedidoUserId,
                 'numero_pedido' => $pedidoNumero,
                 'prazo_confeccao' => $pedidoPrazoConfeccao,
-                'lista_produtos' => $PedidoListaProdutos ?? [],
                 'prazo_arte_final' => $pedidoPrazoArteFinal,
+                'lista_produtos' => $PedidoListaProdutos ?? [],
                 'pedido_produto_categoria' => $pedidoProdutoCategoria,
                 'pedido_material' => $pedidoMaterial,
                 'medida_linear' => $pedidoMedidaLinear,
@@ -85,6 +92,7 @@ class PedidoArteFinalController extends Controller
 
         return response()->json(['message' => 'Pedido atualizado ou criada com sucesso!', 'conta' => $pedido], 200);
     }
+    // precisa do id do tiny 
 
     public function getPedidoArteFinal($id)
     {
@@ -97,6 +105,9 @@ class PedidoArteFinalController extends Controller
 
     public function deletePedidoArteFinal($id)
     {
+        // precisa do id do tiny 
+        // cancelar o pedido no tiny e depois de status ser ok pode deletar
+        
         $pedido = PedidoArteFinal::find($id);
         if (!$pedido) {
             return response()->json(['error' => 'Pedido not found'], 404);

@@ -19,7 +19,7 @@ class PedidoArteFinal extends Model
     protected $fillable = [
         'user_id', 'numero_pedido', 'data_prevista', 'lista_produtos', 'observacoes', 'rolo', 'designer_id',
         'pedido_status_id', 'pedido_tipo_id', 'estagio', 'url_trello', 'situacao',
-        'prioridade', 'orcamento_id'
+        'prioridade', 'orcamento_id', 'prazo_arte_final', 'prazo_confeccao', 'tiny_pedido_id'
     ];
 
     protected $casts = [
