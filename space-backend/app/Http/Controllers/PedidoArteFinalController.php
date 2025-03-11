@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\PedidoResource;
 use App\Models\PedidoArteFinal;
 use App\Models\PedidoStatus;
 use App\Models\PedidoTipo;
@@ -196,9 +195,8 @@ class PedidoArteFinalController extends Controller
             $pedido->url_trello = $pedidoUrlTrello; 
             $pedido->situacao = $pedidoSituacao; 
             $pedido->prioridade = $pedidoPrioridade; 
-            // $pedido->tiny_pedido_id = $idTiny; // Campo faltante
-
-            $pedido->save();
+            $pedido->data_prevista = $dataPrevista; 
+            $pedido->tiny_pedido_id = $tiny; // Campo faltante
             $pedido->save();
         }
 
