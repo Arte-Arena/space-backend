@@ -22,6 +22,7 @@ use App\Http\Controllers\{
     ClienteCadastroShortUrlController,
     LinkController,
     BackupController,
+    BancoInterController,
     MaterialController,
     ProdutoPacoteUniformeController,
     OrcamentosUniformesController,
