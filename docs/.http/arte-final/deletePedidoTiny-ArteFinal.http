@@ -1,0 +1,5 @@
+### Buscar um pedido de arte final específico
+DELETE http://localhost:8000/api/producao/delete-pedido-arte-final/1
+Content-Type: application/json
+Authorization: Bearer 24|zuBmga302KdqLIOEFT7VCuLeiY4CwteYVzyFtPaq1b4df5f9
+
