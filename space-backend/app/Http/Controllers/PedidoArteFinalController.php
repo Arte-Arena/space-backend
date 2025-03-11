@@ -217,15 +217,38 @@ class PedidoArteFinalController extends Controller
 
     public function deletePedidoArteFinal($id)
     {
-        // precisa do id do tiny 
-        // cancelar o pedido no tiny e depois de status ser ok pode deletar
 
         $pedido = PedidoArteFinal::find($id);
         if (!$pedido) {
             return response()->json(['error' => 'Pedido not found'], 404);
         }
-        $pedido->delete();
-        return response()->json(['message' => 'Pedido deleted successfully']);
+        // tem id do tiny?
+        if (!$pedido->tiny_pedido_id) {
+            return response()->json(['error' => 'Tiny ID not found for this pedido'], 400);
+        }
+
+        $url = 'https://api.tiny.com.br/api2/pedido.alterar.situacao.php';
+        $token = env('TINY_TOKEN');
+        
+        $data = [
+            'token' => $token,
+            'id' => $pedido->tiny_pedido_id, // ID do pedido no Tiny
+            'situacao' => 'Cancelado', // Situação para cancelar o pedido
+            'formato' => 'json', // Formato da resposta
+        ];
+
+        $response = Http::asForm()->post($url, $data);
+        $data = json_decode($response, true);
+        Log::info($response);
+
+        if($data['retorno']['status'] !== 'Erro'){
+            $pedido->delete();
+            return response()->json(['message' => 'Pedido deleted successfully']);
+        }
+
+        Log::error('Error deleting pedido', ['Tiny Error: ' => $data['retorno']]);
+        return response()->json(['error' => 'Error deleting pedido', 'Tiny Error: ' => $data['retorno']], 500);
+
     }
 
     public function getAllStatusPedido()
