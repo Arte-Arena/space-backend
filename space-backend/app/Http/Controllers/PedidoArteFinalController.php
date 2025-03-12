@@ -374,4 +374,17 @@ class PedidoArteFinalController extends Controller
         $pedido->save();
         return response()->json(['message' => 'Pedido atualizado com sucesso!'], 200);
     }
+
+    public function trocarObsArteFinal(Request $request, $id)
+    {
+        $pedido = PedidoArteFinal::find($id);
+        if (!$pedido) {
+            return response()->json(['error' => 'Pedido not found'], 500);
+        }
+        $pedido->observacoes = $request['observacoes'];
+        $pedido->save();
+        return response()->json(['message' => 'Pedido atualizado com sucesso!'], 200);
+    }
+
+
 }
