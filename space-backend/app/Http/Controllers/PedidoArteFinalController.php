@@ -18,6 +18,44 @@ class PedidoArteFinalController extends Controller
         $pedidos = PedidoArteFinal::paginate(50);
         return response()->json($pedidos);
     }
+
+    public function createPedidoFromBackoffice($orcamentoId)
+    {
+        // Find the orcamento
+        $orcamento = \App\Models\Orcamento::find($orcamentoId);
+        
+        if (!$orcamento) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Orçamento não encontrado'
+            ], 404);
+        }
+
+        $orcamentoStatus = \App\Models\OrcamentoStatus::where('orcamento_id', $orcamentoId)->first();
+        
+        if (!$orcamentoStatus) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Status do orçamento não encontrado'
+            ], 404);
+        }
+
+        $pedido = PedidoArteFinal::create([
+            'user_id' => Auth::id(),
+            'lista_produtos' => $orcamento->lista_produtos,
+            'orcamento_id' => $orcamento->id,
+            'pedido_status_id' => 1,
+            'pedido_tipo_id' => $orcamento->antecipado ? 2 : 1,
+            'observacoes' => $orcamento->comentarios,
+            'url_trello' => $orcamentoStatus->link_trello,
+            'vendedor_id' => $orcamento->user_id
+        ]);
+
+        return response()->json([
+            'pedido' => $pedido
+        ], 201);
+    }
+
     public function upsertPedidoArteFinal(Request $request)
     {
 
