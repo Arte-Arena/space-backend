@@ -1,0 +1,26 @@
+### Criar ou atualizar um pedido de arte final
+PUT http://localhost:8000/api/producao/pedido-arte-final
+Content-Type: application/json
+Authorization: Bearer 24|zuBmga302KdqLIOEFT7VCuLeiY4CwteYVzyFtPaq1b4df5f9
+
+{
+    "pedido_id": 2,
+    "pedido_numero": "22555",
+    "pedido_observacoes": "testarrr",
+    "pedido_rolo": "3",
+    "pedido_designer_id": 6,
+    "pedido_status_id": 5,
+    "pedido_tipo_id": 2,
+    "pedido_url_trello": null,
+    "lista_produtos": [
+        {
+            "id": 558866843,
+            "nome": "Abadá Personalizado",
+            "quantidade": 50,
+            "material": "Chimpa",
+            "preco": 29.9,
+            "prazo": 10
+        }
+    ]
+}
+
