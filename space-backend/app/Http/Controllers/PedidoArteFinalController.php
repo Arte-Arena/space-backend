@@ -64,7 +64,7 @@ class PedidoArteFinalController extends Controller
             '5' => 704446840,
         ];
 
-        $idVendedorTiny = $vendedorId !== null ? ($vendedoresTiny[$vendedorId] ?? null) : null;
+        $idVendedorTiny = $vendedorId !== null ? ($vendedoresTiny[$vendedorId] ?? 704446840) : 704446840;
 
         if (!$idVendedorTiny) {
             return response()->json([
