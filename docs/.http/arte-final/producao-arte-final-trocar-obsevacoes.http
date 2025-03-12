@@ -1,0 +1,9 @@
+### Atualizar status de um pedido de arte final
+PUT http://localhost:8000/api/producao/pedido-obs-change/2
+Content-Type: application/json
+Authorization: Bearer 24|zuBmga302KdqLIOEFT7VCuLeiY4CwteYVzyFtPaq1b4df5f9
+
+{
+  "observacoes": "testando"
+}
+
