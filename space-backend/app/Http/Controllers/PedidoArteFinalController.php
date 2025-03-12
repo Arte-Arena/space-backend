@@ -23,8 +23,8 @@ class PedidoArteFinalController extends Controller
 
         Log::info($request);
 
-        $pedidoId = $request->input('pedido_id');
         $pedidoUserId = Auth::id();
+        $pedidoId = $request->input('pedido_id');
         $pedidoNumero = $request->input('pedido_numero');
         $pedidoPrazoArteFinal = $request->input('prazo_arte_final');
         $pedidoPrazoConfeccao = $request->input('prazo_confeccao');
@@ -48,7 +48,7 @@ class PedidoArteFinalController extends Controller
         // $id_orcamento = $request['id'];
 
         // pega o id do vendedor no nosso banco e relacionar com os ids do tiny por pessoa. 
-        $vendedor = User::where('id', $request['id_vendedor'])->select('id')->first();
+        $vendedor = User::where('id', $pedidoUserId)->select('id')->first();
         $vendedorId = $vendedor ? $vendedor->id : null;
 
         $vendedoresTiny = [
@@ -63,7 +63,7 @@ class PedidoArteFinalController extends Controller
         ];
 
         $idVendedorTiny = $vendedorId !== null ? ($vendedoresTiny[$vendedorId] ?? null) : null;
-
+            
         if (!$idVendedorTiny) {
             return response()->json([
                 'success' => false,
