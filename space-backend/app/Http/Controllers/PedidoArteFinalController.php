@@ -83,6 +83,7 @@ class PedidoArteFinalController extends Controller
 
         $tiny_id = $request->input('tiny_id');
         $pedido = PedidoArteFinal::find($pedidoId);
+        // $pedido = PedidoArteFinal::where('id', $pedidoId)->value('id');
 
         // aqui fica a logica para atualizar ou criar o pedido
         // $id_orcamento = $request['id'];
@@ -167,7 +168,7 @@ class PedidoArteFinalController extends Controller
 
 
         // separação entre update e insert
-        if (!$pedido || !$tiny_id) {
+        if (!$pedido) {
 
             // Coloca no tiny e pega o id e numero de pedido
             if (!empty($tiny)) {
