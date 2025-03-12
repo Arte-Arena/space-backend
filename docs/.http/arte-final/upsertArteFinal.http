@@ -4,7 +4,8 @@ Content-Type: application/json
 Authorization: Bearer 24|zuBmga302KdqLIOEFT7VCuLeiY4CwteYVzyFtPaq1b4df5f9
 
 {
-    "tiny": "709844553",
+    "tiny": "abcde",
+    "tiny_id": "709844553",
     "pedido_id": 1,
     "id_vendedor": 3,
     "pedido_numero": "12345",
