@@ -356,4 +356,15 @@ class PedidoArteFinalController extends Controller
             ];
         }
     }
+
+    public function trocarStatusArteFinal(Request $request ,$id)
+    {
+        $pedido = PedidoArteFinal::find($id);
+        if (!$pedido) {
+            return response()->json(['error' => 'Pedido not found'], 500);
+        }
+        $pedido->pedido_status_id = $request['pedido_status_id'];
+        $pedido->save();
+        return response()->json(['message' => 'Pedido atualizado com sucesso!'], 200);
+    }
 }
