@@ -31,6 +31,13 @@ class PedidoArteFinalController extends Controller
             ], 404);
         }
 
+        $existingPedido = PedidoArteFinal::where('orcamento_id', $orcamentoId)->first();
+        if ($existingPedido) {
+            return response()->json([
+                'pedido' => $existingPedido,
+            ], 200);
+        }
+
         $orcamentoStatus = \App\Models\OrcamentoStatus::where('orcamento_id', $orcamentoId)->first();
         
         if (!$orcamentoStatus) {
@@ -48,7 +55,8 @@ class PedidoArteFinalController extends Controller
             'pedido_tipo_id' => $orcamento->antecipado ? 2 : 1,
             'observacoes' => $orcamento->comentarios,
             'url_trello' => $orcamentoStatus->link_trello,
-            'vendedor_id' => $orcamento->user_id
+            'vendedor_id' => $orcamento->user_id,
+            'data_prevista' => $orcamento->prev_entrega
         ]);
 
         return response()->json([
