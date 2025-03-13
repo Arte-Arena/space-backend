@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Pedido;
 use App\Models\PedidoArteFinal;
 use App\Models\PedidoStatus;
 use App\Models\PedidoTipo;
 use App\Models\User;
+use App\Models\Orcamento;
+use App\Models\OrcamentoStatus;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
@@ -21,8 +24,7 @@ class PedidoArteFinalController extends Controller
 
     public function createPedidoFromBackoffice($orcamentoId)
     {
-        // Find the orcamento
-        $orcamento = \App\Models\Orcamento::find($orcamentoId);
+        $orcamento = Orcamento::find($orcamentoId);
         
         if (!$orcamento) {
             return response()->json([
@@ -31,14 +33,25 @@ class PedidoArteFinalController extends Controller
             ], 404);
         }
 
+        $hasTinyPedidoArteFinal = PedidoArteFinal::where('orcamento_id', $orcamentoId)
+            ->whereNotNull('tiny_pedido_id')
+            ->exists();
+
+        $hasTinyPedido = Pedido::where('orcamento_id', $orcamentoId)
+            ->whereNotNull('tiny_pedido_id')
+            ->exists();
+
+        $hasTinyId = $hasTinyPedidoArteFinal || $hasTinyPedido;
+
         $existingPedido = PedidoArteFinal::where('orcamento_id', $orcamentoId)->first();
         if ($existingPedido) {
             return response()->json([
                 'pedido' => $existingPedido,
+                'blockTiny' => !$hasTinyId
             ], 200);
         }
 
-        $orcamentoStatus = \App\Models\OrcamentoStatus::where('orcamento_id', $orcamentoId)->first();
+        $orcamentoStatus = OrcamentoStatus::where('orcamento_id', $orcamentoId)->first();
         
         if (!$orcamentoStatus) {
             return response()->json([
@@ -60,7 +73,8 @@ class PedidoArteFinalController extends Controller
         ]);
 
         return response()->json([
-            'pedido' => $pedido
+            'pedido' => $pedido,
+            'blockTiny' => !$hasTinyId
         ], 201);
     }
 
