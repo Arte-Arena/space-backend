@@ -233,6 +233,7 @@ class PedidoArteFinalController extends Controller
                 'situacao' => $pedidoSituacao,
                 'prioridade' => $pedidoPrioridade,
                 'data_prevista' => $dataPrevista,
+                'vendedor_id' => $vendedor_id,
                 'orcamento_id' => $orcamento_id ?? null,
                 'tiny_pedido_id' => $idTiny ?? null
             ]);
@@ -279,6 +280,7 @@ class PedidoArteFinalController extends Controller
             $pedido->data_prevista = $dataPrevista;
             $pedido->orcamento_id = $orcamento_id ?? null;
             $pedido->tiny_pedido_id = $tiny_id ?? null; 
+            $pedido->vendedor_id = $vendedor_id;
             $pedido->save();
         }
 
