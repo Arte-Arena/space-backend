@@ -113,7 +113,6 @@ class PedidoArteFinalController extends Controller
         }
 
         $pedido = PedidoArteFinal::find($pedidoId);
-        // $pedido = PedidoArteFinal::where('id', $pedidoId)->value('id');
 
         // aqui fica a logica para atualizar ou criar o pedido
 
