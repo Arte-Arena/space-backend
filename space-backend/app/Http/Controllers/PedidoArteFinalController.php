@@ -16,12 +16,27 @@ use Illuminate\Support\Facades\Log;
 
 class PedidoArteFinalController extends Controller
 {
-    public function getAllPedidosArteFinal()
+    public function getAllPedidosArteFinal(Request $request)
     {
-        // precisa validar caso seja impressao ou desing e ai puxar apenas os que vier pela requisição com um parametro
-        $pedidos = PedidoArteFinal::paginate(50);
+        $query = PedidoArteFinal::query(); // Inicializa a query base
+    
+        // Se houver o parâmetro 'fila', aplica os filtros
+        if ($request->has('fila')) {
+            $fila = $request->query('fila');
+    
+            if ($fila === 'D') {
+                $query->whereBetween('pedido_status_id', [1, 5]);
+            } elseif ($fila === 'I') {
+                $query->whereBetween('pedido_status_id', [8, 15]);
+            }
+        }
+    
+        // Executa a query paginada APÓS aplicar os filtros
+        $pedidos = $query->paginate(50);
+    
         return response()->json($pedidos);
     }
+    
 
     public function createPedidoFromBackoffice($orcamentoId)
     {

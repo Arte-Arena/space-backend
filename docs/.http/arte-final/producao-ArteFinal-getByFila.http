@@ -1,0 +1,4 @@
+### Buscar um pedido de arte final específico
+GET http://localhost:8000/api/producao/get-pedidos-arte-final?fila=D
+Content-Type: application/json
+Authorization: Bearer 33|zPHeQGnx8Pmej2tlPMnHtXC6djg34fD7n0chnUA4f502d628
