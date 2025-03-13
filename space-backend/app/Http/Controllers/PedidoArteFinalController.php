@@ -112,9 +112,8 @@ class PedidoArteFinalController extends Controller
             $tiny_block = 'false';
         }
 
-        $tiny_id = $request->input('tiny_id');
         $pedido = PedidoArteFinal::find($pedidoId);
-        $pedido = PedidoArteFinal::where('id', $pedidoId)->value('id');
+        // $pedido = PedidoArteFinal::where('id', $pedidoId)->value('id');
 
         // aqui fica a logica para atualizar ou criar o pedido
 
@@ -239,6 +238,7 @@ class PedidoArteFinalController extends Controller
             ]);
         } else {
             // fazer o update od tiny
+            $tiny_id = $pedido->tiny_pedido_id;
 
             $updateTiny = [
                 "dados_pedido" => [
