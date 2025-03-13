@@ -112,9 +112,7 @@ class PedidoArteFinalController extends Controller
             $tiny_block = 'false';
         }
 
-        $tiny_id = $request->input('tiny_id');
         $pedido = PedidoArteFinal::find($pedidoId);
-        $pedido = PedidoArteFinal::where('id', $pedidoId)->value('id');
 
         // aqui fica a logica para atualizar ou criar o pedido
 
@@ -234,11 +232,13 @@ class PedidoArteFinalController extends Controller
                 'situacao' => $pedidoSituacao,
                 'prioridade' => $pedidoPrioridade,
                 'data_prevista' => $dataPrevista,
+                'vendedor_id' => $vendedor_id,
                 'orcamento_id' => $orcamento_id ?? null,
                 'tiny_pedido_id' => $idTiny ?? null
             ]);
         } else {
             // fazer o update od tiny
+            $tiny_id = $pedido->tiny_pedido_id;
 
             $updateTiny = [
                 "dados_pedido" => [
@@ -279,6 +279,7 @@ class PedidoArteFinalController extends Controller
             $pedido->data_prevista = $dataPrevista;
             $pedido->orcamento_id = $orcamento_id ?? null;
             $pedido->tiny_pedido_id = $tiny_id ?? null; 
+            $pedido->vendedor_id = $vendedor_id;
             $pedido->save();
         }
 
