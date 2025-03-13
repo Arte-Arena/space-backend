@@ -368,7 +368,6 @@ class PedidoArteFinalController extends Controller
     {
         $apiUrl = 'https://api.tiny.com.br/api2/pedido.alterar.php';
         $token = env('TINY_TOKEN');
-        $id = $idTiny;
 
 
         $url = $apiUrl . '?token=' . urlencode($token) . '&id=' . urlencode($idTiny);

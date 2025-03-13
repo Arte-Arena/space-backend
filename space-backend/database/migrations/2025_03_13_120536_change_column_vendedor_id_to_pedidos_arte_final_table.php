@@ -12,8 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('pedidos_arte_final', function (Blueprint $table) {
-            $table->foreignId('vendedor_id')->nullable()->constrained('users')->onDelete('cascade');
+            $table->dropForeign(['vendedor_id']);
+            $table->dropColumn('vendedor_id');
         });
+        
+        Schema::table('pedidos_arte_final', function (Blueprint $table) {
+            $table->foreignId('vendedor_id')->nullable()->constrained('users')->onDelete('cascade')->unique();
+        });
+        
     }
 
     /**
@@ -22,7 +28,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('pedidos_arte_final', function (Blueprint $table) {
-            $table->dropForeign(['vendedor_id']);
+            $table->dropUnique(['vendedor_id']);
+            $table->dropColumn('vendedor_id');
         });
     }
 };
