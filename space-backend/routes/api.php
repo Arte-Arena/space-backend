@@ -29,7 +29,8 @@ use App\Http\Controllers\{
     ProdutoCategoriaController,
     MercadoPagoController,
     UserRoleController,
-    BancoInterController
+    BancoInterController,
+    PedidosArteFinalUniformesController
 };
 
 Route::post('/login', [AuthController::class, 'login']);
@@ -44,6 +45,9 @@ Route::post('/encurtador-link/resolve/{code}', [LinkController::class, 'resolve'
 Route::put('/super-admin/upsert-backup', [BackupController::class, 'upsertBackup']);
 Route::get('/orcamento/uniformes/{orcamento_id}', [OrcamentosUniformesController::class, 'getUniforms']);
 Route::put('/orcamento/uniformes/{id}/configuracoes', [OrcamentosUniformesController::class, 'updateConfiguracoes']);
+
+Route::get('/producao/pedido-arte-final/uniformes/{arteFinalId}', [PedidosArteFinalUniformesController::class, 'getUniformes']);
+Route::put('/producao/pedido-arte-final/uniformes/{id}/configuracoes', [PedidosArteFinalUniformesController::class, 'updateConfiguracoes']);
 
 Route::post('/webhooks/mercadopago', [MercadoPagoController::class, 'webhook']);
 Route::post('/webhooks/bancointer', [BancoInterController::class, 'webhook']);
@@ -170,6 +174,7 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,de
     Route::delete('/producao/delete-pedido-arte-final/{id}', [PedidoArteFinalController::class, 'deletePedidoArteFinal']);
     // Route::get('/vendas/orcamentos-por-entrega', [VendasController::class, 'getQuantidadeOrcamentosEntrega']);
 
+    Route::get('/producao/pedido-arte-final/{arteFinalId}/verificar-uniformes', [PedidosArteFinalUniformesController::class, 'verificarUniformes']);
 });
 
 Route::middleware(['auth:sanctum', 'role:super-admin,admin,comercial,designer,producao'])->group(function () {
@@ -181,5 +186,3 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,comercial,designer,pr
     Route::get('/calendar/feriados-ano-mes', [CalendarEventController::class, 'getHolidaysByMonthAndYear']);
 
 });
-
-
