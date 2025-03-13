@@ -28,7 +28,8 @@ use App\Http\Controllers\{
     PedidoArteFinalController,
     ProdutoCategoriaController,
     MercadoPagoController,
-    UserRoleController
+    UserRoleController,
+    BancoInterController
 };
 
 Route::post('/login', [AuthController::class, 'login']);
@@ -43,6 +44,9 @@ Route::post('/encurtador-link/resolve/{code}', [LinkController::class, 'resolve'
 Route::put('/super-admin/upsert-backup', [BackupController::class, 'upsertBackup']);
 Route::get('/orcamento/uniformes/{orcamento_id}', [OrcamentosUniformesController::class, 'getUniforms']);
 Route::put('/orcamento/uniformes/{id}/configuracoes', [OrcamentosUniformesController::class, 'updateConfiguracoes']);
+
+Route::post('/webhooks/mercadopago', [MercadoPagoController::class, 'webhook']);
+Route::post('/webhooks/bancointer', [BancoInterController::class, 'webhook']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/validate-token', [AuthController::class, 'validateToken']);
@@ -143,6 +147,7 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,de
     Route::get('/vendas/orcamentos-por-status-todos', [VendasController::class, 'getOrcamentosPorStatusTodos']);
     Route::get('/vendas/orcamentos-por-dia-filtered', [VendasController::class, 'getFilteredOrcamentosPorDia']);
     Route::get('/vendas/orcamentos-user-names', [VendasController::class, 'getUsersForFilter']);
+    Route::get('/vendas/pedido-total', [VendasController::class, 'getTotalOrcamentoPedido']);
     Route::put('/orcamentos/{orcamento_id}/status', [OrcamentoController::class, 'upsertOrcamentoStatus']);
     Route::put('/orcamentos/orcamentos-status-change-aprovado/{id}', [OrcamentoController::class, 'OrcamentoStatusChangeAprovado']);
     Route::put('/orcamentos/orcamentos-status-change-desaprovado/{id}', [OrcamentoController::class, 'OrcamentoStatusChangeDesaprovado']);
@@ -152,14 +157,15 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,de
     Route::post('/orcamento/uniformes', [OrcamentosUniformesController::class, 'store']);
     Route::get('/pedidos/get-pedido-orcamento/{id}', [PedidoController::class, 'getPedidoOrcamento']);
     Route::get('/pedidos/get-pedidos', [PedidoController::class, 'getAllPedidos']);
+    Route::get('/orcamento/backoffice/get-pedido-cadastro', [PedidoController::class, 'getPedidoCadastro']);
     Route::put('/pedidos/pedido-envio-recebimento-aprovado/{id}', [PedidoController::class, 'pedidoStatusChangeAprovadoEntrega']);
     Route::post('/orcamento/backoffice/pedido-cadastro', [PedidoController::class, 'createPedidoTiny']);
-    Route::get('/orcamento/backoffice/get-pedido-cadastro', [PedidoController::class, 'getPedidoCadastro']);
     Route::get('/producao/get-pedidos-arte-final', [PedidoArteFinalController::class, 'getAllPedidosArteFinal']);
     Route::get('/producao/pedido-arte-final/{id}', [PedidoArteFinalController::class, 'getPedidoArteFinal']);
+    Route::get('/producao/get-pedido-status', [PedidoArteFinalController::class, 'getAllStatusPedido']);
+    Route::get('/producao/get-pedido-tipos', [PedidoArteFinalController::class, 'getAllTiposPedido']);
     Route::put('/producao/pedido-arte-final', [PedidoArteFinalController::class, 'upsertPedidoArteFinal']);
-    Route::get('/vendas/pedido-total', [VendasController::class, 'getTotalOrcamentoPedido']);
-    // 
+    Route::put('/producao/pedido-designer-change/{id}', [PedidoArteFinalController::class, 'atribuirDesigner']);
     // Route::get('/vendas/orcamentos-por-entrega', [VendasController::class, 'getQuantidadeOrcamentosEntrega']);
 
 });
