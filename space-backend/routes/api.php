@@ -165,6 +165,7 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,de
     Route::put('/pedidos/pedido-envio-recebimento-aprovado/{id}', [PedidoController::class, 'pedidoStatusChangeAprovadoEntrega']);
     Route::post('/orcamento/backoffice/pedido-cadastro', [PedidoController::class, 'createPedidoTiny']);
     Route::get('/producao/get-pedidos-arte-final', [PedidoArteFinalController::class, 'getAllPedidosArteFinal']);
+    Route::post('/producao/pedido-arte-final/from-backoffice/{orcamentoId}', [PedidoArteFinalController::class, 'createPedidoFromBackoffice']);
     Route::get('/producao/pedido-arte-final/{id}', [PedidoArteFinalController::class, 'getPedidoArteFinal']);
     Route::get('/producao/get-pedido-status', [PedidoArteFinalController::class, 'getAllStatusPedido']);
     Route::get('/producao/get-pedido-tipos', [PedidoArteFinalController::class, 'getAllTiposPedido']);
