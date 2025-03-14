@@ -34,7 +34,7 @@ class PedidoArteFinalController extends Controller
         $query->orderBy('data_prevista', 'asc');
     
         // Executa a query paginada APÓS aplicar os filtros
-        $pedidos = $query->paginate(50);
+        $pedidos = $query->paginate(170);
     
         return response()->json($pedidos);
     }
