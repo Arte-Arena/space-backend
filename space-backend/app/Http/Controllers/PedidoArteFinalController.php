@@ -503,5 +503,29 @@ class PedidoArteFinalController extends Controller
         return response()->json(['message' => 'Pedido atualizado com sucesso!'], 200);
     }
 
+    public function trocarMediaLinear(Request $request, $id)
+    {
+        $pedido = PedidoArteFinal::find($id);
+        if (!$pedido) {
+            return response()->json(['error' => 'Pedido not found'], 500);
+        }
+        
+        $pedido->lista_produtos;
+        $lista_produtos = json_decode($pedido->lista_produtos, true);
+        
+        foreach ($lista_produtos as $key => $value) {
+            if (isset($value['uid']) && $value['uid'] == $request['uid']) {
+                $lista_produtos[$key]['media_linear'] = $request['media_linear'];
+            }
+            if (!isset($value['media_linear']) && $value['uid'] == $request['uid']) {
+                $lista_produtos[$key]['media_linear'] = $request['media_linear'];
+            }
+        }
+
+        $pedido->lista_produtos = json_encode($lista_produtos);
+        $pedido->save();
+        
+        return response()->json(['message' => 'Pedido atualizado com sucesso!'], 200);
+    }
 
 }
