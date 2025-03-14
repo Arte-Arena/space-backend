@@ -30,6 +30,8 @@ class PedidoArteFinalController extends Controller
                 $query->whereBetween('pedido_status_id', [8, 15]);
             }
         }
+
+        $query->orderBy('data_prevista', 'asc');
     
         // Executa a query paginada APÓS aplicar os filtros
         $pedidos = $query->paginate(50);
