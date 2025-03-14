@@ -41,7 +41,7 @@ class PedidoArteFinalController extends Controller
             }
         }
 
-        $query->orderBy('created_at', 'asc');
+        $query->orderBy('data_prevista', 'asc');
         // $query->orderBy('data_prevista', 'asc');
     
         // Executa a query paginada APÓS aplicar os filtros
