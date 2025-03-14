@@ -37,7 +37,9 @@ class PedidoArteFinalController extends Controller
             if ($fila === 'D') {
                 $query->where('estagio', 'D');
             } elseif ($fila === 'I') {
-                $query->whereIn('estagio', ['I', 'C']); // Correto: busca registros onde estagio seja "I" ou "C"
+                $query->where('estagio', 'I'); // Correto: busca registros onde estagio seja "I" ou "C"
+            } elseif ($fila === 'C') {
+                $query->where('estagio', 'C');
             }
         }
 
