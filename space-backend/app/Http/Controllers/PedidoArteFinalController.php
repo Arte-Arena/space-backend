@@ -469,9 +469,25 @@ class PedidoArteFinalController extends Controller
     {
         $pedido = PedidoArteFinal::find($id);
         if (!$pedido) {
-            return response()->json(['error' => 'Pedido not found'], 500);
+            return response()->json(['error' => 'Pedido not found'], 400);
         }
+
+        if ($request['pedido_status_id'] >= 1 && $request['pedido_status_id'] <= 7) {
+            $pedido->estagio = 'D';
+        }
+        
+
+        if ($request['pedido_status_id'] >= 8 && $request['pedido_status_id'] <= 10) {
+            $pedido->estagio = 'I';
+        }
+        
+        // colocar pra entrega caso seja maior que X
+        if ($request['pedido_status_id'] >10) {
+            $pedido->estagio = 'C';
+        }
+
         $pedido->pedido_status_id = $request['pedido_status_id'];
+
         $pedido->save();
         return response()->json(['message' => 'Pedido atualizado com sucesso!'], 200);
     }
