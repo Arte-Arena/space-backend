@@ -21,17 +21,28 @@ class PedidoArteFinalController extends Controller
         $query = PedidoArteFinal::query(); // Inicializa a query base
     
         // Se houver o parâmetro 'fila', aplica os filtros
+        // if ($request->has('fila')) {
+        //     $fila = $request->query('fila');
+    
+        //     if ($fila === 'D') {
+        //         $query->whereBetween('pedido_status_id', [1, 7]);
+        //     } elseif ($fila === 'I') {
+        //         $query->whereBetween('pedido_status_id', [8, 18]);
+        //     }
+        // }
+
         if ($request->has('fila')) {
             $fila = $request->query('fila');
     
             if ($fila === 'D') {
-                $query->whereBetween('pedido_status_id', [1, 5]);
+                $query->where('estagio', 'D');
             } elseif ($fila === 'I') {
-                $query->whereBetween('pedido_status_id', [8, 15]);
+                $query->whereIn('estagio', ['I', 'C']); // Correto: busca registros onde estagio seja "I" ou "C"
             }
         }
 
-        $query->orderBy('data_prevista', 'asc');
+        $query->orderBy('created_at', 'asc');
+        // $query->orderBy('data_prevista', 'asc');
     
         // Executa a query paginada APÓS aplicar os filtros
         $pedidos = $query->paginate(170);
