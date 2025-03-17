@@ -126,7 +126,7 @@ class PedidoArteFinalController extends Controller
         $pedidoDesignerId = $request->input('pedido_designer_id');
         $pedidoStatusId = $request->input('pedido_status_id');
         $pedidoTipoId = $request->input('pedido_tipo_id');
-        $pedidoEstagio = $request->input('pedido_estagio');
+        $pedidoEstagio = $request->input('pedido_estagio') ?? 'D';
         $pedidoUrlTrello = $request->input('pedido_url_trello');
         $pedidoSituacao = $request->input('pedido_situacao');
         $pedidoPrioridade = $request->input('pedido_prioridade');
@@ -479,12 +479,12 @@ class PedidoArteFinalController extends Controller
         }
         
 
-        if ($request['pedido_status_id'] >= 8 && $request['pedido_status_id'] <= 10) {
+        if ($request['pedido_status_id'] >= 8 && $request['pedido_status_id'] <= 13) {
             $pedido->estagio = 'I';
         }
         
         // colocar pra entrega caso seja maior que X
-        if ($request['pedido_status_id'] >10) {
+        if ($request['pedido_status_id'] >15) {
             $pedido->estagio = 'C';
         }
 
