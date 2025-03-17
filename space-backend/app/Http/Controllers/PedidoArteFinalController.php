@@ -19,11 +19,11 @@ class PedidoArteFinalController extends Controller
     public function getAllPedidosArteFinal(Request $request)
     {
         $query = PedidoArteFinal::query(); // Inicializa a query base
-    
+
         // Se houver o parâmetro 'fila', aplica os filtros
         // if ($request->has('fila')) {
         //     $fila = $request->query('fila');
-    
+
         //     if ($fila === 'D') {
         //         $query->whereBetween('pedido_status_id', [1, 7]);
         //     } elseif ($fila === 'I') {
@@ -33,7 +33,7 @@ class PedidoArteFinalController extends Controller
 
         if ($request->has('fila')) {
             $fila = $request->query('fila');
-    
+
             if ($fila === 'D') {
                 $query->where('estagio', 'D');
             } elseif ($fila === 'I') {
@@ -45,18 +45,18 @@ class PedidoArteFinalController extends Controller
 
         $query->orderBy('data_prevista', 'asc');
         // $query->orderBy('data_prevista', 'asc');
-    
+
         // Executa a query paginada APÓS aplicar os filtros
         $pedidos = $query->paginate(170);
-    
+
         return response()->json($pedidos);
     }
-    
+
 
     public function createPedidoFromBackoffice($orcamentoId)
     {
         $orcamento = Orcamento::find($orcamentoId);
-        
+
         if (!$orcamento) {
             return response()->json([
                 'success' => false,
@@ -83,7 +83,7 @@ class PedidoArteFinalController extends Controller
         }
 
         $orcamentoStatus = OrcamentoStatus::where('orcamento_id', $orcamentoId)->first();
-        
+
         if (!$orcamentoStatus) {
             return response()->json([
                 'success' => false,
@@ -136,9 +136,9 @@ class PedidoArteFinalController extends Controller
         $tiny_block = filter_var($request->input('block_tiny'), FILTER_VALIDATE_BOOLEAN);
 
         Log::info($tiny_block ? 'true' : 'false');
-        if($tiny_block){
+        if ($tiny_block) {
             $tiny_block = 'true';
-        }else{
+        } else {
             $tiny_block = 'false';
         }
 
@@ -229,7 +229,7 @@ class PedidoArteFinalController extends Controller
 
             // Coloca no tiny e pega o id e numero de pedido
             if ($tiny_block == 'false') {
-                Log::info('PASSOU NO INSTERT TINY');    
+                Log::info('PASSOU NO INSTERT TINY');
                 $resultadoApi = $this->inserirTiny($pedidoTiny);
 
                 if ($resultadoApi['status'] == 'erro') {
@@ -241,7 +241,7 @@ class PedidoArteFinalController extends Controller
                 }
 
                 Log::info('Resultado da API Tiny:', $resultadoApi);
-                
+
                 $idTiny = $resultadoApi['idTiny'];
                 $numero = $resultadoApi['numero'];
             }
@@ -308,7 +308,7 @@ class PedidoArteFinalController extends Controller
             $pedido->prioridade = $pedidoPrioridade;
             $pedido->data_prevista = $dataPrevista;
             $pedido->orcamento_id = $orcamento_id ?? null;
-            $pedido->tiny_pedido_id = $tiny_id ?? null; 
+            $pedido->tiny_pedido_id = $tiny_id ?? null;
             $pedido->vendedor_id = $vendedor_id;
             $pedido->save();
         }
@@ -477,14 +477,14 @@ class PedidoArteFinalController extends Controller
         if ($request['pedido_status_id'] >= 1 && $request['pedido_status_id'] <= 7) {
             $pedido->estagio = 'D';
         }
-        
+
 
         if ($request['pedido_status_id'] >= 8 && $request['pedido_status_id'] <= 13) {
             $pedido->estagio = 'I';
         }
-        
+
         // colocar pra entrega caso seja maior que X
-        if ($request['pedido_status_id'] >15) {
+        if ($request['pedido_status_id'] > 13) {
             $pedido->estagio = 'C';
         }
 
@@ -507,27 +507,43 @@ class PedidoArteFinalController extends Controller
 
     public function trocarMediaLinear(Request $request, $id)
     {
+        // Encontra o pedido pelo ID
         $pedido = PedidoArteFinal::find($id);
         if (!$pedido) {
             return response()->json(['error' => 'Pedido not found'], 500);
         }
-        
-        $pedido->lista_produtos;
+
+        // Decodifica o JSON da lista de produtos
         $lista_produtos = json_decode($pedido->lista_produtos, true);
-        
+
+        // Itera sobre a lista de produtos
         foreach ($lista_produtos as $key => $value) {
+            // Verifica se o UID corresponde ao UID da requisição
             if (isset($value['uid']) && $value['uid'] == $request['uid']) {
-                $lista_produtos[$key]['media_linear'] = $request['media_linear'];
+                // Se o campo 'media_linear' não existir, cria-o com o valor da requisição
+                if (!isset($value['media_linear'])) {
+                    $lista_produtos[$key]['media_linear'] = $request['media_linear'];
+                } else {
+                    // Se existir, atualiza o valor
+                    $lista_produtos[$key]['media_linear'] = $request['media_linear'];
+                }
             }
-            if (!isset($value['media_linear']) && $value['uid'] == $request['uid']) {
-                $lista_produtos[$key]['media_linear'] = $request['media_linear'];
+            else{
+                // Se o campo 'media_linear' não existir, cria-o com o valor da requisição
+                if (!isset($value['media_linear'])) {
+                    $lista_produtos[$key]['media_linear'] = $request['media_linear'];
+                } else {
+                    // Se existir, atualiza o valor
+                    $lista_produtos[$key]['media_linear'] = $request['media_linear'];
+                }
             }
         }
 
+        // Atualiza o campo lista_produtos no pedido
         $pedido->lista_produtos = json_encode($lista_produtos);
         $pedido->save();
-        
+
+        // Retorna uma resposta de sucesso
         return response()->json(['message' => 'Pedido atualizado com sucesso!'], 200);
     }
-
 }
