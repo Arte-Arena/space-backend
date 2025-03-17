@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\PedidoStatus;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class PedidoStatusSeeder extends Seeder
 {
@@ -12,6 +13,16 @@ class PedidoStatusSeeder extends Seeder
      */
     public function run(): void
     {
+
+        // Desativa as verificações de chave estrangeira
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+
+        // Trunca a tabela
+        DB::table('pedidos_status')->truncate();
+
+        // Reativa as verificações de chave estrangeira
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+
         $statusDesign = [
             'Pendente',
             'Em andamento',
@@ -45,15 +56,21 @@ class PedidoStatusSeeder extends Seeder
             ]);
         }
 
-        $statusEntrega = [
-            'Em Transporte',
-            'Entregue',
+        $statusConfeccao = [
+            'prensa/clandra',
+            'checagem',
+            'corte/preparaçao',
+            'prateleriera/pendente',
+            'costura/confeccao',
+            'conferencia final',
+            'finalizado',
+            'reposição',
         ];
 
-        for ($i = 0; $i < count($statusEntrega); $i++) {
+        for ($i = 0; $i < count($statusConfeccao); $i++) {
             PedidoStatus::create([
-                'nome'  => $statusProduction[$i],
-                'fila' => 'E',
+                'nome'  => $statusConfeccao[$i],
+                'fila' => 'C',
             ]);
         }
     }
