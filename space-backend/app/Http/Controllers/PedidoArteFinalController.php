@@ -513,28 +513,37 @@ class PedidoArteFinalController extends Controller
             return response()->json(['error' => 'Pedido not found'], 500);
         }
 
+        Log::info('request: ', $request->all());
+        // Log::info('pedido lista: ', $pedido->lista_produtos);
+        Log::info('Conteúdo de lista_produtos: ', ['lista_produtos' => $pedido->lista_produtos]);
+
+
         // Decodifica o JSON da lista de produtos
-        $lista_produtos = json_decode($pedido->lista_produtos, true);
+        $lista_produtos = is_string($pedido->lista_produtos)
+            ? json_decode($pedido->lista_produtos, true)
+            : $pedido->lista_produtos;
+
+        Log::info('Tipo de lista_produtos: ' . gettype($pedido->lista_produtos));
+        Log::info('Conteúdo de lista_produtos: ', ['lista_produtos' => $pedido->lista_produtos]);
 
         // Itera sobre a lista de produtos
         foreach ($lista_produtos as $key => $value) {
             // Verifica se o UID corresponde ao UID da requisição
             if (isset($value['uid']) && $value['uid'] == $request['uid']) {
                 // Se o campo 'media_linear' não existir, cria-o com o valor da requisição
-                if (!isset($value['media_linear'])) {
-                    $lista_produtos[$key]['media_linear'] = $request['media_linear'];
+                if (!isset($value['medida_linear'])) {
+                    $lista_produtos[$key]['medida_linear'] = $request['medida_linear'];
                 } else {
                     // Se existir, atualiza o valor
-                    $lista_produtos[$key]['media_linear'] = $request['media_linear'];
+                    $lista_produtos[$key]['medida_linear'] = $request['medida_linear'];
                 }
-            }
-            else{
-                // Se o campo 'media_linear' não existir, cria-o com o valor da requisição
-                if (!isset($value['media_linear'])) {
-                    $lista_produtos[$key]['media_linear'] = $request['media_linear'];
+            } else {
+                // Se o campo 'medida_linear' não existir, cria-o com o valor da requisição
+                if (!isset($value['medida_linear'])) {
+                    $lista_produtos[$key]['medida_linear'] = $request['medida_linear'];
                 } else {
                     // Se existir, atualiza o valor
-                    $lista_produtos[$key]['media_linear'] = $request['media_linear'];
+                    $lista_produtos[$key]['medida_linear'] = $request['medida_linear'];
                 }
             }
         }
