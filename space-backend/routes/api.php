@@ -173,6 +173,7 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,de
     Route::put('/producao/pedido-designer-change/{id}', [PedidoArteFinalController::class, 'atribuirDesigner']);
     Route::put('/producao/pedido-status-change/{id}', [PedidoArteFinalController::class, 'trocarStatusArteFinal']);
     Route::put('/producao/pedido-media-change/{id}', [PedidoArteFinalController::class, 'trocarMediaLinear']);
+    Route::put('/producao/pedido-obs-change/{id}', [PedidoArteFinalController::class, 'trocarObsArteFinal']);
     Route::delete('/producao/delete-pedido-arte-final/{id}', [PedidoArteFinalController::class, 'deletePedidoArteFinal']);
     // Route::get('/vendas/orcamentos-por-entrega', [VendasController::class, 'getQuantidadeOrcamentosEntrega']);
 
