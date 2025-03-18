@@ -18,18 +18,7 @@ class PedidoArteFinalController extends Controller
 {
     public function getAllPedidosArteFinal(Request $request)
     {
-        $query = PedidoArteFinal::query(); // Inicializa a query base
-
-        // Se houver o parâmetro 'fila', aplica os filtros
-        // if ($request->has('fila')) {
-        //     $fila = $request->query('fila');
-
-        //     if ($fila === 'D') {
-        //         $query->whereBetween('pedido_status_id', [1, 7]);
-        //     } elseif ($fila === 'I') {
-        //         $query->whereBetween('pedido_status_id', [8, 18]);
-        //     }
-        // }
+        $query = PedidoArteFinal::query()->whereNotNull('numero_pedido'); // Inicializa a query base
 
         if ($request->has('fila')) {
             $fila = $request->query('fila');
@@ -47,7 +36,7 @@ class PedidoArteFinalController extends Controller
         // $query->orderBy('data_prevista', 'asc');
 
         // Executa a query paginada APÓS aplicar os filtros
-        $pedidos = $query->paginate(170);
+        $pedidos = $query->paginate(200);
 
         return response()->json($pedidos);
     }
@@ -313,7 +302,7 @@ class PedidoArteFinalController extends Controller
             $pedido->save();
         }
 
-        return response()->json(['message' => 'Pedido atualizado ou criado com sucesso!', 'conta' => $pedido], 200);
+        return response()->json(['message' => 'Pedido atualizado ou criado com sucesso!', 'pedido' => $pedido], 200);
     }
 
     public function getPedidoArteFinal($id)
