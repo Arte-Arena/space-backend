@@ -25,6 +25,9 @@ class DatabaseSeeder extends Seeder
             ConfigSeeder::class,
             ContaSeeder::class,
             ContaRecorrenteSeeder::class,
+            ProdutosBandeirasOficiaisSeeder::class,
+            ProdutosPersonalizadosSeeder::class,
+            CrmClientesSeeder::class,
         ]);
 
     }
