@@ -18,18 +18,7 @@ class PedidoArteFinalController extends Controller
 {
     public function getAllPedidosArteFinal(Request $request)
     {
-        $query = PedidoArteFinal::query(); // Inicializa a query base
-
-        // Se houver o parâmetro 'fila', aplica os filtros
-        // if ($request->has('fila')) {
-        //     $fila = $request->query('fila');
-
-        //     if ($fila === 'D') {
-        //         $query->whereBetween('pedido_status_id', [1, 7]);
-        //     } elseif ($fila === 'I') {
-        //         $query->whereBetween('pedido_status_id', [8, 18]);
-        //     }
-        // }
+        $query = PedidoArteFinal::query()->whereNotNull('numero_pedido'); // Inicializa a query base
 
         if ($request->has('fila')) {
             $fila = $request->query('fila');
@@ -47,7 +36,7 @@ class PedidoArteFinalController extends Controller
         // $query->orderBy('data_prevista', 'asc');
 
         // Executa a query paginada APÓS aplicar os filtros
-        $pedidos = $query->paginate(170);
+        $pedidos = $query->paginate(200);
 
         return response()->json($pedidos);
     }
@@ -313,7 +302,7 @@ class PedidoArteFinalController extends Controller
             $pedido->save();
         }
 
-        return response()->json(['message' => 'Pedido atualizado ou criado com sucesso!', 'conta' => $pedido], 200);
+        return response()->json(['message' => 'Pedido atualizado ou criado com sucesso!', 'pedido' => $pedido], 200);
     }
 
     public function getPedidoArteFinal($id)
@@ -507,40 +496,56 @@ class PedidoArteFinalController extends Controller
 
     public function trocarMediaLinear(Request $request, $id)
     {
+        // o input recebido tem que ser um array dependendo de quantos produtos tenha e iterar por cada um dos que tem ID
         // Encontra o pedido pelo ID
         $pedido = PedidoArteFinal::find($id);
         if (!$pedido) {
             return response()->json(['error' => 'Pedido not found'], 500);
         }
 
+        Log::info('request: ', $request->all());
+        // Log::info('pedido lista: ', $pedido->lista_produtos);
+        Log::info('Conteúdo de lista_produtos: ', ['lista_produtos' => $pedido->lista_produtos]);
+
         // Decodifica o JSON da lista de produtos
-        $lista_produtos = json_decode($pedido->lista_produtos, true);
+        $lista_produtos = is_string($pedido->lista_produtos)
+            ? json_decode($pedido->lista_produtos, true)
+            : $pedido->lista_produtos;
+
+        Log::info('Tipo de lista_produtos: ' . gettype($pedido->lista_produtos));
+        Log::info('Conteúdo de lista_produtos: ', ['lista_produtos' => $pedido->lista_produtos]);
 
         // Itera sobre a lista de produtos
         foreach ($lista_produtos as $key => $value) {
             // Verifica se o UID corresponde ao UID da requisição
-            if (isset($value['uid']) && $value['uid'] == $request['uid']) {
-                // Se o campo 'media_linear' não existir, cria-o com o valor da requisição
-                if (!isset($value['media_linear'])) {
-                    $lista_produtos[$key]['media_linear'] = $request['media_linear'];
-                } else {
-                    // Se existir, atualiza o valor
-                    $lista_produtos[$key]['media_linear'] = $request['media_linear'];
+            if ($request->has('uid') && !is_null($request->uid)) {
+                foreach ($lista_produtos as &$produto) {
+                    if (isset($produto['uid']) && $produto['uid'] == $request->uid) {
+                        $produto['medida_linear'] = $request->medida_linear;
+                    }
                 }
             }
-            else{
-                // Se o campo 'media_linear' não existir, cria-o com o valor da requisição
-                if (!isset($value['media_linear'])) {
-                    $lista_produtos[$key]['media_linear'] = $request['media_linear'];
-                } else {
-                    // Se existir, atualiza o valor
-                    $lista_produtos[$key]['media_linear'] = $request['media_linear'];
+            // Se não há UID, verificamos se o campo medida_linear existe para o produto
+            elseif (!isset($produto['medida_linear']) && is_null($request->uid)) {
+                foreach ($lista_produtos as &$produto) {
+                    if (!isset($produto['medida_linear'])) {
+                        $produto['medida_linear'] = $request->medida_linear;
+                    }
                 }
+            }
+            elseif (isset($produto['medida_linear']) && is_null($request->uid)) { // não esta atualizando o campo de medida linear 
+                // foreach ($lista_produtos as &$produto) {
+                // }
+                $produto['medida_linear'] = $request->medida_linear;
+            } 
+            else {
+                Log::warning('Nenhum UID fornecido, atualização ignorada.');
+                return response()->json(['error' => 'UID inválido'], 400);
             }
         }
 
         // Atualiza o campo lista_produtos no pedido
-        $pedido->lista_produtos = json_encode($lista_produtos);
+        $pedido->lista_produtos = $lista_produtos;
         $pedido->save();
 
         // Retorna uma resposta de sucesso

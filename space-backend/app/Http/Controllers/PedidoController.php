@@ -166,9 +166,11 @@ class PedidoController extends Controller
                 'user_id' => $vendedor->id,
                 'orcamento_id' => $id_orcamento,
                 'numero_pedido' => $numero,
+                'tiny_pedido_id' => $idTiny,
                 'orcamento_id' => $id_orcamento,
                 'pedido_situacao' => "Aberto",
-                // 'lista_produtos' => $itens,
+                'estagio' => 'D'
+                // 'lista_produtos' => $request['lista_produtos'],
                 // 'pedido_situacao' => "Cancelado",
             ]);
 
