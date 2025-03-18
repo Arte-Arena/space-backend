@@ -467,16 +467,20 @@ class PedidoArteFinalController extends Controller
             $pedido->estagio = 'D';
         }
 
-
         if ($request['pedido_status_id'] >= 8 && $request['pedido_status_id'] <= 13) {
             $pedido->estagio = 'I';
         }
 
         // colocar pra entrega caso seja maior que X
-        if ($request['pedido_status_id'] > 13) {
+        if ($request['pedido_status_id'] >= 14 && $request['pedido_status_id'] <= 21) {
             $pedido->estagio = 'C';
         }
+        
+        if ($request['pedido_status_id'] > 21 && $request['pedido_status_id'] <= 26) {
+            $pedido->estagio = 'E';
+        }
 
+        
         $pedido->pedido_status_id = $request['pedido_status_id'];
 
         $pedido->save();
@@ -503,6 +507,7 @@ class PedidoArteFinalController extends Controller
             return response()->json(['error' => 'Pedido not found'], 500);
         }
 
+        Log::info('request id: ', ['id' => $id]);
         Log::info('request: ', $request->all());
         // Log::info('pedido lista: ', $pedido->lista_produtos);
         Log::info('Conteúdo de lista_produtos: ', ['lista_produtos' => $pedido->lista_produtos]);
@@ -534,9 +539,9 @@ class PedidoArteFinalController extends Controller
                 }
             }
             elseif (isset($produto['medida_linear']) && is_null($request->uid)) { // não esta atualizando o campo de medida linear 
-                // foreach ($lista_produtos as &$produto) {
-                // }
-                $produto['medida_linear'] = $request->medida_linear;
+                foreach ($lista_produtos as &$produto) {
+                    $produto['medida_linear'] = $request->medida_linear;
+                }
             } 
             else {
                 Log::warning('Nenhum UID fornecido, atualização ignorada.');
@@ -549,6 +554,7 @@ class PedidoArteFinalController extends Controller
         $pedido->save();
 
         // Retorna uma resposta de sucesso
+        // Log::info('message: ', ['sucesso' => $request->medida_linear]);
         return response()->json(['message' => 'Pedido atualizado com sucesso!'], 200);
     }
 }
