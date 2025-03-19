@@ -202,8 +202,8 @@ class PedidoArteFinalController extends Controller
                 "data_pedido" => date('d/m/Y'),
                 "parcelas" => [],
                 "outras_despesas" => $request['taxa_antecipa'],
-                // "situacao" => "aberto",
-                "situacao" => "cancelado",
+                "situacao" => "aberto",
+                // "situacao" => "cancelado",
                 "nome_transportador" => $request['transportadora'],
                 "intermediador" => [
                     "nome" => "",
