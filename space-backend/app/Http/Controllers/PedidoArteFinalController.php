@@ -255,54 +255,57 @@ class PedidoArteFinalController extends Controller
                 'orcamento_id' => $orcamento_id ?? null,
                 'tiny_pedido_id' => $idTiny ?? null
             ]);
-        } else {
-            // fazer o update od tiny
-            $tiny_id = $pedido->tiny_pedido_id;
 
-            $updateTiny = [
-                "dados_pedido" => [
-                    // "data_prevista" => $dataPrevista,  
-                    // "data_envio" => "05/02/2022 08:00:00",  
-                    "obs" => $observacao,
-                    // "obs_interna" => "observacao interna teste api",
-                ]
-            ];
-
-            if ($tiny_block == 'false') {
-
-                $resultadoApi = $this->updateTiny($updateTiny, $tiny_id);
-
-                if ($resultadoApi['status'] == 'erro') {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Erro ao criar pedido na API Tiny: ' . $resultadoApi['mensagem']
-                    ], 400);
-                }
-            }
-
-            // Corrigindo nomes de campos e adicionando campos faltantes
-            $pedido->user_id = $pedidoUserId;
-            $pedido->numero_pedido = $pedidoNumero ?? null;
-            $pedido->prazo_confeccao = $pedidoPrazoConfeccao;
-            $pedido->prazo_arte_final = $pedidoPrazoArteFinal;
-            $pedido->lista_produtos = $PedidoListaProdutos ?? [];
-            $pedido->observacoes = $pedidoObservacoes;
-            $pedido->rolo = $pedidoRolo;
-            $pedido->designer_id = $pedidoDesignerId;
-            $pedido->pedido_status_id = $pedidoStatusId;
-            $pedido->pedido_tipo_id = $pedidoTipoId;
-            $pedido->estagio = $pedidoEstagio;
-            $pedido->url_trello = $pedidoUrlTrello;
-            $pedido->situacao = $pedidoSituacao;
-            $pedido->prioridade = $pedidoPrioridade;
-            $pedido->data_prevista = $dataPrevista;
-            $pedido->orcamento_id = $orcamento_id ?? null;
-            $pedido->tiny_pedido_id = $tiny_id ?? null;
-            $pedido->vendedor_id = $vendedor_id;
-            $pedido->save();
+            return response()->json(['message' => 'Pedido criado com sucesso!', 'pedido' => $pedido], 200);
         }
 
-        return response()->json(['message' => 'Pedido atualizado ou criado com sucesso!', 'pedido' => $pedido], 200);
+        // UPDATE
+        // fazer o update od tiny
+        $tiny_id = $pedido->tiny_pedido_id;
+
+        $updateTiny = [
+            "dados_pedido" => [
+                // "data_prevista" => $dataPrevista,  
+                // "data_envio" => "05/02/2022 08:00:00",  
+                "obs" => $observacao,
+                // "obs_interna" => "observacao interna teste api",
+            ]
+        ];
+
+        if ($tiny_block == 'false') {
+
+            $resultadoApi = $this->updateTiny($updateTiny, $tiny_id);
+
+            if ($resultadoApi['status'] == 'erro') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Erro ao criar pedido na API Tiny: ' . $resultadoApi['mensagem']
+                ], 400);
+            }
+        }
+
+        // Corrigindo nomes de campos e adicionando campos faltantes
+        $pedido->user_id = $pedidoUserId;
+        $pedido->numero_pedido = $pedidoNumero ?? null;
+        $pedido->prazo_confeccao = $pedidoPrazoConfeccao;
+        $pedido->prazo_arte_final = $pedidoPrazoArteFinal;
+        $pedido->lista_produtos = $PedidoListaProdutos ?? [];
+        $pedido->observacoes = $pedidoObservacoes;
+        $pedido->rolo = $pedidoRolo;
+        $pedido->designer_id = $pedidoDesignerId;
+        $pedido->pedido_status_id = $pedidoStatusId;
+        $pedido->pedido_tipo_id = $pedidoTipoId;
+        $pedido->estagio = $pedidoEstagio;
+        $pedido->url_trello = $pedidoUrlTrello;
+        $pedido->situacao = $pedidoSituacao;
+        $pedido->prioridade = $pedidoPrioridade;
+        $pedido->data_prevista = $dataPrevista;
+        $pedido->orcamento_id = $orcamento_id ?? null;
+        $pedido->tiny_pedido_id = $tiny_id ?? null;
+        $pedido->vendedor_id = $vendedor_id;
+        $pedido->save();
+
+        return response()->json(['message' => 'Pedido atualizado com sucesso!', 'pedido' => $pedido], 200);
     }
 
     public function getPedidoArteFinal($id)
@@ -475,12 +478,12 @@ class PedidoArteFinalController extends Controller
         if ($request['pedido_status_id'] >= 14 && $request['pedido_status_id'] <= 21) {
             $pedido->estagio = 'C';
         }
-        
+
         if ($request['pedido_status_id'] > 21 && $request['pedido_status_id'] <= 26) {
             $pedido->estagio = 'E';
         }
 
-        
+
         $pedido->pedido_status_id = $request['pedido_status_id'];
 
         $pedido->save();
@@ -537,13 +540,11 @@ class PedidoArteFinalController extends Controller
                         $produto['medida_linear'] = $request->medida_linear;
                     }
                 }
-            }
-            elseif (isset($produto['medida_linear']) && is_null($request->uid)) { // não esta atualizando o campo de medida linear 
+            } elseif (isset($produto['medida_linear']) && is_null($request->uid)) { // não esta atualizando o campo de medida linear 
                 foreach ($lista_produtos as &$produto) {
                     $produto['medida_linear'] = $request->medida_linear;
                 }
-            } 
-            else {
+            } else {
                 Log::warning('Nenhum UID fornecido, atualização ignorada.');
                 return response()->json(['error' => 'UID inválido'], 400);
             }
