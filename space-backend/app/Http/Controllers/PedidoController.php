@@ -157,31 +157,31 @@ class PedidoController extends Controller
                 'user_id' => $vendedor->id,
                 'orcamento_id' => $id_orcamento,
                 'numero_pedido' => $numero,
-                'tiny_pedido_id' => $idTiny,
+                'tiny_pedido_id' => $idTiny,    
                 'pedido_situacao' => "Aberto",
                 // 'pedido_situacao' => "Cancelado",
             ]);
+
+            // aqui vai ficar o upsert pra tabela de pedidos artefinal
+            $pedidoArteFinal = PedidoArteFinal::updateOrCreate(
+                ['orcamento_id' => $id_orcamento], // Condição para encontrar o registro
+                [
+                    'user_id' => $vendedor->id,
+                    'numero_pedido' => $numero,
+                    'tiny_pedido_id' => $idTiny,
+                    'pedido_situacao' => "Aberto",
+                    'estagio' => 'D',
+                ]
+            );
             
-            $pedidoArteFinal = PedidoArteFinal::create([
-                'user_id' => $vendedor->id,
-                'orcamento_id' => $id_orcamento,
-                'numero_pedido' => $numero,
-                'tiny_pedido_id' => $idTiny,
-                'orcamento_id' => $id_orcamento,
-                'pedido_situacao' => "Aberto",
-                'estagio' => 'D'
-                // 'lista_produtos' => $request['lista_produtos'],
-                // 'pedido_situacao' => "Cancelado",
-            ]);
-
+            
             // insere os produtos juntamente do brinde
-            $pedido_id = $pedidoArteFinal->id;
-            $responsePedidoProdutos = 
-            $this->putProdutosPedido($request['lista_produtos'], $request['produtos_brinde'],$pedido_id);
-
+            // $pedido_id = $pedidoArteFinal->id;
+            // $responsePedidoProdutos = 
+            // $this->putProdutosPedido($request['lista_produtos'], $request['produtos_brinde'],$pedido_id);
+            // Log::Info("Produtos Pedido: " . $responsePedidoProdutos);
 
             Log::info("Pedido: " . $pedido);
-            Log::Info("Produtos Pedido: " . $responsePedidoProdutos);
             
             return response()->json([
                 'message' => 'Pedido criado com sucesso!',
