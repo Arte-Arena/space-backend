@@ -560,4 +560,42 @@ class PedidoArteFinalController extends Controller
         // Log::info('message: ', ['sucesso' => $request->medida_linear]);
         return response()->json(['message' => 'Pedido atualizado com sucesso!'], 200);
     }
+
+    public function getPedidoByNumeroTiny($numero)
+    {
+        if (!preg_match('/^\d{5}$/', $numero)) {
+            return response()->json([
+                'message' => 'O número do pedido deve ter exatamente 5 dígitos'
+            ], 400);
+        }
+
+        $url = 'https://api.tiny.com.br/api2/pedidos.pesquisa.php';
+        $token = env('TINY_TOKEN');
+
+        $params = [
+            'token' => $token,
+            'formato' => 'json',
+            'numero' => $numero
+        ];
+
+        $response = Http::get($url, $params);
+        $data = $response->json();
+
+        if (isset($data['retorno']['status']) && $data['retorno']['status'] === 'OK' && 
+            isset($data['retorno']['pedidos']) && count($data['retorno']['pedidos']) > 0) {
+            
+            $pedidoId = $data['retorno']['pedidos'][0]['pedido']['id'];
+            
+            return response()->json([
+                'pedido_id' => $pedidoId,
+            ], 200);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Pedido não encontrado ou erro na API Tiny',
+            'api_response' => $data
+        ], 404);
+    }
+    
 }
