@@ -355,9 +355,9 @@ class PedidoController extends Controller
         $campo = $request['campo'];
 
         if ($campo == "envio") {
-            $status = 14;
+            $status = 24;
         } else if ($campo == "recebimento") {
-            $status = 15;
+            $status = 25;
         } else {
             return response()->json(['message' => 'Campo do status não encontrado'], 500);
         }
