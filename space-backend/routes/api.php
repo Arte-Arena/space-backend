@@ -162,6 +162,8 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,de
     Route::put('/pedidos/pedido-codigo-rastreamento', [PedidoController::class, 'createCodRastramento']);
     Route::post('/orcamento/uniformes', [OrcamentosUniformesController::class, 'store']);
     Route::get('/pedidos/get-pedido-orcamento/{id}', [PedidoController::class, 'getPedidoOrcamento']);
+    Route::get('/pedidos/get-pedido-&-orcamento/{id}', [PedidoController::class, 'getPedidoWithOrcamento']); //para tela de rastreamento backoffice
+    Route::get('/pedidos/get-pedido-arte-final-&-orcamento/{id}', [PedidoArteFinalController::class, 'getPedidoWithOrcamento']);//para tela de expedição da produção
     Route::get('/pedidos/get-pedidos', [PedidoController::class, 'getAllPedidos']);
     Route::get('/pedidos/tiny/numero/{numero}', [PedidoArteFinalController::class, 'getPedidoByNumeroTiny']);
     Route::get('/orcamento/backoffice/get-pedido-cadastro', [PedidoController::class, 'getPedidoCadastro']);
