@@ -194,7 +194,6 @@ class PedidoArteFinalController extends Controller
 
         if (!$pedido) {
             $idTiny = null;
-            $numero = null;
             
             if (!$tiny_block) {
                 Log::info('PASSOU NO INSERT TINY');
@@ -209,12 +208,11 @@ class PedidoArteFinalController extends Controller
                 
                 Log::info('Resultado da API Tiny:', $resultadoApi);
                 $idTiny = $resultadoApi['idTiny'];
-                $numero = $resultadoApi['numero'];
             }
             
             $pedido = PedidoArteFinal::create([
                 'user_id' => $pedidoUserId,
-                'numero_pedido' => $numero,
+                'numero_pedido' => $pedidoNumero,
                 'prazo_confeccao' => $pedidoPrazoConfeccao,
                 'prazo_arte_final' => $pedidoPrazoArteFinal,
                 'lista_produtos' => $PedidoListaProdutos,
