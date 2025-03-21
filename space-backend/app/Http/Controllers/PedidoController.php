@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Pedido;
 use App\Http\Resources\PedidoResource;
+use App\Models\Orcamento;
 use App\Models\User;
 use App\Models\PedidoArteFinal;
 use Illuminate\Http\Request;
@@ -137,27 +138,27 @@ class PedidoController extends Controller
         Log::info('Resposta da API Tiny Pedidos:', $response->json());
 
         $data = json_decode($response, true);
-        
+
         Log::info($response);
 
         // Captura os valores
-        if($data['retorno']['status'] !== 'Erro'){
+        if ($data['retorno']['status'] !== 'Erro') {
 
             $idTiny = $data['retorno']['registros']['registro']['id'];
             $numero = $data['retorno']['registros']['registro']['numero'];
             // ou caastrar o id do pedido no orcamento e passar todos os dados do orcamento para o pedido ou visse versa
-            
+
             Log::info('id orcamento: ' . $id_orcamento);
             Log::info('id do tiny: ' . $idTiny);
             Log::info('numero pedido: ' . $numero);
-            
-            
+
+
             // vai fazer a inserção no nosso banco
             $pedido = Pedido::create([
                 'user_id' => $vendedor->id,
                 'orcamento_id' => $id_orcamento,
                 'numero_pedido' => $numero,
-                'tiny_pedido_id' => $idTiny,    
+                'tiny_pedido_id' => $idTiny,
                 'pedido_situacao' => "Aberto",
                 // 'pedido_situacao' => "Cancelado",
             ]);
@@ -173,8 +174,8 @@ class PedidoController extends Controller
                     'estagio' => 'D',
                 ]
             );
-            
-            
+
+
             // insere os produtos juntamente do brinde
             // $pedido_id = $pedidoArteFinal->id;
             // $responsePedidoProdutos = 
@@ -182,7 +183,7 @@ class PedidoController extends Controller
             // Log::Info("Produtos Pedido: " . $responsePedidoProdutos);
 
             Log::info("Pedido: " . $pedido);
-            
+
             return response()->json([
                 'message' => 'Pedido criado com sucesso!',
                 'id_pedido' => $idTiny,
@@ -192,13 +193,12 @@ class PedidoController extends Controller
             ]);
         }
 
-        if($data['retorno']['status'] !== 'Erro'){
+        if ($data['retorno']['status'] !== 'Erro') {
             return response()->json([
                 'message' => 'Erro ao cadastrar pedido!',
                 'Erro' => $data,
             ], 500);
         }
-
     }
 
     private function putProdutosPedido($produtos, $brindes, $id)
@@ -376,5 +376,19 @@ class PedidoController extends Controller
         // retorna pro usuario
         return null;
     }
-    
+
+    public function getPedidoWithOrcamento($id)
+    {
+        $orcamento = Orcamento::where('id', $id)->first();
+        $pedido = Pedido::where('orcamento_id', $id)->first();
+
+        if (!$pedido || !$orcamento) {
+            return response()->json(['error' => 'Pedido or Orcamento not found'], 404);
+        }
+
+        return response()->json([
+            'pedido' => $pedido,
+            'orcamento' => $orcamento
+        ], 200);
+    }
 }
