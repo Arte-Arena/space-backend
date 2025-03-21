@@ -39,6 +39,9 @@ class OrcamentoController extends Controller
         $produtos_brinde = $request->input('produtos_brinde');
         $prev_entrega = $request->input('previsaoEntrega');
 
+        $enderecoCep = $enderecoCep ?? 'Não informado';
+        $endereco = $endereco ?? 'Não informado';
+
         $orcamento = Orcamento::create([
             'user_id' => $userId,
             'cliente_octa_number' => $clienteOctaNumber,
