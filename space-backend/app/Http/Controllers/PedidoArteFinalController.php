@@ -208,6 +208,7 @@ class PedidoArteFinalController extends Controller
                 
                 Log::info('Resultado da API Tiny:', $resultadoApi);
                 $idTiny = $resultadoApi['idTiny'];
+                $pedidoNumero = $resultadoApi['numero'];
             } else {
                 $idTiny = $this->getPedidoByNumeroTiny($pedidoNumero);
                 if (!$idTiny) {
