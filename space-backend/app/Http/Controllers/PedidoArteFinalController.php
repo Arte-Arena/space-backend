@@ -28,13 +28,37 @@ class PedidoArteFinalController extends Controller
             }
         }
 
+        $dadosPorData = $query->groupBy('data_prevista')->map(function ($pedidosDoDia) {
+            return [
+                'quantidade_pedidos' => $pedidosDoDia->count(),
+                'total_medida_linear' => $pedidosDoDia->sum(function ($pedido) {
+                    $listaProdutos = is_string($pedido->lista_produtos)
+                        ? json_decode($pedido->lista_produtos, true)
+                        : $pedido->lista_produtos;
+
+                    return collect($listaProdutos)->sum('medida_linear');
+                })
+            ];
+        });
+
         $query->orderBy('data_prevista', 'asc');
         // $query->orderBy('data_prevista', 'asc');
 
         // Executa a query paginada APÓS aplicar os filtros
         $pedidos = $query->paginate(200);
 
-        return response()->json($pedidos);
+        return response()->json([
+            'pedidos' => $pedidos,
+            'dados_por_data' => $dadosPorData
+        ]);
+
+        // saida:
+        // "dados_por_data": {
+        // "2024-03-21": {
+        //     "quantidade_pedidos": 2,
+        //     "total_medida_linear": 23
+        //   }
+        // }
     }
 
 
