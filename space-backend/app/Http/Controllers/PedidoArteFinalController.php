@@ -28,7 +28,37 @@ class PedidoArteFinalController extends Controller
             }
         }
 
-        $dadosPorData = $query->groupBy('data_prevista')->map(function ($pedidosDoDia) {
+        // Obtém todos os pedidos antes de aplicar a paginação
+        $todosPedidos = $query->get();
+
+        // Aplica a ordenação
+        $query->orderBy('data_prevista', 'asc');
+
+        // Pagina os pedidos
+        $pedidosPaginados = $query->paginate(200);
+
+        return response()->json( $pedidosPaginados);
+
+    }
+
+    // so precisa fazer a rota e os hooks no front
+    public function getAllPedidosArteFinalRelatorios(Request $request)
+    {
+        $query = PedidoArteFinal::query()->whereNotNull('numero_pedido'); // Inicializa a query base
+
+        if ($request->has('fila')) {
+            $fila = $request->query('fila');
+
+            if (in_array($fila, ['D', 'I', 'C', 'E'])) {
+                $query->where('estagio', $fila);
+            }
+        }
+
+        // Obtém todos os pedidos antes de aplicar a paginação
+        $todosPedidos = $query->get();
+
+        // Agrupa por data e calcula os valores necessários
+        $dadosPorData = $todosPedidos->groupBy('data_prevista')->map(function ($pedidosDoDia) {
             return [
                 'quantidade_pedidos' => $pedidosDoDia->count(),
                 'total_medida_linear' => $pedidosDoDia->sum(function ($pedido) {
@@ -41,14 +71,12 @@ class PedidoArteFinalController extends Controller
             ];
         });
 
+        // Aplica a ordenação
         $query->orderBy('data_prevista', 'asc');
-        // $query->orderBy('data_prevista', 'asc');
 
-        // Executa a query paginada APÓS aplicar os filtros
-        $pedidos = $query->paginate(200);
+        // Pagina os pedidos
 
         return response()->json([
-            'pedidos' => $pedidos,
             'dados_por_data' => $dadosPorData
         ]);
 
