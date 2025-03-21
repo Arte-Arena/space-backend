@@ -23,16 +23,10 @@ class PedidoArteFinalController extends Controller
         if ($request->has('fila')) {
             $fila = $request->query('fila');
 
-            if ($fila === 'D') {
-                $query->where('estagio', 'D');
-            } elseif ($fila === 'I') {
-                $query->where('estagio', 'I'); // Correto: busca registros onde estagio seja "I" ou "C"
-            } elseif ($fila === 'C') {
-                $query->where('estagio', 'C');
-            } elseif ($fila === 'E') {
-                $query->where('estagio', 'E');
+            if (in_array($fila, ['D', 'I', 'C', 'E'])) {
+                $query->where('estagio', $fila);
             }
-        }
+        }   
 
         $query->orderBy('data_prevista', 'asc');
         // $query->orderBy('data_prevista', 'asc');
@@ -131,7 +125,7 @@ class PedidoArteFinalController extends Controller
 
         $vendedor = User::where('id', $vendedor_id)->select('id')->first();
         $vendedorId = $vendedor ? $vendedor->id : null;
-        
+
         $vendedoresTiny = [
             '29' => 707100035,
             '43' => 709683645,
@@ -142,9 +136,9 @@ class PedidoArteFinalController extends Controller
             '4' => 704446840,
             '5' => 704446840,
         ];
-        
+
         $idVendedorTiny = $vendedorId !== null ? ($vendedoresTiny[$vendedorId] ?? 704446840) : 704446840;
-        
+
         if (!$idVendedorTiny) {
             return response()->json([
                 'message' => 'Vendedor não encontrado no sistema Tiny'
@@ -160,13 +154,13 @@ class PedidoArteFinalController extends Controller
             return [
                 "item" => [
                     "descricao" => $produto["nome"] . " - " . $produto['esboco'],
-                    "unidade" => "UN", 
+                    "unidade" => "UN",
                     "quantidade" => (string)$produto["quantidade"],
                     "valor_unitario" => number_format($produto["preco"], 2, '.', '')
                 ]
             ];
         }, $produtos);
-        
+
         Log::info($itens);
 
         $pedidoTiny = [
@@ -195,23 +189,23 @@ class PedidoArteFinalController extends Controller
         if (!$pedido) {
             $idTiny = null;
             $numero = null;
-            
+
             if (!$tiny_block) {
                 Log::info('PASSOU NO INSERT TINY');
                 $resultadoApi = $this->inserirTiny($pedidoTiny);
-                
+
                 if ($resultadoApi['status'] == 'erro') {
                     Log::info('Erro retorno 400 ', $resultadoApi);
                     return response()->json([
                         'message' => 'Erro ao criar pedido na API Tiny: ' . $resultadoApi['mensagem']
                     ], 400);
                 }
-                
+
                 Log::info('Resultado da API Tiny:', $resultadoApi);
                 $idTiny = $resultadoApi['idTiny'];
                 $numero = $resultadoApi['numero'];
             }
-            
+
             $pedido = PedidoArteFinal::create([
                 'user_id' => $pedidoUserId,
                 'numero_pedido' => $numero,
@@ -232,23 +226,23 @@ class PedidoArteFinalController extends Controller
                 'orcamento_id' => $orcamento_id,
                 'tiny_pedido_id' => $idTiny
             ]);
-            
+
             return response()->json([
-                'message' => 'Pedido criado com sucesso!', 
+                'message' => 'Pedido criado com sucesso!',
                 'pedido' => $pedido
             ], 200);
         } else {
             $tiny_id = $pedido->tiny_pedido_id;
-            
+
             if (!$tiny_block && $tiny_id) {
                 $updateTiny = [
                     "dados_pedido" => [
                         "obs" => $observacao,
                     ]
                 ];
-                
+
                 $resultadoApi = $this->updateTiny($updateTiny, $tiny_id);
-                
+
                 if ($resultadoApi['status'] == 'erro') {
                     return response()->json([
                         'message' => 'Erro ao atualizar pedido na API Tiny: ' . $resultadoApi['mensagem']
@@ -270,7 +264,7 @@ class PedidoArteFinalController extends Controller
 
                 $pedido->tiny_pedido_id = $tinyId;
             }
-            
+
             $pedido->user_id = $pedidoUserId;
             $pedido->numero_pedido = $pedidoNumero;
             $pedido->prazo_confeccao = $pedidoPrazoConfeccao;
@@ -289,9 +283,9 @@ class PedidoArteFinalController extends Controller
             $pedido->orcamento_id = $orcamento_id;
             $pedido->vendedor_id = $vendedor_id;
             $pedido->save();
-            
+
             return response()->json([
-                'message' => 'Pedido atualizado com sucesso!', 
+                'message' => 'Pedido atualizado com sucesso!',
                 'pedido' => $pedido
             ], 200);
         }
@@ -562,15 +556,29 @@ class PedidoArteFinalController extends Controller
         $response = Http::get($url, $params);
         $data = $response->json();
 
-        if (isset($data['retorno']['status']) && $data['retorno']['status'] === 'OK' && 
-            isset($data['retorno']['pedidos']) && count($data['retorno']['pedidos']) > 0) {
-            
+        if (
+            isset($data['retorno']['status']) && $data['retorno']['status'] === 'OK' &&
+            isset($data['retorno']['pedidos']) && count($data['retorno']['pedidos']) > 0
+        ) {
+
             $pedidoId = $data['retorno']['pedidos'][0]['pedido']['id'];
-            
+
             return $pedidoId;
         }
 
         return false;
     }
-    
+
+    public function getPedidoWithOrcamento($id)
+    {
+        $orcamento = Orcamento::where('id', $id)->first();
+        $pedidoArteFinal = PedidoArteFinal::where('orcamento_id', $id)->first();
+        if (!$pedidoArteFinal) {
+            return response()->json(['error' => 'Pedido or not found'], 404);
+        }
+        return response()->json([
+            'pedido' => $pedidoArteFinal,
+            'orcamento' => $orcamento
+        ], 200);
+    }
 }
