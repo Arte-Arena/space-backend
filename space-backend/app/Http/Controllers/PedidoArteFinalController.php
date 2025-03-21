@@ -208,6 +208,13 @@ class PedidoArteFinalController extends Controller
                 
                 Log::info('Resultado da API Tiny:', $resultadoApi);
                 $idTiny = $resultadoApi['idTiny'];
+            } else {
+                $idTiny = $this->getPedidoByNumeroTiny($pedidoNumero);
+                if (!$idTiny) {
+                    return response()->json([
+                        'message' => 'Pedido não encontrado ou erro na API Tiny',
+                    ], 404);
+                }
             }
             
             $pedido = PedidoArteFinal::create([
