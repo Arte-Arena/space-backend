@@ -20,7 +20,7 @@ class PedidoArteFinalController extends Controller
     {
         $query = PedidoArteFinal::query()
             ->whereNotNull('numero_pedido')
-            ->whereNotNull('tiny_pedido_id'); 
+            ->whereNotNull('tiny_pedido_id');
 
         if ($request->has('fila')) {
             $fila = $request->query('fila');
@@ -32,20 +32,21 @@ class PedidoArteFinalController extends Controller
 
         // Aplica a ordenação
         $query->orderBy('data_prevista', 'asc')
-        ->orderBy('numero_pedido', 'asc');  
+            ->orderBy('numero_pedido', 'asc');
 
 
         // Pagina os pedidos
         $pedidosPaginados = $query->paginate(200);
 
-        return response()->json( $pedidosPaginados);
-
+        return response()->json($pedidosPaginados);
     }
 
     // so precisa fazer a rota e os hooks no front
     public function getAllPedidosArteFinalRelatorios(Request $request)
     {
-        $query = PedidoArteFinal::query()->whereNotNull('numero_pedido'); // Inicializa a query base
+        $query = PedidoArteFinal::query()
+            ->whereNotNull('numero_pedido')
+            ->whereNotNull('tiny_pedido_id');
 
         if ($request->has('fila')) {
             $fila = $request->query('fila');
@@ -59,7 +60,7 @@ class PedidoArteFinalController extends Controller
         $todosPedidos = $query->get();
 
         // Agrupa por data e calcula os valores necessários
-        $dadosPorData = $todosPedidos->groupBy('data_prevista')->map(function ($pedidosDoDia) {
+        $dadosPorData = $todosPedidos->groupBy('data_prevista')->map(function ($pedidosDoDia) { // tem que ver se é do created at ou do data prevista
             return [
                 'quantidade_pedidos' => $pedidosDoDia->count(),
                 'total_medida_linear' => $pedidosDoDia->sum(function ($pedido) {
