@@ -174,7 +174,7 @@ class PedidoArteFinalController extends Controller
 
         Log::info($tiny_block ? 'true' : 'false');
 
-        if (!preg_match('/^\d{5}$/', $pedidoNumero)) {
+        if (!$tiny_block && !preg_match('/^\d{5}$/', $pedidoNumero)) {
             return response()->json([
                 'message' => 'O número do pedido deve ter exatamente 5 dígitos'
             ], 400);
