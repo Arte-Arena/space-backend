@@ -18,7 +18,9 @@ class PedidoArteFinalController extends Controller
 {
     public function getAllPedidosArteFinal(Request $request)
     {
-        $query = PedidoArteFinal::query()->whereNotNull('numero_pedido'); // Inicializa a query base
+        $query = PedidoArteFinal::query()
+            ->whereNotNull('numero_pedido')
+            ->whereNotNull('tiny_pedido_id'); 
 
         if ($request->has('fila')) {
             $fila = $request->query('fila');
@@ -27,9 +29,6 @@ class PedidoArteFinalController extends Controller
                 $query->where('estagio', $fila);
             }
         }
-
-        // Obtém todos os pedidos antes de aplicar a paginação
-        $todosPedidos = $query->get();
 
         // Aplica a ordenação
         $query->orderBy('data_prevista', 'asc');
@@ -365,6 +364,7 @@ class PedidoArteFinalController extends Controller
         if (!$pedido) {
             return response()->json(['error' => 'Pedido not found'], 404);
         }
+
         // tem id do tiny?
         if (!$pedido->tiny_pedido_id) {
             return response()->json(['error' => 'Tiny ID not found for this pedido'], 400);
@@ -382,7 +382,7 @@ class PedidoArteFinalController extends Controller
 
         $response = Http::asForm()->post($url, $data);
         $data = json_decode($response, true);
-        Log::info($response);
+        Log::info('Exclusao:', ['response' => $response]);
 
         if ($data['retorno']['status'] !== 'Erro') {
             $pedido->delete();
