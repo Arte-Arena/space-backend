@@ -61,13 +61,22 @@ class ClienteCadastroController extends Controller
 
         $cpf = preg_replace('/\D/', '', $request['cpf']);
         $cnpj = preg_replace('/\D/', '', $request['cnpj']);
+        
+        $tipo_pessoa = '';
+        $cpf_cnpj = '';
+        $nome = '';
+        $ie = '';
 
         if ($request['tipo_pessoa'] == 'J') {
             $tipo_pessoa = 'PJ';
             $cpf_cnpj = $cnpj;
+            $nome = $request['razao_social'];
+            $ie = $request->has('ie') ? $request['ie'] : $request['inscricao_estadual'];
         } else {
             $tipo_pessoa = 'PF';
             $cpf_cnpj = $cpf;
+            $nome = $request['nome'];
+            $ie = $request['ie'];
         }
 
         $apiUrl = 'https://api.tiny.com.br/api2/contato.incluir.php';
@@ -77,10 +86,10 @@ class ClienteCadastroController extends Controller
                 [
                     "contato" => [
                         "sequencia" => "1",
-                        "nome" => $request['nome'],
+                        "nome" => $nome,
                         "tipo_pessoa" => $request['tipo_pessoa'],
                         "cpf_cnpj" => $cpf_cnpj,
-                        "ie" => $request['ie'],
+                        "ie" => $ie,
                         "rg" => $request['rg'],
                         "endereco" => $request['endereco'],
                         "numero" => $request['numero'],
@@ -113,14 +122,14 @@ class ClienteCadastroController extends Controller
 
         $clienteData = [
             "sequencia" => "1",
-            "nome_completo" => $request['nome'],
+            "nome_completo" => $nome,
             "tipo_pessoa" => $tipo_pessoa,
             "rg" => $request['rg'],
             "cpf" => $cpf,
             "razao_social" => $request['razao_social'],
             "inscricao_estadual" => $request['inscricao_estadual'],
             "cnpj" => $cnpj,
-            "ie" => $request['ie'],
+            "ie" => $ie,
             "endereco" => $request['endereco'],
             "numero" => $request['numero'],
             "complemento" => $request['complemento'],
