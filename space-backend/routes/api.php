@@ -83,6 +83,7 @@ Route::middleware(['auth:sanctum', 'role:super-admin'])->group(function () {
     Route::put('/super-admin/upsert-role-module', [SuperAdminController::class, 'upsertRoleModule']);
     Route::put('/super-admin/upsert-config', [SuperAdminController::class, 'upsertConfig']);
     Route::get('/super-admin/get-backups', [BackupController::class, 'getBackups']);
+    Route::put('/super-admin/update-dias-antecipa', [SuperAdminController::class, 'updateDiasAntecipaProd']);
     
 });
 

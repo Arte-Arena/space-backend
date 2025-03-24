@@ -265,4 +265,19 @@ class SuperAdminController extends Controller
 
         return response()->json(['message' => 'Módulos do papel atualizados com sucesso.'], 200);
     }
+
+    public function updateDiasAntecipaProd(Request $request){
+
+        $dias = $request->input('dias');
+
+        if(!$dias){
+            return response()->json(['message' => 'Sem dias para deefinir. Dias não definidos.'], 400);
+        }
+        
+        $config = Config::first();
+        $config->dias_antecipa_prod = $dias;
+        $config->save();
+        
+        return response()->json(['message' => 'Dias definidos com sucesso.', 'Dias: '=> $dias], 200);
+    }
 }
