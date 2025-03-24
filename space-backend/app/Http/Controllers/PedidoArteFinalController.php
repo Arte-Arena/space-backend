@@ -174,6 +174,25 @@ class PedidoArteFinalController extends Controller
 
         Log::info($tiny_block ? 'true' : 'false');
 
+        if (!preg_match('/^\d{5}$/', $pedidoNumero)) {
+            return response()->json([
+                'message' => 'O número do pedido deve ter exatamente 5 dígitos'
+            ], 400);
+        }
+
+        $existingPedidoNumero = PedidoArteFinal::where('numero_pedido', $pedidoNumero)
+            ->where(function($query) use ($pedidoId) {
+                if ($pedidoId) {
+                    $query->where('id', '!=', $pedidoId);
+                }
+            })->exists();
+
+        if ($existingPedidoNumero) {
+            return response()->json([
+                'message' => 'Já existe um pedido com o número ' . $pedidoNumero
+            ], 400);
+        }
+
         $pedido = PedidoArteFinal::find($pedidoId);
 
         $vendedor = User::where('id', $vendedor_id)->select('id')->first();
@@ -265,6 +284,13 @@ class PedidoArteFinalController extends Controller
                 }
             }
 
+            if (!$idTiny) {
+                Log::error('Tentativa de criar pedido sem ID Tiny válido');
+                return response()->json([
+                    'message' => 'Não é possível criar um pedido sem um ID Tiny válido'
+                ], 400);
+            }
+
             $pedido = PedidoArteFinal::create([
                 'user_id' => $pedidoUserId,
                 'numero_pedido' => $pedidoNumero,
@@ -293,27 +319,7 @@ class PedidoArteFinalController extends Controller
         } else {
             $tiny_id = $pedido->tiny_pedido_id;
 
-            if (!$tiny_block && $tiny_id) {
-                $updateTiny = [
-                    "dados_pedido" => [
-                        "obs" => $observacao,
-                    ]
-                ];
-
-                $resultadoApi = $this->updateTiny($updateTiny, $tiny_id);
-
-                if ($resultadoApi['status'] == 'erro') {
-                    return response()->json([
-                        'message' => 'Erro ao atualizar pedido na API Tiny: ' . $resultadoApi['mensagem']
-                    ], 400);
-                }
-            } else {
-                if (!preg_match('/^\d{5}$/', $pedidoNumero)) {
-                    return response()->json([
-                        'message' => 'O número do pedido deve ter exatamente 5 dígitos'
-                    ], 400);
-                }
-
+            if (!$tiny_id) {
                 $tinyId = $this->getPedidoByNumeroTiny($pedidoNumero);
                 if (!$tinyId) {
                     return response()->json([
@@ -322,6 +328,22 @@ class PedidoArteFinalController extends Controller
                 }
 
                 $pedido->tiny_pedido_id = $tinyId;
+            }
+
+            if (!$tiny_block) {
+                $updatedTiny = [
+                    "dados_pedido" => [
+                        "obs" => $observacao,
+                    ]
+                ];
+
+                $resultadoApi = $this->updateTiny($updatedTiny, $tiny_id);
+
+                if ($resultadoApi['status'] == 'erro') {
+                    return response()->json([
+                        'message' => 'Erro ao atualizar pedido na API Tiny: ' . $resultadoApi['mensagem']
+                    ], 400);
+                }
             }
 
             $pedido->user_id = $pedidoUserId;
@@ -437,17 +459,15 @@ class PedidoArteFinalController extends Controller
 
         // Realiza a requisição HTTP POST para a API do Tiny
         $response = Http::asForm()->post($apiUrl, $data);
-        $data = json_decode($response, true);
+        $responseData = $response->json();
 
         // Verifica a resposta da API
-        if ($data['retorno']['status'] !== 'Erro') {
-
-            $dataJson = $response->json();
-            Log::info('Resposta da API Tiny Pedidos:', $dataJson);
+        if ($responseData['retorno']['status'] !== 'Erro') {
+            Log::info('Resposta da API Tiny Pedidos:', $responseData);
 
             // Captura os dados do pedido criado
-            $idTiny = $data['retorno']['registros']['registro']['id'];
-            $numero = $data['retorno']['registros']['registro']['numero'];
+            $idTiny = $responseData['retorno']['registros']['registro']['id'];
+            $numero = $responseData['retorno']['registros']['registro']['numero'];
 
             return [
                 'status' => 'sucesso',
