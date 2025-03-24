@@ -85,7 +85,7 @@ class ClienteCadastroController extends Controller
             "contatos" => [
                 [
                     "contato" => [
-                        "sequencia" => "1",
+                        "sequencia" => $request['orcamento_id'],
                         "nome" => $nome,
                         "tipo_pessoa" => $request['tipo_pessoa'],
                         "cpf_cnpj" => $cpf_cnpj,
@@ -120,8 +120,17 @@ class ClienteCadastroController extends Controller
         $response = Http::asForm()->post($apiUrl, $data);
         Log::info('Resposta da API Tiny:', $response->json());
 
+        $responseData = $response->json();
+        if (isset($responseData['status']) && $responseData['status'] === 'Erro') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro na API Tiny',
+                'error' => $responseData['erros'] ?? 'Erro não especificado'
+            ], 422);
+        }
+
         $clienteData = [
-            "sequencia" => "1",
+            "sequencia" => $request['orcamento_id'],
             "nome_completo" => $nome,
             "tipo_pessoa" => $tipo_pessoa,
             "rg" => $request['rg'],
