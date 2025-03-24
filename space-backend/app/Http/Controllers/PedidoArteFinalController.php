@@ -320,14 +320,14 @@ class PedidoArteFinalController extends Controller
             $tiny_id = $pedido->tiny_pedido_id;
 
             if (!$tiny_id) {
-                $tinyId = $this->getPedidoByNumeroTiny($pedidoNumero);
-                if (!$tinyId) {
+                $tiny_id = $this->getPedidoByNumeroTiny($pedidoNumero);
+                if (!$tiny_id) {
                     return response()->json([
                         'message' => 'Pedido não encontrado ou erro na API Tiny',
                     ], 404);
                 }
 
-                $pedido->tiny_pedido_id = $tinyId;
+                $pedido->tiny_pedido_id = $tiny_id;
             }
 
             if (!$tiny_block) {
@@ -344,6 +344,7 @@ class PedidoArteFinalController extends Controller
                         'message' => 'Erro ao atualizar pedido na API Tiny: ' . $resultadoApi['mensagem']
                     ], 400);
                 }
+                $pedidoNumero = $resultadoApi['numero'];
             }
 
             $pedido->user_id = $pedidoUserId;
