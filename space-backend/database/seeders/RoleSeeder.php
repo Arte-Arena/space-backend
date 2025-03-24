@@ -21,7 +21,8 @@ class RoleSeeder extends Seeder
             'designer',
             'designer-coordenador',
             'producao',
-            'comercial'
+            'comercial',
+            'backoffice',
         ];
 
         for ($i = 0; $i < count($roles); $i++) {
