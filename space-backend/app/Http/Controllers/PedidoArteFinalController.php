@@ -18,6 +18,31 @@ class PedidoArteFinalController extends Controller
 {
     public function getAllPedidosArteFinal(Request $request)
     {
+        $query = PedidoArteFinal::query()
+            ->whereNotNull('numero_pedido')
+            ->whereNotNull('tiny_pedido_id'); 
+
+        if ($request->has('fila')) {
+            $fila = $request->query('fila');
+
+            if (in_array($fila, ['D', 'I', 'C', 'E'])) {
+                $query->where('estagio', $fila);
+            }
+        }
+
+        // Aplica a ordenação
+        $query->orderBy('data_prevista', 'asc');
+
+        // Pagina os pedidos
+        $pedidosPaginados = $query->paginate(200);
+
+        return response()->json( $pedidosPaginados);
+
+    }
+
+    // so precisa fazer a rota e os hooks no front
+    public function getAllPedidosArteFinalRelatorios(Request $request)
+    {
         $query = PedidoArteFinal::query()->whereNotNull('numero_pedido'); // Inicializa a query base
 
         if ($request->has('fila')) {
@@ -28,13 +53,39 @@ class PedidoArteFinalController extends Controller
             }
         }
 
+        // Obtém todos os pedidos antes de aplicar a paginação
+        $todosPedidos = $query->get();
+
+        // Agrupa por data e calcula os valores necessários
+        $dadosPorData = $todosPedidos->groupBy('data_prevista')->map(function ($pedidosDoDia) {
+            return [
+                'quantidade_pedidos' => $pedidosDoDia->count(),
+                'total_medida_linear' => $pedidosDoDia->sum(function ($pedido) {
+                    $listaProdutos = is_string($pedido->lista_produtos)
+                        ? json_decode($pedido->lista_produtos, true)
+                        : $pedido->lista_produtos;
+
+                    return collect($listaProdutos)->sum('medida_linear');
+                })
+            ];
+        });
+
+        // Aplica a ordenação
         $query->orderBy('data_prevista', 'asc');
-        // $query->orderBy('data_prevista', 'asc');
 
-        // Executa a query paginada APÓS aplicar os filtros
-        $pedidos = $query->paginate(200);
+        // Pagina os pedidos
 
-        return response()->json($pedidos);
+        return response()->json([
+            'dados_por_data' => $dadosPorData
+        ]);
+
+        // saida:
+        // "dados_por_data": {
+        // "2024-03-21": {
+        //     "quantidade_pedidos": 2,
+        //     "total_medida_linear": 23
+        //   }
+        // }
     }
 
 
@@ -313,6 +364,7 @@ class PedidoArteFinalController extends Controller
         if (!$pedido) {
             return response()->json(['error' => 'Pedido not found'], 404);
         }
+
         // tem id do tiny?
         if (!$pedido->tiny_pedido_id) {
             return response()->json(['error' => 'Tiny ID not found for this pedido'], 400);
@@ -330,7 +382,7 @@ class PedidoArteFinalController extends Controller
 
         $response = Http::asForm()->post($url, $data);
         $data = json_decode($response, true);
-        Log::info($response);
+        Log::info('Exclusao:', ['response' => $response]);
 
         if ($data['retorno']['status'] !== 'Erro') {
             $pedido->delete();
