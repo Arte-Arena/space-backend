@@ -75,6 +75,7 @@ class PedidoArteFinalController extends Controller
 
         // Aplica a ordenação
         $query->orderBy('data_prevista', 'asc');
+        $query->orderBy('numero_pedido', 'asc');
 
         // Pagina os pedidos
 
