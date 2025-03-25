@@ -345,7 +345,6 @@ class PedidoArteFinalController extends Controller
                         'message' => 'Erro ao atualizar pedido na API Tiny: ' . $resultadoApi['mensagem']
                     ], 400);
                 }
-                $pedidoNumero = $resultadoApi['numero'];
             }
 
             $pedido->user_id = $pedidoUserId;
