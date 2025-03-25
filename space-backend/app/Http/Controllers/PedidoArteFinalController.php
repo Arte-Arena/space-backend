@@ -567,7 +567,6 @@ class PedidoArteFinalController extends Controller
 
     public function trocarMediaLinear(Request $request, $id)
     {
-        // o input recebido tem que ser um array dependendo de quantos produtos tenha e iterar por cada um dos que tem ID
         // Encontra o pedido pelo ID
         $pedido = PedidoArteFinal::find($id);
         if (!$pedido) {
@@ -595,21 +594,12 @@ class PedidoArteFinalController extends Controller
                     if (isset($produto['uid']) && $produto['uid'] == $request->uid) {
                         $produto['medida_linear'] = $request->medida_linear;
                     }
-                }
-            }
-            // Se não há UID, verificamos se o campo medida_linear existe para o produto
-            elseif (!isset($produto['medida_linear']) && is_null($request->uid)) {
-                foreach ($lista_produtos as &$produto) {
-                    if (!isset($produto['medida_linear'])) {
+                    if ($produto['id'] == $request->uid) {
                         $produto['medida_linear'] = $request->medida_linear;
                     }
                 }
-            } elseif (isset($produto['medida_linear']) && is_null($request->uid)) { // não esta atualizando o campo de medida linear 
-                foreach ($lista_produtos as &$produto) {
-                    $produto['medida_linear'] = $request->medida_linear;
-                }
             } else {
-                Log::warning('Nenhum UID fornecido, atualização ignorada.');
+                Log::warning('Não foi possível fazer a operação, atualização ignorada.');
                 return response()->json(['error' => 'UID inválido'], 400);
             }
         }
@@ -620,7 +610,7 @@ class PedidoArteFinalController extends Controller
 
         // Retorna uma resposta de sucesso
         // Log::info('message: ', ['sucesso' => $request->medida_linear]);
-        return response()->json(['message' => 'Pedido atualizado com sucesso!'], 200);
+        return response()->json(['message' => 'Pedido atualizado com sucesso!', 'produtos' => $lista_produtos], 200);
     }
 
     private function getPedidoByNumeroTiny($numero)
