@@ -8,17 +8,15 @@ use Illuminate\Support\Facades\DB;
 
 class VendasController extends Controller
 {
-    public function getQuantidadeOrcamentos(Request $request)
+    public function getQuantidadeOrcamentos()
     {
-        $user = $request->user();
-
-        $totalOrcamentos = Orcamento::where('user_id', $user->id)->count();
+        $totalOrcamentos = Orcamento::count();
 
         return response()->json(['totalOrcamentos' => $totalOrcamentos]);
     }
 
 
-    public function getQuantidadeOrcamentosAprovados(Request $request)
+    public function getQuantidadeOrcamentosAprovados()
     {
         $totalOrcamentos = OrcamentoStatus::where('status', 'aprovado')
             ->latest('created_at')
