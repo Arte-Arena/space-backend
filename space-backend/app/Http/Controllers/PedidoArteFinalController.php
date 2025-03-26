@@ -131,9 +131,18 @@ class PedidoArteFinalController extends Controller
             ], 404);
         }
 
+        // criar 
+        $novaListaDeProdutos = array_map(function ($produto) {
+            $produto['medida_linear'] = 0;
+            $produto['material'] = " - ";
+            $produto['esboco'] = " - ";
+            return $produto;
+        }, json_decode($orcamento->lista_produtos, true));
+
         $pedido = PedidoArteFinal::create([
             'user_id' => Auth::id(),
-            'lista_produtos' => $orcamento->lista_produtos,
+            // 'lista_produtos' => $orcamento->lista_produtos,
+            'lista_produtos' => $novaListaDeProdutos,
             'orcamento_id' => $orcamento->id,
             'pedido_status_id' => 1,
             'pedido_tipo_id' => $orcamento->antecipado ? 2 : 1,
@@ -183,7 +192,7 @@ class PedidoArteFinalController extends Controller
         }
 
         $existingPedidoNumero = PedidoArteFinal::where('numero_pedido', $pedidoNumero)
-            ->where(function($query) use ($pedidoId) {
+            ->where(function ($query) use ($pedidoId) {
                 if ($pedidoId) {
                     $query->where('id', '!=', $pedidoId);
                 }
