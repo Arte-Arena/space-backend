@@ -75,7 +75,6 @@ class PedidoArteFinalController extends Controller
 
         // Aplica a ordenação
         $query->orderBy('data_prevista', 'asc');
-        $query->orderBy('numero_pedido', 'asc');
 
         // Pagina os pedidos
 
@@ -83,13 +82,6 @@ class PedidoArteFinalController extends Controller
             'dados_por_data' => $dadosPorData
         ]);
 
-        // saida:
-        // "dados_por_data": {
-        // "2024-03-21": {
-        //     "quantidade_pedidos": 2,
-        //     "total_medida_linear": 23
-        //   }
-        // }
     }
 
 
