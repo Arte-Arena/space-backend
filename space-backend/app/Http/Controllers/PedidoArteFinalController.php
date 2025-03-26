@@ -134,6 +134,7 @@ class PedidoArteFinalController extends Controller
         // criar 
         $novaListaDeProdutos = array_map(function ($produto) {
             $produto['medida_linear'] = 0;
+            $produto['uid'] = $produto['id'] . rand(10, 99); // se caso mudar no gerar orcamento, mudar aqui.
             $produto['material'] = " - ";
             $produto['esboco'] = " - ";
             return $produto;
