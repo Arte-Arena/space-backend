@@ -75,6 +75,7 @@ class PedidoArteFinalController extends Controller
 
         // Aplica a ordenação
         $query->orderBy('data_prevista', 'asc');
+        $query->orderBy('numero_pedido', 'asc');
 
         // Pagina os pedidos
 
@@ -130,9 +131,18 @@ class PedidoArteFinalController extends Controller
             ], 404);
         }
 
+        // criar 
+        $novaListaDeProdutos = array_map(function ($produto) {
+            $produto['medida_linear'] = 0;
+            $produto['material'] = " - ";
+            $produto['esboco'] = " - ";
+            return $produto;
+        }, json_decode($orcamento->lista_produtos, true));
+
         $pedido = PedidoArteFinal::create([
             'user_id' => Auth::id(),
-            'lista_produtos' => $orcamento->lista_produtos,
+            // 'lista_produtos' => $orcamento->lista_produtos,
+            'lista_produtos' => $novaListaDeProdutos,
             'orcamento_id' => $orcamento->id,
             'pedido_status_id' => 1,
             'pedido_tipo_id' => $orcamento->antecipado ? 2 : 1,
@@ -175,14 +185,8 @@ class PedidoArteFinalController extends Controller
 
         Log::info($tiny_block ? 'true' : 'false');
 
-        if ($tiny_block && !preg_match('/^\d{5}$/', $pedidoNumero)) {
-            return response()->json([
-                'message' => 'O número do pedido deve ter exatamente 5 dígitos'
-            ], 400);
-        }
-
         $existingPedidoNumero = PedidoArteFinal::where('numero_pedido', $pedidoNumero)
-            ->where(function($query) use ($pedidoId) {
+            ->where(function ($query) use ($pedidoId) {
                 if ($pedidoId) {
                     $query->where('id', '!=', $pedidoId);
                 }
