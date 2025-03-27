@@ -37,7 +37,7 @@ class OrcamentoController extends Controller
         $total_orcamento = $request->input('total_orcamento');
         $brinde = $request->input('brinde');
         $produtos_brinde = $request->input('produtos_brinde');
-        $prev_entrega = $request->input('previsaoEntrega');
+        $prev_entrega = $request->input('prev_entrega');
 
         $enderecoCep = $enderecoCep ?? 'Não informado';
         $endereco = $endereco ?? 'Não informado';
