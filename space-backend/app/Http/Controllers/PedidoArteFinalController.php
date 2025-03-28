@@ -84,6 +84,233 @@ class PedidoArteFinalController extends Controller
     }
 
 
+    public function createPedidoArteFinalWithTiny(Request $request)
+    {
+
+        Log::info('createPedidoArteFinalWithTiny request:', ['request' => $request]);
+
+        $pedidoUserId = Auth::id();
+        $vendedor_id = $request->input('vendedor_id');
+        $pedidoId = $request->input('pedido_id');
+        $pedidoNumero = $request->input('pedido_numero');
+        $pedidoPrazoArteFinal = $request->input('prazo_arte_final');
+        $pedidoPrazoConfeccao = $request->input('prazo_confeccao');
+        $dataPrevista = $request->input('data_prevista');
+        $pedidoObservacoes = $request->input('pedido_observacoes');
+        $pedidoRolo = $request->input('pedido_rolo');
+        $pedidoDesignerId = $request->input('pedido_designer_id');
+        $pedidoStatusId = $request->input('pedido_status_id');
+        $pedidoTipoId = $request->input('pedido_tipo_id');
+        $pedidoEstagio = $request->input('pedido_estagio') ?? 'D';
+        $pedidoUrlTrello = $request->input('pedido_url_trello');
+        $pedidoSituacao = $request->input('pedido_situacao');
+        $pedidoPrioridade = $request->input('pedido_prioridade');
+        $PedidoListaProdutos = $request->input('lista_produtos');
+        $observacao = $request->input('observacoes');
+        $orcamento_id = $request['orcamento_id'];
+    }
+
+    public function createPedidoArteFinalBlockTinyWithBrush($orcamentoId, Request $request)
+    {
+
+        Log::info('createPedidoArteFinalBlockTiny request:', ['request' => $request]);
+
+        $orcamento = Orcamento::find($orcamentoId);
+
+        if (!$orcamento) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Orçamento não encontrado'
+            ], 404);
+        }
+
+
+        $pedidoUserId = Auth::id();
+        $vendedor_id = $request->input('vendedor_id');
+        $prazo_arte_final = $request->input('prazo_arte_final');
+        $prazo_confeccao = $request->input('prazo_confeccao');
+        $data_prevista = $request->input('data_prevista');
+        $pedido_observacoes = $request->input('pedido_observacoes');
+        $pedido_rolo = $request->input('pedido_rolo');
+        $pedido_designer_id = $request->input('pedido_designer_id');
+        $pedido_status_id = $request->input('pedido_status_id');
+        $pedido_tipo_id = $request->input('pedido_tipo_id');
+        $pedido_estagio = $request->input('pedido_estagio') ?? 'D';
+        $pedido_url_trello = $request->input('pedido_url_trello');
+        $pedido_situacao = $request->input('pedido_situacao');
+        $pedido_prioridade = $request->input('pedido_prioridade');
+        $lista_produtos = $request->input('lista_produtos');
+        $observacoes = $request->input('observacoes');
+        $orcamento_id = $request['orcamento_id'];
+
+        $existingPedido = PedidoArteFinal::where('orcamento_id', $orcamentoId)->first();
+        if ($existingPedido) {
+            return response()->json([
+                'pedido' => $existingPedido
+            ], 200);
+        }
+
+        $orcamentoStatus = OrcamentoStatus::where('orcamento_id', $orcamentoId)->first();
+
+        if (!$orcamentoStatus) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Status do orçamento não encontrado'
+            ], 404);
+        }
+
+        $novaListaDeProdutos = array_map(function ($produto) {
+            $produto['medida_linear'] = 0;
+            $produto['uid'] = $produto['uid'];
+            $produto['material'] = " - ";
+            $produto['esboco'] = " - ";
+            return $produto;
+        }, json_decode($orcamento->lista_produtos, true));
+
+        $pedido = PedidoArteFinal::create([
+            'user_id' => Auth::id(),
+            'lista_produtos' => $novaListaDeProdutos,
+            'orcamento_id' => $orcamento->id,
+            'pedido_status_id' => 1,
+            'pedido_tipo_id' => $orcamento->antecipado ? 2 : 1,
+            'observacoes' => $orcamento->comentarios,
+            'url_trello' => $orcamentoStatus->link_trello,
+            'vendedor_id' => $orcamento->user_id,
+            'data_prevista' => $orcamento->prev_entrega
+        ]);
+
+        return response()->json([
+            'pedido' => $pedido
+        ], 201);
+    }
+
+    public function createPedidoArteFinalBlockTinyBlockBrush($orcamentoId, Request $request)
+    {
+
+        Log::info('createPedidoArteFinalBlockTiny request:', ['request' => $request]);
+
+        $orcamento = Orcamento::find($orcamentoId);
+
+        if (!$orcamento) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Orçamento não encontrado'
+            ], 404);
+        }
+
+        $vendedor_id = $request->input('vendedor_id');
+        $data_prevista = $request->input('data_prevista');
+        $observacoes = $request->input('observacoes');
+        $pedido_tipo_id = $request->input('pedido_tipo_id');
+        $url_trello = $request->input('url_trello');
+        $lista_produtos = $request->input('lista_produtos');
+        $observacoes = $request->input('observacoes');
+        $orcamento_id = $request['orcamento_id'];
+
+        $existingPedido = PedidoArteFinal::where('orcamento_id', $orcamentoId)->first();
+        if ($existingPedido) {
+            return response()->json([
+                'pedido' => $existingPedido
+            ], 409);
+        }
+
+        $pedido = PedidoArteFinal::create([
+            'user_id' => Auth::id(),
+            'lista_produtos' => $lista_produtos,
+            'orcamento_id' => $orcamento->id,
+            'pedido_status_id' => 1,
+            'estagio' => "D",
+            'pedido_tipo_id' => $pedido_tipo_id,
+            'observacoes' => $observacoes,
+            'url_trello' => $url_trello,
+            'vendedor_id' => $orcamento->user_id,
+            'data_prevista' => $data_prevista,
+            'vendedor_id' => $vendedor_id,
+            'orcamento_id' => $orcamento_id,
+        ]);
+
+        return response()->json([
+            'pedido' => $pedido
+        ], 201);
+    }
+
+    public function updatePedidoArteFinalWithTiny(Request $request)
+    {
+
+        Log::info('updatePedidoArteFinalWithTiny request:', ['request' => $request]);
+
+        $pedidoUserId = Auth::id();
+        $vendedor_id = $request->input('vendedor_id');
+        $pedidoId = $request->input('pedido_id');
+        $pedidoNumero = $request->input('pedido_numero');
+        $pedidoPrazoArteFinal = $request->input('prazo_arte_final');
+        $pedidoPrazoConfeccao = $request->input('prazo_confeccao');
+        $dataPrevista = $request->input('data_prevista');
+        $pedidoObservacoes = $request->input('pedido_observacoes');
+        $pedidoRolo = $request->input('pedido_rolo');
+        $pedidoDesignerId = $request->input('pedido_designer_id');
+        $pedidoStatusId = $request->input('pedido_status_id');
+        $pedidoTipoId = $request->input('pedido_tipo_id');
+        $pedidoEstagio = $request->input('pedido_estagio') ?? 'D';
+        $pedidoUrlTrello = $request->input('pedido_url_trello');
+        $pedidoSituacao = $request->input('pedido_situacao');
+        $pedidoPrioridade = $request->input('pedido_prioridade');
+        $PedidoListaProdutos = $request->input('lista_produtos');
+        $observacao = $request->input('observacoes');
+        $orcamento_id = $request['orcamento_id'];
+    }
+
+    public function updatePedidoArteFinalBlockTiny(Request $request)
+    {
+
+        Log::info('updatePedidoArteFinalBlockTiny request:', ['request' => $request]);
+        $pedidoUserId = Auth::id();
+        $vendedor_id = $request->input('vendedor_id');
+        $pedidoId = $request->input('pedido_id');
+        $pedidoNumero = $request->input('pedido_numero');
+        $pedidoPrazoArteFinal = $request->input('prazo_arte_final');
+        $pedidoPrazoConfeccao = $request->input('prazo_confeccao');
+        $dataPrevista = $request->input('data_prevista');
+        $pedidoRolo = $request->input('pedido_rolo');
+        $pedidoDesignerId = $request->input('pedido_designer_id');
+        $pedidoStatusId = $request->input('pedido_status_id');
+        $pedidoTipoId = $request->input('pedido_tipo_id');
+        $pedidoEstagio = $request->input('pedido_estagio') ?? 'D';
+        $pedidoUrlTrello = $request->input('pedido_url_trello');
+        $pedidoSituacao = $request->input('pedido_situacao');
+        $pedidoPrioridade = $request->input('pedido_prioridade');
+        $PedidoListaProdutos = $request->input('lista_produtos');
+        $observacoes = $request->input('observacoes');
+        $orcamento_id = $request['orcamento_id'];
+
+        $pedido = PedidoArteFinal::create([
+            'user_id' => $pedidoUserId,
+            'numero_pedido' => $pedidoNumero,
+            'prazo_confeccao' => $pedidoPrazoConfeccao,
+            'prazo_arte_final' => $pedidoPrazoArteFinal,
+            'lista_produtos' => $PedidoListaProdutos,
+            'observacoes' => $observacoes,
+            'rolo' => $pedidoRolo,
+            'designer_id' => $pedidoDesignerId,
+            'pedido_status_id' => $pedidoStatusId,
+            'pedido_tipo_id' => $pedidoTipoId,
+            'estagio' => $pedidoEstagio,
+            'url_trello' => $pedidoUrlTrello,
+            'situacao' => $pedidoSituacao,
+            'prioridade' => $pedidoPrioridade,
+            'data_prevista' => $dataPrevista,
+            'vendedor_id' => $vendedor_id,
+            'orcamento_id' => $orcamento_id,
+            // 'tiny_pedido_id' => $idTiny
+        ]);
+
+        return response()->json([
+            'message' => 'Pedido criado com sucesso!',
+            'pedido' => $pedido
+        ], 200);
+    }
+
+
     public function createPedidoFromBackoffice($orcamentoId)
     {
         $orcamento = Orcamento::find($orcamentoId);
@@ -175,7 +402,7 @@ class PedidoArteFinalController extends Controller
         $observacao = $request->input('observacoes');
         $orcamento_id = $request['orcamento_id'];
         $tiny_block = $request['block_tiny'] === 'true';
-        
+
         Log::info($tiny_block ? 'true' : 'false');
 
         if ($pedidoNumero) {
