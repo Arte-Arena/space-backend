@@ -81,7 +81,6 @@ class PedidoArteFinalController extends Controller
         return response()->json([
             'dados_por_data' => $dadosPorData
         ]);
-
     }
 
 
@@ -100,11 +99,12 @@ class PedidoArteFinalController extends Controller
             ->whereNotNull('tiny_pedido_id')
             ->exists();
 
-        $hasTinyPedido = Pedido::where('orcamento_id', $orcamentoId)
-            ->whereNotNull('tiny_pedido_id')
-            ->exists();
+        // $hasTinyPedido = Pedido::where('orcamento_id', $orcamentoId)
+        //     ->whereNotNull('tiny_pedido_id')
+        //     ->exists();
 
-        $hasTinyId = $hasTinyPedidoArteFinal || $hasTinyPedido;
+        // $hasTinyId = $hasTinyPedidoArteFinal || $hasTinyPedido;
+        $hasTinyId = $hasTinyPedidoArteFinal;
 
         $existingPedido = PedidoArteFinal::where('orcamento_id', $orcamentoId)->first();
         if ($existingPedido) {
@@ -174,28 +174,29 @@ class PedidoArteFinalController extends Controller
         $PedidoListaProdutos = $request->input('lista_produtos');
         $observacao = $request->input('observacoes');
         $orcamento_id = $request['orcamento_id'];
-        $tiny_block = filter_var($request->input('block_tiny'), FILTER_VALIDATE_BOOLEAN);
-
+        $tiny_block = $request['block_tiny'] === 'true';
+        
         Log::info($tiny_block ? 'true' : 'false');
 
-        $existingPedidoNumero = PedidoArteFinal::where('numero_pedido', $pedidoNumero)
-            ->where(function ($query) use ($pedidoId) {
-                if ($pedidoId) {
-                    $query->where('id', '!=', $pedidoId);
-                }
-            })->exists();
+        if ($pedidoNumero) {
+            $existingPedidoNumero = PedidoArteFinal::where('numero_pedido', $pedidoNumero)
+                ->where(function ($query) use ($pedidoId) {
+                    if ($pedidoId) {
+                        $query->where('id', '!=', $pedidoId);
+                    }
+                })->exists();
 
-        if ($existingPedidoNumero) {
-            return response()->json([
-                'message' => 'Já existe um pedido com o número ' . $pedidoNumero
-            ], 400);
+            if ($existingPedidoNumero) {
+                return response()->json([
+                    'message' => 'Já existe um pedido com o número ' . $pedidoNumero
+                ], 400);
+            }
         }
 
         $pedido = PedidoArteFinal::find($pedidoId);
 
         $vendedor = User::where('id', $vendedor_id)->select('id')->first();
         $vendedorId = $vendedor ? $vendedor->id : null;
-
         $vendedoresTiny = [
             '29' => 707100035,
             '43' => 709683645,
@@ -206,9 +207,7 @@ class PedidoArteFinalController extends Controller
             '4' => 704446840,
             '5' => 704446840,
         ];
-
         $idVendedorTiny = $vendedorId !== null ? ($vendedoresTiny[$vendedorId] ?? 704446840) : 704446840;
-
         if (!$idVendedorTiny) {
             return response()->json([
                 'message' => 'Vendedor não encontrado no sistema Tiny'
@@ -219,7 +218,6 @@ class PedidoArteFinalController extends Controller
         if (is_string($PedidoListaProdutos)) {
             $produtos = json_decode($PedidoListaProdutos, true);
         }
-
         $itens = array_map(function ($produto) {
             return [
                 "item" => [
@@ -230,7 +228,6 @@ class PedidoArteFinalController extends Controller
                 ]
             ];
         }, $produtos);
-
         Log::info($itens);
 
         $pedidoTiny = [
@@ -241,7 +238,7 @@ class PedidoArteFinalController extends Controller
                 ],
                 "itens" => $itens,
                 "valor_desconto" => $request['valor_desconto'],
-                "obs" => $request['obs'],
+                "obs" => $observacao,
                 "numero_pedido_ecommerce" => $request['id'],
                 "id_vendedor" => $idVendedorTiny,
                 "data_pedido" => date('d/m/Y'),
@@ -318,6 +315,7 @@ class PedidoArteFinalController extends Controller
             $tiny_id = $pedido->tiny_pedido_id;
 
             if (!$tiny_id) {
+
                 $tiny_id = $this->getPedidoByNumeroTiny($pedidoNumero);
                 if (!$tiny_id) {
                     return response()->json([
@@ -612,6 +610,10 @@ class PedidoArteFinalController extends Controller
 
     private function getPedidoByNumeroTiny($numero)
     {
+        if (empty($numero) || is_null($numero)) {
+            return false;
+        }
+
         $url = 'https://api.tiny.com.br/api2/pedidos.pesquisa.php';
         $token = env('TINY_TOKEN');
 
