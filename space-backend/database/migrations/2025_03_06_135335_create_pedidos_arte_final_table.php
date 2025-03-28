@@ -15,8 +15,6 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('SET NULL');
             $table->string('numero_pedido')->nullable();
-            $table->date('prazo_arte_final')->nullable();
-            $table->date('prazo_confeccao')->nullable();            
             $table->json('lista_produtos')->nullable();
             $table->text('observacoes')->nullable();
             $table->string('rolo')->nullable();
