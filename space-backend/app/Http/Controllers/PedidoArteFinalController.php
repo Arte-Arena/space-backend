@@ -241,7 +241,7 @@ class PedidoArteFinalController extends Controller
                 ],
                 "itens" => $itens,
                 "valor_desconto" => $request['valor_desconto'],
-                "obs" => $request['obs'],
+                "obs" => $observacao,
                 "numero_pedido_ecommerce" => $request['id'],
                 "id_vendedor" => $idVendedorTiny,
                 "data_pedido" => date('d/m/Y'),
