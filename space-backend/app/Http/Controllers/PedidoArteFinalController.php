@@ -233,7 +233,22 @@ class PedidoArteFinalController extends Controller
 
         $result = $this->getPedidoByTinyId($tinyId);
 
-        return $result;
+        $pedido_tiny = [
+            'id' => $result['id'],
+            'numero_pedido' => $result['numero'],
+            'observacoes' => $result['observacoes']
+        ];
+
+        $pedido = PedidoArteFinal::create([
+            'user_id' => Auth::id(),
+            'numero_pedido' => $pedido_tiny['numero_pedido'],
+            'tiny_pedido_id' => $pedido_tiny['id'],
+            'observacoes' => $pedido_tiny['observacoes'],
+            'estagio' => "D",
+            'pedido_status_id' => 1,
+        ]);
+
+        return $pedido;
 
     }
 
