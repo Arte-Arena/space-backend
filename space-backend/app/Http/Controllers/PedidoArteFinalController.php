@@ -73,10 +73,7 @@ class PedidoArteFinalController extends Controller
             ];
         });
 
-        // Aplica a ordenação
         $query->orderBy('data_prevista', 'asc');
-
-        // Pagina os pedidos
 
         return response()->json([
             'dados_por_data' => $dadosPorData
@@ -89,25 +86,98 @@ class PedidoArteFinalController extends Controller
 
         Log::info('createPedidoArteFinalWithTiny request:', ['request' => $request]);
 
-        $pedidoUserId = Auth::id();
         $vendedor_id = $request->input('vendedor_id');
-        $pedidoId = $request->input('pedido_id');
-        $pedidoNumero = $request->input('pedido_numero');
-        $pedidoPrazoArteFinal = $request->input('prazo_arte_final');
-        $pedidoPrazoConfeccao = $request->input('prazo_confeccao');
         $dataPrevista = $request->input('data_prevista');
         $pedidoObservacoes = $request->input('pedido_observacoes');
         $pedidoRolo = $request->input('pedido_rolo');
-        $pedidoDesignerId = $request->input('pedido_designer_id');
-        $pedidoStatusId = $request->input('pedido_status_id');
         $pedidoTipoId = $request->input('pedido_tipo_id');
-        $pedidoEstagio = $request->input('pedido_estagio') ?? 'D';
+        $pedidoEstagio = "D";
         $pedidoUrlTrello = $request->input('pedido_url_trello');
-        $pedidoSituacao = $request->input('pedido_situacao');
-        $pedidoPrioridade = $request->input('pedido_prioridade');
         $PedidoListaProdutos = $request->input('lista_produtos');
-        $observacao = $request->input('observacoes');
-        $orcamento_id = $request['orcamento_id'];
+
+        $vendedor = User::where('id', $vendedor_id)->select('id')->first();
+        $vendedorId = $vendedor ? $vendedor->id : null;
+        $vendedoresTiny = [
+            '29' => 707100035,
+            '43' => 709683645,
+            '28' => 705062240,
+            '1' => 704446840,
+            '2' => 704446840,
+            '3' => 704446840,
+            '4' => 704446840,
+            '5' => 704446840,
+        ];
+        $idVendedorTiny = $vendedorId !== null ? ($vendedoresTiny[$vendedorId] ?? 704446840) : 704446840;
+        if (!$idVendedorTiny) {
+            return response()->json([
+                'message' => 'Vendedor não encontrado no sistema Tiny'
+            ], 400);
+        }
+
+        $produtos = $PedidoListaProdutos;
+        if (is_string($PedidoListaProdutos)) {
+            $produtos = json_decode($PedidoListaProdutos, true);
+        }
+        $itens = array_map(function ($produto) {
+            return [
+                "item" => [
+                    "descricao" => $produto["nome"] . " - " . $produto['esboco'],
+                    "unidade" => "UN",
+                    "quantidade" => (string)$produto["quantidade"],
+                    "valor_unitario" => number_format($produto["preco"], 2, '.', '')
+                ]
+            ];
+        }, $produtos);
+        Log::info($itens);
+
+        $pedidoTiny = [
+            "pedido" => [
+                "cliente" => [
+                    "nome" => 1,
+                    "codigo" => $request['cliente_codigo'] ?? 1,
+                ],
+                "itens" => $itens,
+                "valor_desconto" => "",
+                "obs" => $pedidoObservacoes,
+                "numero_pedido_ecommerce" => "",
+                "id_vendedor" => $idVendedorTiny,
+                "data_pedido" => date('d/m/Y'),
+                "parcelas" => [],
+                "outras_despesas" => "",
+                "situacao" => "aberto",
+                "nome_transportador" => "",
+                "intermediador" => [
+                    "nome" => "",
+                    "cnpj" => ""
+                ],
+            ]
+        ];
+
+        $result = $this->inserirTiny($pedidoTiny);
+
+        Log::info('Result from inserirTiny:', ['result' => $result]);
+        $resultData = $result;
+        $numeroDoPedido = $resultData['numero'];
+        $idDoTiny = $resultData['idTiny'];
+
+        $pedido = PedidoArteFinal::create([
+            'user_id' => Auth::id(),
+            'numero_pedido' => $numeroDoPedido,
+            'tiny_pedido_id' => $idDoTiny,
+            'estagio' => $pedidoEstagio,
+            'rolo' => $pedidoRolo,
+            'lista_produtos' => $PedidoListaProdutos,
+            'pedido_status_id' => 1,
+            'pedido_tipo_id' => $pedidoTipoId,
+            'observacoes' => $pedidoObservacoes,
+            'url_trello' => $pedidoUrlTrello,
+            'vendedor_id' => $vendedor_id,
+            'data_prevista' => $dataPrevista
+        ]);
+
+        return response()->json([
+            'pedido' => $pedido
+        ], 201);
     }
 
     public function createPedidoArteFinalBlockTinyWithBrush($orcamentoId, Request $request)
@@ -353,16 +423,9 @@ class PedidoArteFinalController extends Controller
             ], 404);
         }
 
-        $hasTinyPedidoArteFinal = PedidoArteFinal::where('orcamento_id', $orcamentoId)
+        $hasTinyId = PedidoArteFinal::where('orcamento_id', $orcamentoId)
             ->whereNotNull('tiny_pedido_id')
             ->exists();
-
-        // $hasTinyPedido = Pedido::where('orcamento_id', $orcamentoId)
-        //     ->whereNotNull('tiny_pedido_id')
-        //     ->exists();
-
-        // $hasTinyId = $hasTinyPedidoArteFinal || $hasTinyPedido;
-        $hasTinyId = $hasTinyPedidoArteFinal;
 
         $existingPedido = PedidoArteFinal::where('orcamento_id', $orcamentoId)->first();
         if ($existingPedido) {
@@ -384,7 +447,7 @@ class PedidoArteFinalController extends Controller
         // criar 
         $novaListaDeProdutos = array_map(function ($produto) {
             $produto['medida_linear'] = 0;
-            $produto['uid'] = $produto['id'] . rand(10, 99); // se caso mudar no gerar orcamento, mudar aqui.
+            $produto['uid'] = $produto['id'] . rand(10, 99);
             $produto['material'] = " - ";
             $produto['esboco'] = " - ";
             return $produto;
@@ -392,7 +455,6 @@ class PedidoArteFinalController extends Controller
 
         $pedido = PedidoArteFinal::create([
             'user_id' => Auth::id(),
-            // 'lista_produtos' => $orcamento->lista_produtos,
             'lista_produtos' => $novaListaDeProdutos,
             'orcamento_id' => $orcamento->id,
             'pedido_status_id' => 1,
@@ -407,6 +469,122 @@ class PedidoArteFinalController extends Controller
             'pedido' => $pedido,
             'blockTiny' => !$hasTinyId
         ], 201);
+    }
+
+    public function updatePedidoArteFinalComOrcamento(Request $request, $orcamentoId)
+    {
+
+        if (empty($orcamentoId) || !is_numeric($orcamentoId) || !ctype_digit((string) $orcamentoId)) {
+            return response()->json(['error' => 'Orcamento ID inválido'], 409);
+        }
+
+        Log::info('updatePedidoArteFinalComOrcamento request:', ['request' => $request]);
+
+        // Get the JsonResponse object
+        $pedidoResponse = $this->getPedidoWithOrcamento($orcamentoId);
+
+        // Extract the data as an array
+        $pedidoData = $pedidoResponse->getData(true);
+
+        Log::info('pedido data:', ['pedidoData' => $pedidoData]);
+
+        // Access the 'pedido' array from the data
+        $id_pedido = $pedidoData['pedido']['id'];
+
+        if (is_null($id_pedido) || empty($id_pedido)) {
+            return response()->json(['error' => 'Pedido não encontrado'], 409);
+        }
+
+        $vendedor_id = $request->input('id_vendedor');
+        if (empty($vendedor_id) || $vendedor_id == 0) {
+            return response()->json(['error' => 'Vendedor ID inválido'], 422);
+        }
+
+
+        $vendedor = User::where('id', $vendedor_id)->select('id')->first();
+        $vendedorId = $vendedor ? $vendedor->id : null;
+        $vendedoresTiny = [
+            '29' => 707100035,
+            '43' => 709683645,
+            '28' => 705062240,
+            '1' => 704446840,
+            '2' => 704446840,
+            '3' => 704446840,
+            '4' => 704446840,
+            '5' => 704446840,
+        ];
+        $idVendedorTiny = $vendedorId !== null ? ($vendedoresTiny[$vendedorId] ?? 704446840) : 704446840;
+        if (!$idVendedorTiny) {
+            return response()->json([
+                'message' => 'Vendedor não encontrado no sistema Tiny'
+            ], 400);
+        }
+
+        $PedidoListaProdutos = $request->input('lista_produtos');
+
+        $produtos = $PedidoListaProdutos;
+        if (is_string($PedidoListaProdutos)) {
+            $produtos = json_decode($PedidoListaProdutos, true);
+        }
+        $itens = array_map(function ($produto) {
+            return [
+                "item" => [
+                    "descricao" => $produto["nome"] . " [artearena]",
+                    "unidade" => "UN",
+                    "quantidade" => (string)$produto["quantidade"],
+                    "valor_unitario" => number_format($produto["preco"], 2, '.', '')
+                ]
+            ];
+        }, $produtos);
+        Log::info($itens);
+
+        $pedidoTiny = [
+            "pedido" => [
+                "cliente" => [
+                    "nome" => $request['nome_cliente'] ?? 1,
+                    "codigo" => $request['cliente_codigo'] ?? 1,
+                ],
+                "itens" => $itens,
+                "valor_desconto" => $request['valor_desconto'],
+                "obs" => "",
+                "numero_pedido_ecommerce" => $request['id'],
+                "id_vendedor" => $idVendedorTiny,
+                "data_pedido" => date('d/m/Y'),
+                "parcelas" => [],
+                "outras_despesas" => $request['taxa_antecipa'],
+                "situacao" => "aberto",
+                "nome_transportador" => $request['transportadora'],
+                "intermediador" => [
+                    "nome" => "",
+                    "cnpj" => ""
+                ],
+            ]
+        ];
+
+        $result = $this->inserirTiny($pedidoTiny);
+
+        Log::info('inserido_tiny', $result);
+
+        if ($result['status'] !== "success" && $result['mensagem']) {
+            return response()->json([
+                'message' => 'Erro ao inserir pedido Tiny: ' . $result['mensagem']
+            ], 500);
+        } else if ($result['status'] !== "success") {
+            return response()->json([
+                'message' => 'Erro crítico ao inserir pedido no Tiny: ' . $result
+            ], 500);
+        } else {
+            $tiny_id = $result['idTiny'];
+            $numero_pedido = $result['numero'];
+
+            $pedidoArteFinal = PedidoArteFinal::where('id', $id_pedido)->first();
+            if ($pedidoArteFinal) {
+                $pedidoArteFinal->numero_pedido = $numero_pedido;
+                $pedidoArteFinal->tiny_pedido_id = $tiny_id;
+                $pedidoArteFinal->save();
+            }
+            return response()->json(['id_pedido' => $id_pedido]);
+        }
     }
 
     public function upsertPedidoArteFinal(Request $request)
