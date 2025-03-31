@@ -565,13 +565,13 @@ class PedidoArteFinalController extends Controller
 
         Log::info('inserido_tiny', $result);
 
-        if ($result['status'] !== "success" && $result['mensagem']) {
+        if ($result['status'] !== "sucesso" && isset($result['mensagem'])) {
             return response()->json([
                 'message' => 'Erro ao inserir pedido Tiny: ' . $result['mensagem']
             ], 500);
-        } else if ($result['status'] !== "success") {
+        } else if ($result['status'] !== "sucesso") {
             return response()->json([
-                'message' => 'Erro crítico ao inserir pedido no Tiny: ' . $result
+                'message' => 'Erro crítico ao inserir pedido no Tiny: ' . json_encode($result)
             ], 500);
         } else {
             $tiny_id = $result['idTiny'];
