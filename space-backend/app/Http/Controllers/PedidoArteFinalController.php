@@ -199,7 +199,6 @@ class PedidoArteFinalController extends Controller
             return $value;
         };
 
-        // Obter e decodificar os campos
         $data = $request->all();
         $data['observacoes'] = $decodeUnicode($data['observacoes'] ?? '');
         $data['lista_produtos'] = $decodeUnicode($data['lista_produtos'] ?? '');
@@ -208,6 +207,7 @@ class PedidoArteFinalController extends Controller
         // Criar o pedido
         $pedido = PedidoArteFinal::create([
             'user_id' => Auth::id(),
+            'numero_pedido' => $data['pedido_numero'],
             'lista_produtos' => mb_convert_encoding($data['lista_produtos'], 'UTF-8', 'UTF-8'),
             'pedido_status_id' => 1,
             'estagio' => "D",
@@ -219,6 +219,22 @@ class PedidoArteFinalController extends Controller
         ]);
 
         return response()->json(['pedido' => $pedido], 201);
+    }
+
+    public function createPedidoArteFinalImportFromTiny(Request $request) {
+
+        $numero_pedido = $request->input('numero_pedido');
+
+        if (is_null($numero_pedido)) {
+            return response()->json(['error' => 'Parâmetro numero_pedido é obrigatório'], 400);
+        }
+
+        $tinyId = $this->getPedidoByNumeroTiny($numero_pedido);
+
+        $result = $this->getPedidoByTinyId($tinyId);
+
+        return $result;
+
     }
 
     public function updatePedidoArteFinalWithTiny(Request $request)
@@ -848,6 +864,35 @@ class PedidoArteFinalController extends Controller
             $pedidoId = $data['retorno']['pedidos'][0]['pedido']['id'];
 
             return $pedidoId;
+        }
+
+        return false;
+    }
+
+    
+    private function getPedidoByTinyId($tinyId)
+    {
+        if (empty($tinyId) || is_null($tinyId)) {
+            return false;
+        }
+
+        $url = 'https://api.tiny.com.br/api2/pdv.pedido.obter.php';
+        $token = env('TINY_TOKEN');
+
+        $params = [
+            'token' => $token,
+            'id' => $tinyId
+        ];
+
+        $response = Http::asForm()->get($url, $params);
+        $data = $response->json();
+
+        if (
+            isset($data['retorno']['status']) && $data['retorno']['status'] === 'OK' &&
+            isset($data['retorno']['pedido'])
+        ) {
+            Log::info('Resposta da API Tiny Pedidos:', ['response' => $response->body()]);
+            return $data['retorno']['pedido'];
         }
 
         return false;

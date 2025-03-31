@@ -185,6 +185,7 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,de
     Route::get('/producao/pedido-arte-final/{arteFinalId}/verificar-uniformes', [PedidosArteFinalUniformesController::class, 'verificarUniformes']);
 
     Route::post('/producao/add-block-tiny-block-brush', [PedidoArteFinalController::class, 'createPedidoArteFinalBlockTinyBlockBrush']);
+    Route::post('/producao/import-pedido-from-tiny', [PedidoArteFinalController::class, 'createPedidoArteFinalImportFromTiny']);
 
 });
 
