@@ -221,7 +221,8 @@ class PedidoArteFinalController extends Controller
         return response()->json(['pedido' => $pedido], 201);
     }
 
-    public function createPedidoArteFinalImportFromTiny(Request $request) {
+    public function createPedidoArteFinalImportFromTiny(Request $request)
+    {
 
         $numero_pedido = $request->input('numero_pedido');
 
@@ -231,25 +232,37 @@ class PedidoArteFinalController extends Controller
 
         $tinyId = $this->getPedidoByNumeroTiny($numero_pedido);
 
+        if (!$tinyId) {
+            return response()->json(['error' => 'Pedido não encontrado pelo numero Tiny'], 409);
+        }
+
         $result = $this->getPedidoByTinyId($tinyId);
+
+        if (!$result) {
+            return response()->json(['error' => 'Pedido não encontrado pelo id Tiny'], 409);
+        }
 
         $pedido_tiny = [
             'id' => $result['id'],
             'numero_pedido' => $result['numero'],
-            'observacoes' => $result['observacoes']
+            'observacoes' => ($result['observacoes'] == "Array" ? null : $result['observacoes'])
         ];
 
-        $pedido = PedidoArteFinal::create([
-            'user_id' => Auth::id(),
-            'numero_pedido' => $pedido_tiny['numero_pedido'],
-            'tiny_pedido_id' => $pedido_tiny['id'],
-            'observacoes' => $pedido_tiny['observacoes'],
-            'estagio' => "D",
-            'pedido_status_id' => 1,
-        ]);
+        try {
+            $pedido = PedidoArteFinal::create([
+                'user_id' => Auth::id(),
+                'numero_pedido' => $pedido_tiny['numero_pedido'],
+                'tiny_pedido_id' => $pedido_tiny['id'],
+                'observacoes' => $pedido_tiny['observacoes'],
+                'estagio' => "D",
+                'pedido_status_id' => 1,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Erro ao criar pedido arte final com tiny', ['error' => $e->getMessage()]);
+            return response()->json(['error' => 'Erro ao criar pedido arte final com tiny'], 500);
+        }
 
         return $pedido;
-
     }
 
     public function updatePedidoArteFinalWithTiny(Request $request)
@@ -884,7 +897,7 @@ class PedidoArteFinalController extends Controller
         return false;
     }
 
-    
+
     private function getPedidoByTinyId($tinyId)
     {
         if (empty($tinyId) || is_null($tinyId)) {
