@@ -184,54 +184,41 @@ class PedidoArteFinalController extends Controller
         ], 201);
     }
 
-    public function createPedidoArteFinalBlockTinyBlockBrush($orcamentoId, Request $request)
+    public function createPedidoArteFinalBlockTinyBlockBrush(Request $request)
     {
+        Log::info('Raw JSON input: ' . file_get_contents('php://input'));
 
-        Log::info('createPedidoArteFinalBlockTiny request:', ['request' => $request]);
+        // Função para decodificar Unicode com escapes duplos
+        $decodeUnicode = function ($value) {
+            if (is_string($value)) {
+                $value = str_replace('\\\\u', '\\u', $value);
+                return preg_replace_callback('/\\\\u([0-9a-fA-F]{4})/', function ($match) {
+                    return mb_convert_encoding(pack('H*', $match[1]), 'UTF-8', 'UCS-2BE');
+                }, $value);
+            }
+            return $value;
+        };
 
-        $orcamento = Orcamento::find($orcamentoId);
+        // Obter e decodificar os campos
+        $data = $request->all();
+        $data['observacoes'] = $decodeUnicode($data['observacoes'] ?? '');
+        $data['lista_produtos'] = $decodeUnicode($data['lista_produtos'] ?? '');
+        $data['url_trello'] = $decodeUnicode($data['url_trello'] ?? '');
 
-        if (!$orcamento) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Orçamento não encontrado'
-            ], 404);
-        }
-
-        $vendedor_id = $request->input('vendedor_id');
-        $data_prevista = $request->input('data_prevista');
-        $observacoes = $request->input('observacoes');
-        $pedido_tipo_id = $request->input('pedido_tipo_id');
-        $url_trello = $request->input('url_trello');
-        $lista_produtos = $request->input('lista_produtos');
-        $observacoes = $request->input('observacoes');
-        $orcamento_id = $request['orcamento_id'];
-
-        $existingPedido = PedidoArteFinal::where('orcamento_id', $orcamentoId)->first();
-        if ($existingPedido) {
-            return response()->json([
-                'pedido' => $existingPedido
-            ], 409);
-        }
-
+        // Criar o pedido
         $pedido = PedidoArteFinal::create([
             'user_id' => Auth::id(),
-            'lista_produtos' => $lista_produtos,
-            'orcamento_id' => $orcamento->id,
+            'lista_produtos' => mb_convert_encoding($data['lista_produtos'], 'UTF-8', 'UTF-8'),
             'pedido_status_id' => 1,
             'estagio' => "D",
-            'pedido_tipo_id' => $pedido_tipo_id,
-            'observacoes' => $observacoes,
-            'url_trello' => $url_trello,
-            'vendedor_id' => $orcamento->user_id,
-            'data_prevista' => $data_prevista,
-            'vendedor_id' => $vendedor_id,
-            'orcamento_id' => $orcamento_id,
+            'pedido_tipo_id' => $data['pedido_tipo_id'],
+            'observacoes' => mb_convert_encoding($data['observacoes'], 'UTF-8', 'UTF-8'),
+            'url_trello' => mb_convert_encoding($data['url_trello'], 'UTF-8', 'UTF-8'),
+            'data_prevista' => $data['data_prevista'],
+            'vendedor_id' => $data['vendedor_id'],
         ]);
 
-        return response()->json([
-            'pedido' => $pedido
-        ], 201);
+        return response()->json(['pedido' => $pedido], 201);
     }
 
     public function updatePedidoArteFinalWithTiny(Request $request)
