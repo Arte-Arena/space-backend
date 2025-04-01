@@ -189,7 +189,7 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,de
     Route::post('/producao/add-block-tiny-block-brush', [PedidoArteFinalController::class, 'createPedidoArteFinalBlockTinyBlockBrush']);
     Route::post('/producao/import-pedido-from-tiny', [PedidoArteFinalController::class, 'createPedidoArteFinalImportFromTiny']);
     Route::post('/producao/add-with-tiny', [PedidoArteFinalController::class, 'createPedidoArteFinalWithTiny']);
-    Route::post('/producao/edit-block-tiny-with-brush', [PedidoArteFinalController::class, 'updatePedidoArteFinalBlockTinyWithBrush']);
+    Route::patch('/producao/edit-block-tiny-with-brush', [PedidoArteFinalController::class, 'updatePedidoArteFinalBlockTinyWithBrush']);
 
 });
 

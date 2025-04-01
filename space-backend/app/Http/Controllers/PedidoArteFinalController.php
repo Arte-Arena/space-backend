@@ -425,10 +425,11 @@ class PedidoArteFinalController extends Controller
         ], 200);
     }
 
-    public function updatePedidoArteFinalBlockTinyWithBrush(Request $request, $idPedido)
+    public function updatePedidoArteFinalBlockTinyWithBrush(Request $request)
     {
 
-        $existingPedido = PedidoArteFinal::where('id', $idPedido)->first();
+        $idPedido = $request->input('pedido_id');
+        $existingPedido = PedidoArteFinal::find($idPedido);
 
         if (!$existingPedido) {
             return response()->json([
@@ -437,48 +438,30 @@ class PedidoArteFinalController extends Controller
         }
 
         Log::info('updatePedidoArteFinalBlockTiny request:', ['request' => $request]);
-        $pedidoUserId = Auth::id();
-        $vendedor_id = $request->input('vendedor_id');
-        $pedidoNumero = $request->input('pedido_numero');
-        $pedidoPrazoArteFinal = $request->input('prazo_arte_final');
-        $pedidoPrazoConfeccao = $request->input('prazo_confeccao');
-        $dataPrevista = $request->input('data_prevista');
-        $pedidoRolo = $request->input('pedido_rolo');
-        $pedidoDesignerId = $request->input('pedido_designer_id');
-        $pedidoStatusId = $request->input('pedido_status_id');
-        $pedidoTipoId = $request->input('pedido_tipo_id');
-        $pedidoEstagio = $request->input('pedido_estagio') ?? 'D';
-        $pedidoUrlTrello = $request->input('pedido_url_trello');
-        $pedidoSituacao = $request->input('pedido_situacao');
-        $pedidoPrioridade = $request->input('pedido_prioridade');
-        $PedidoListaProdutos = $request->input('lista_produtos');
-        $observacoes = $request->input('observacoes');
-        $orcamento_id = $request['orcamento_id'];
 
-        $pedido = PedidoArteFinal::create([
-            'user_id' => $pedidoUserId,
-            'numero_pedido' => $pedidoNumero,
-            'prazo_confeccao' => $pedidoPrazoConfeccao,
-            'prazo_arte_final' => $pedidoPrazoArteFinal,
-            'lista_produtos' => $PedidoListaProdutos,
-            'observacoes' => $observacoes,
-            'rolo' => $pedidoRolo,
-            'designer_id' => $pedidoDesignerId,
-            'pedido_status_id' => $pedidoStatusId,
-            'pedido_tipo_id' => $pedidoTipoId,
-            'estagio' => $pedidoEstagio,
-            'url_trello' => $pedidoUrlTrello,
-            'situacao' => $pedidoSituacao,
-            'prioridade' => $pedidoPrioridade,
-            'data_prevista' => $dataPrevista,
-            'vendedor_id' => $vendedor_id,
-            'orcamento_id' => $orcamento_id,
-            // 'tiny_pedido_id' => $idTiny
-        ]);
+        $dataToUpdate = [
+            'user_id' => Auth::id(),
+            'numero_pedido' => $request->input('pedido_numero'),
+            'lista_produtos' => $request->input('lista_produtos'),
+            'observacoes' => $request->input('observacoes'),
+            'rolo' => $request->input('pedido_rolo'),
+            'designer_id' => $request->input('pedido_designer_id'),
+            'pedido_status_id' => $request->input('pedido_status_id'),
+            'pedido_tipo_id' => $request->input('pedido_tipo_id'),
+            'estagio' => $request->input('pedido_estagio') ?? 'D',
+            'url_trello' => $request->input('pedido_url_trello'),
+            'situacao' => $request->input('pedido_situacao'),
+            'prioridade' => $request->input('pedido_prioridade'),
+            'data_prevista' => $request->input('data_prevista'),
+            'vendedor_id' => $request->input('vendedor_id'),
+            'orcamento_id' => $request['orcamento_id'],
+        ];
+
+        $existingPedido->update($dataToUpdate);
 
         return response()->json([
             'message' => 'Pedido criado com sucesso!',
-            'pedido' => $pedido
+            'pedido' => $existingPedido
         ], 200);
     }
 
