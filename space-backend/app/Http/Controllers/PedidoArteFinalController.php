@@ -270,6 +270,13 @@ class PedidoArteFinalController extends Controller
         };
 
         $data = $request->all();
+
+        $pedidoExistente = PedidoArteFinal::where('numero_pedido', $data['pedido_numero'])->first();
+
+        if ($pedidoExistente) {
+            return response()->json(['error' => 'Pedido já existe na tabela pedidos_arte_final'], 409);
+        }
+
         $data['observacoes'] = $decodeUnicode($data['observacoes'] ?? '');
         $data['lista_produtos'] = $decodeUnicode($data['lista_produtos'] ?? '');
         $data['url_trello'] = $decodeUnicode($data['url_trello'] ?? '');
@@ -295,6 +302,13 @@ class PedidoArteFinalController extends Controller
     {
 
         $numero_pedido = $request->input('numero_pedido');
+
+        $pedidoExistente = PedidoArteFinal::where('numero_pedido', $numero_pedido)->first();
+
+        if ($pedidoExistente) {
+            return response()->json(['error' => 'Pedido já existe na tabela pedidos_arte_final'], 409);
+        }
+
 
         if (is_null($numero_pedido)) {
             return response()->json(['error' => 'Parâmetro numero_pedido é obrigatório'], 400);
@@ -368,6 +382,63 @@ class PedidoArteFinalController extends Controller
         $pedidoUserId = Auth::id();
         $vendedor_id = $request->input('vendedor_id');
         $pedidoId = $request->input('pedido_id');
+        $pedidoNumero = $request->input('pedido_numero');
+        $pedidoPrazoArteFinal = $request->input('prazo_arte_final');
+        $pedidoPrazoConfeccao = $request->input('prazo_confeccao');
+        $dataPrevista = $request->input('data_prevista');
+        $pedidoRolo = $request->input('pedido_rolo');
+        $pedidoDesignerId = $request->input('pedido_designer_id');
+        $pedidoStatusId = $request->input('pedido_status_id');
+        $pedidoTipoId = $request->input('pedido_tipo_id');
+        $pedidoEstagio = $request->input('pedido_estagio') ?? 'D';
+        $pedidoUrlTrello = $request->input('pedido_url_trello');
+        $pedidoSituacao = $request->input('pedido_situacao');
+        $pedidoPrioridade = $request->input('pedido_prioridade');
+        $PedidoListaProdutos = $request->input('lista_produtos');
+        $observacoes = $request->input('observacoes');
+        $orcamento_id = $request['orcamento_id'];
+
+        $pedido = PedidoArteFinal::create([
+            'user_id' => $pedidoUserId,
+            'numero_pedido' => $pedidoNumero,
+            'prazo_confeccao' => $pedidoPrazoConfeccao,
+            'prazo_arte_final' => $pedidoPrazoArteFinal,
+            'lista_produtos' => $PedidoListaProdutos,
+            'observacoes' => $observacoes,
+            'rolo' => $pedidoRolo,
+            'designer_id' => $pedidoDesignerId,
+            'pedido_status_id' => $pedidoStatusId,
+            'pedido_tipo_id' => $pedidoTipoId,
+            'estagio' => $pedidoEstagio,
+            'url_trello' => $pedidoUrlTrello,
+            'situacao' => $pedidoSituacao,
+            'prioridade' => $pedidoPrioridade,
+            'data_prevista' => $dataPrevista,
+            'vendedor_id' => $vendedor_id,
+            'orcamento_id' => $orcamento_id,
+            // 'tiny_pedido_id' => $idTiny
+        ]);
+
+        return response()->json([
+            'message' => 'Pedido criado com sucesso!',
+            'pedido' => $pedido
+        ], 200);
+    }
+
+    public function updatePedidoArteFinalBlockTinyWithBrush(Request $request, $idPedido)
+    {
+
+        $existingPedido = PedidoArteFinal::where('id', $idPedido)->first();
+
+        if (!$existingPedido) {
+            return response()->json([
+                'message' => 'Pedido não encontrado na tabela pedidos_arte_final'
+            ], 409);
+        }
+
+        Log::info('updatePedidoArteFinalBlockTiny request:', ['request' => $request]);
+        $pedidoUserId = Auth::id();
+        $vendedor_id = $request->input('vendedor_id');
         $pedidoNumero = $request->input('pedido_numero');
         $pedidoPrazoArteFinal = $request->input('prazo_arte_final');
         $pedidoPrazoConfeccao = $request->input('prazo_confeccao');
