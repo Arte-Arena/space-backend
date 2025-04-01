@@ -6,6 +6,7 @@ use App\Models\Orcamento;
 use App\Models\OrcamentoStatus;
 use App\Models\OrcamentoStatusEtapa;
 use App\Models\Pedido;
+use App\Models\PedidoArteFinal;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\JsonResponse;
@@ -229,7 +230,7 @@ class OrcamentoController extends Controller
 
     private function getPedidosPorOrcamentoId($orcamentoId)
     {
-        $pedidos = Pedido::where('orcamento_id', $orcamentoId)->get();
+        $pedidos = PedidoArteFinal::where('orcamento_id', $orcamentoId)->get();
         return $pedidos;
     }
 
@@ -285,6 +286,7 @@ class OrcamentoController extends Controller
                 'total_orcamento' => $orcamento->total_orcamento,
                 'brinde' => $orcamento->brinde,
                 'produtos_brinde' => $orcamento->produtos_brinde,
+                'prev_entrega' => $orcamento->prev_entrega,
                 'pedidos' => $pedidos,
             ];
         }, $orcamentos);
