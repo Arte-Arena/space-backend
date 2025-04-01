@@ -380,8 +380,10 @@ class PedidoArteFinalController extends Controller
         ], 201);
     }
 
-    public function updatePedidoArteFinalComOrcamento(Request $request, $orcamentoId)
+    public function updatePedidoArteFinalComOrcamento(Request $request)
     {
+
+        $orcamentoId = $request['id'];
 
         if (empty($orcamentoId) || !is_numeric($orcamentoId) || !ctype_digit((string) $orcamentoId)) {
             return response()->json(['error' => 'Orcamento ID inválido'], 409);
@@ -389,13 +391,6 @@ class PedidoArteFinalController extends Controller
 
         Log::info('updatePedidoArteFinalComOrcamento request:', ['request' => $request]);
 
-     
-        $pedidoExistente = PedidoArteFinal::where('orcamento_id', $orcamentoId)->first();
-
-        if ($pedidoExistente) {
-            return response()->json(['error' => 'Pedido ja existe na tabela pedidos_arte_final'], 409);
-        }
-     
         // Get the JsonResponse object
         $pedidoResponse = $this->getPedidoWithOrcamento($orcamentoId);
 
