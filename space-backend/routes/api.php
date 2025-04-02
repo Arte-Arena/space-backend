@@ -151,6 +151,7 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,de
     Route::get('/orcamento/get-orcamentos', [OrcamentoController::class, 'getAllOrcamentos']);
     Route::get('/orcamento/orcamentos-last-status/{id}', [OrcamentoController::class, 'getAllOrcamentosEtapas']);
     Route::get('/orcamento/get-orcamentos-aprovados', [OrcamentoController::class, 'getAllOrcamentosAprovados']);
+    Route::post('/orcamento/uniformes', [OrcamentosUniformesController::class, 'store']);
     Route::get('/clientes-consolidados', [ClientesConsolidadosController::class, 'consolidateDataPaginated']);
     Route::get('/search-clientes-consolidados', [ClientesConsolidadosController::class, 'searchConsolidateDataPaginated']);
     Route::get('/vendas/quantidade-orcamentos', [VendasController::class, 'getQuantidadeOrcamentos']);
@@ -166,18 +167,13 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,de
     Route::get('/vendas/orcamentos-por-dia-filtered', [VendasController::class, 'getFilteredOrcamentosPorDia']);
     Route::get('/vendas/orcamentos-user-names', [VendasController::class, 'getUsersForFilter']);
     Route::get('/vendas/pedido-total', [VendasController::class, 'getTotalOrcamentoPedido']);
-    Route::post('/orcamento/uniformes', [OrcamentosUniformesController::class, 'store']);
     Route::get('/pedidos/get-pedido-arte-final-&-orcamento/{id}', [PedidoArteFinalController::class, 'getPedidoWithOrcamento']);
     Route::get('/pedidos/get-pedido-arte-final-orcamento/{id}', [PedidoArteFinalController::class, 'getPedidoWithOrcamento']);
     Route::get('/producao/get-pedidos-arte-final', [PedidoArteFinalController::class, 'getAllPedidosArteFinal']);
     Route::get('/producao/pedido-arte-final/{id}', [PedidoArteFinalController::class, 'getPedidoArteFinal']);
     Route::get('/producao/get-pedido-status', [PedidoArteFinalController::class, 'getAllStatusPedido']);
     Route::get('/producao/get-pedido-tipos', [PedidoArteFinalController::class, 'getAllTiposPedido']);
-    Route::put('/producao/pedido-status-change/{id}', [PedidoArteFinalController::class, 'trocarStatusArteFinal']);
-    Route::put('/producao/pedido-media-change/{id}', [PedidoArteFinalController::class, 'trocarMediaLinear']);
-    Route::put('/producao/pedido-obs-change/{id}', [PedidoArteFinalController::class, 'trocarObsArteFinal']);
-    Route::get('/producao/get-pedidos-por-data', [PedidoArteFinalController::class, 'getAllPedidosArteFinalRelatorios']);
-
+    Route::get('/producao/get-pedidos-por-data', [PedidoArteFinalController::class, 'getAllPedidosArteFinalRelatorios']);   
     Route::post('/producao/pedido-arte-final/from-backoffice/{orcamentoId}', [PedidoArteFinalController::class, 'createPedidoFromBackoffice']);
     Route::post('/producao/add-block-tiny-block-brush', [PedidoArteFinalController::class, 'createPedidoArteFinalBlockTinyBlockBrush']);
     Route::post('/producao/import-pedido-from-tiny', [PedidoArteFinalController::class, 'createPedidoArteFinalImportFromTiny']);
@@ -185,6 +181,9 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,de
     Route::patch('/producao/pedido-designer-change/{id}', [PedidoArteFinalController::class, 'atribuirDesigner']);
     Route::patch('/orcamento/backoffice/update-arte-final-com-orcamento/{id}', [PedidoArteFinalController::class, 'updatePedidoArteFinalComOrcamento']);
     Route::patch('/producao/edit-block-tiny-with-brush', [PedidoArteFinalController::class, 'updatePedidoArteFinalBlockTinyWithBrush']);
+    Route::patch('/producao/pedido-status-change/{id}', [PedidoArteFinalController::class, 'trocarStatusArteFinal']);
+    Route::patch('/producao/pedido-medida-change/{id}', [PedidoArteFinalController::class, 'trocarMedidaLinear']);
+    Route::patch('/producao/pedido-obs-change/{id}', [PedidoArteFinalController::class, 'trocarObsArteFinal']);
 
     Route::delete('/producao/delete-pedido-arte-final/{id}', [PedidoArteFinalController::class, 'deletePedidoArteFinal']);
     Route::get('/producao/pedido-arte-final/{arteFinalId}/verificar-uniformes', [PedidosArteFinalUniformesController::class, 'verificarUniformes']);
