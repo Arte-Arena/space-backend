@@ -182,7 +182,7 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,de
     Route::patch('/orcamento/backoffice/update-arte-final-com-orcamento/{id}', [PedidoArteFinalController::class, 'updatePedidoArteFinalComOrcamento']);
     Route::patch('/producao/edit-block-tiny-with-brush', [PedidoArteFinalController::class, 'updatePedidoArteFinalBlockTinyWithBrush']);
     Route::patch('/producao/pedido-status-change/{id}', [PedidoArteFinalController::class, 'trocarStatusArteFinal']);
-    Route::patch('/producao/pedido-medida-change/{id}', [PedidoArteFinalController::class, 'trocarMediaLinear']);
+    Route::patch('/producao/pedido-medida-change/{id}', [PedidoArteFinalController::class, 'trocarMedidaLinear']);
     Route::patch('/producao/pedido-obs-change/{id}', [PedidoArteFinalController::class, 'trocarObsArteFinal']);
 
     Route::delete('/producao/delete-pedido-arte-final/{id}', [PedidoArteFinalController::class, 'deletePedidoArteFinal']);
