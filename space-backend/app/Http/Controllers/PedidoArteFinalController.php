@@ -907,7 +907,7 @@ class PedidoArteFinalController extends Controller
         return response()->json(['message' => 'Pedido atualizado com sucesso!'], 200);
     }
 
-    public function trocarMediaLinear(Request $request, $id)
+    public function trocarMedidaLinear(Request $request, $id)
     {
         // Encontra o pedido pelo ID
         $pedido = PedidoArteFinal::find($id);
