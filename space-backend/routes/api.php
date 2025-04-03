@@ -109,7 +109,7 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin'])->group(function ()
     
 });
 
-Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,designer'])->group(function () {
+Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,designer,backoffice'])->group(function () {
     Route::get('/url/{id}', [ClienteCadastroShortUrlController::class, 'createShortUrl']);
     Route::post('/payment/generate-checkout', [MercadoPagoController::class, 'generateCheckoutLink']);
     Route::get('/chat-octa', [ChatOctaController::class, 'getAllChatOcta']);
@@ -179,7 +179,7 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,de
     Route::post('/producao/import-pedido-from-tiny', [PedidoArteFinalController::class, 'createPedidoArteFinalImportFromTiny']);
     Route::post('/producao/add-with-tiny', [PedidoArteFinalController::class, 'createPedidoArteFinalWithTiny']);
     Route::patch('/producao/pedido-designer-change/{id}', [PedidoArteFinalController::class, 'atribuirDesigner']);
-    Route::patch('/orcamento/backoffice/update-arte-final-com-orcamento/{id}', [PedidoArteFinalController::class, 'updatePedidoArteFinalComOrcamento']);
+    Route::patch('/orcamento/backoffice/update-arte-final-com-orcamento', [PedidoArteFinalController::class, 'updatePedidoArteFinalComOrcamento']);
     Route::patch('/producao/edit-block-tiny-with-brush', [PedidoArteFinalController::class, 'updatePedidoArteFinalBlockTinyWithBrush']);
     Route::patch('/producao/pedido-status-change/{id}', [PedidoArteFinalController::class, 'trocarStatusArteFinal']);
     Route::patch('/producao/pedido-medida-change/{id}', [PedidoArteFinalController::class, 'trocarMedidaLinear']);

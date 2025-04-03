@@ -153,11 +153,24 @@ class PedidoArteFinalController extends Controller
         ];
 
         $result = $this->inserirTiny($pedidoTiny);
-
         Log::info('Result from inserirTiny:', ['result' => $result]);
-        $resultData = $result;
-        $numeroDoPedido = $resultData['numero'];
-        $idDoTiny = $resultData['idTiny'];
+
+        if ($result['status'] !== "sucesso" && isset($result['mensagem'])) {
+            return response()->json([
+                'message' => 'Erro ao inserir pedido Tiny: ' . $result['mensagem']
+            ], 500);
+        }
+
+        if ($result['status'] !== "sucesso" && !$result['mensagem']) {
+            return response()->json([
+                'message' => 'Erro sem mensagem ao inserir pedido Tiny!'
+            ], 500);
+        }
+
+
+
+        $numeroDoPedido = $result['numero'];
+        $idDoTiny = $result['idTiny'];
 
         $pedido = PedidoArteFinal::create([
             'user_id' => Auth::id(),
