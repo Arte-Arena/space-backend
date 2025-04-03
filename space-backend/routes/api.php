@@ -106,11 +106,11 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin'])->group(function ()
     Route::put('/conta', [ContaController::class, 'upsertConta']);
     Route::delete('/conta/{id}', [ContaController::class, 'deleteConta']);
     Route::get('/contas-and-recorrentes', [ContaController::class, 'getAllContasAndRecorrentes']);
-
-    Route::get('/url/{id}', [ClienteCadastroShortUrlController::class, 'createShortUrl']);
+    
 });
 
 Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,designer'])->group(function () {
+    Route::get('/url/{id}', [ClienteCadastroShortUrlController::class, 'createShortUrl']);
     Route::post('/payment/generate-checkout', [MercadoPagoController::class, 'generateCheckoutLink']);
     Route::get('/chat-octa', [ChatOctaController::class, 'getAllChatOcta']);
     Route::put('/chat-octa', [ChatOctaController::class, 'upsertChatOcta']);
