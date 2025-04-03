@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('pedidos_arte_final_impressao', function (Blueprint $table) {
             $table->id();
             $table->integer('impressora')->nullable();
+            $table->string('tipo_corte')->nullable();
             $table->foreignId('pedido_arte_final_id')->unique()->constrained('pedidos_arte_final')->onDelete('cascade');
             $table->timestamps();
         });
