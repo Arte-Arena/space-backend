@@ -266,9 +266,9 @@ class SuperAdminController extends Controller
         return response()->json(['message' => 'Módulos do papel atualizados com sucesso.'], 200);
     }
 
-    public function updateDiasAntecipaProducao(Request $request)
+    public function updateDiasAntecipaProducaoArteFinal(Request $request)
     {
-        $diasAntecipacao = $request->input('dias_antecipa');
+        $diasAntecipacao = $request->input('dias_antecipa_producao_arte_final');
 
         if (!$diasAntecipacao) {
             return response()->json(['message' => 'Dias de antecipação não informados.'], 422);
@@ -284,9 +284,79 @@ class SuperAdminController extends Controller
 
         Config::updateOrCreate(
             ['id' => 1],
-            ['dias_antecipa_producao' => $diasAntecipacao]
+            ['dias_antecipa_producao_arte_final' => $diasAntecipacao]
         );
     
         return response()->json(['message' => 'Dias de antecipação atualizados com sucesso.'], 200);
     }
+
+    public function updateDiasAntecipaProducaoImpressao(Request $request)
+    {
+        $diasAntecipacao = $request->input('dias_antecipa_producao_impressao');
+        if (!$diasAntecipacao) {
+            return response()->json(['message' => 'Dias de antecipação não informados.'], 422);
+        }
+
+        if ($diasAntecipacao < 0) {
+            return response()->json(['message' => 'Dias de antecipação não pode ser menor que 0.'], 422);
+        }
+
+        if ($diasAntecipacao > 15) {
+            return response()->json(['message' => 'Dias de antecipação não pode ser maior que 15.'], 422);
+        }
+
+        Config::updateOrCreate(
+            ['id' => 1],
+            ['dias_antecipa_producao_impressao' => $diasAntecipacao]
+        );
+    
+        return response()->json(['message' => 'Dias de antecipação atualizados com sucesso.'], 200);        
+    }
+
+    public function updateDiasAntecipaProducaoConfeccao(Request $request)
+    {
+        $diasAntecipacao = $request->input('dias_antecipa_producao_confeccao');
+        if (!$diasAntecipacao) {
+            return response()->json(['message' => 'Dias de antecipação não informados.'], 422);
+        }
+
+        if ($diasAntecipacao < 0) {
+            return response()->json(['message' => 'Dias de antecipação não pode ser menor que 0.'], 422);
+        }
+
+        if ($diasAntecipacao > 15) {
+            return response()->json(['message' => 'Dias de antecipação não pode ser maior que 15.'], 422);
+        }
+
+        Config::updateOrCreate(
+            ['id' => 1],
+            ['dias_antecipa_producao_confeccao' => $diasAntecipacao]
+        );
+    
+        return response()->json(['message' => 'Dias de antecipação atualizados com sucesso.'], 200);
+    }
+
+    public function updateDiasAntecipaProducaoExpedicao(Request $request)
+    {
+        $diasAntecipacao = $request->input('dias_antecipa_producao_expedicao');
+        if (!$diasAntecipacao) {
+            return response()->json(['message' => 'Dias de antecipação não informados.'], 422);
+        }
+
+        if ($diasAntecipacao < 0) {
+            return response()->json(['message' => 'Dias de antecipação não pode ser menor que 0.'], 422);
+        }
+
+        if ($diasAntecipacao > 15) {
+            return response()->json(['message' => 'Dias de antecipação não pode ser maior que 15.'], 422);
+        }
+
+        Config::updateOrCreate(
+            ['id' => 1],
+            ['dias_antecipa_producao_expedicao' => $diasAntecipacao]
+        );
+    
+        return response()->json(['message' => 'Dias de antecipação atualizados com sucesso.'], 200); 
+    }
+
 }

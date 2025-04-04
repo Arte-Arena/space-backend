@@ -83,8 +83,10 @@ Route::middleware(['auth:sanctum', 'role:super-admin'])->group(function () {
     Route::put('/super-admin/upsert-role-module', [SuperAdminController::class, 'upsertRoleModule']);
     Route::put('/super-admin/upsert-config', [SuperAdminController::class, 'upsertConfig']);
     Route::get('/super-admin/get-backups', [BackupController::class, 'getBackups']);
-    Route::put('/super-admin/update-dias-antecipa-producao', [SuperAdminController::class, 'updateDiasAntecipaProducao']);
-    
+    Route::patch('/super-admin/update-dias-antecipa-producao-arte-final', [SuperAdminController::class, 'updateDiasAntecipaProducaoArteFinal']);
+    Route::patch('/super-admin/update-dias-antecipa-producao-impressao', [SuperAdminController::class, 'updateDiasAntecipaProducaoImpressao']);
+    Route::patch('/super-admin/update-dias-antecipa-producao-confeccao', [SuperAdminController::class, 'updateDiasAntecipaProducaoConfeccao']);
+    Route::patch('/super-admin/update-dias-antecipa-producao-expedicao', [SuperAdminController::class, 'updateDiasAntecipaProducaoExpedicao']);    
 });
 
 Route::middleware(['auth:sanctum', 'role:super-admin,admin'])->group(function () {
