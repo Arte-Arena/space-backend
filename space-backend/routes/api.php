@@ -82,11 +82,8 @@ Route::middleware(['auth:sanctum', 'role:super-admin'])->group(function () {
     Route::delete('/super-admin/delete-role-module/{roleId}/{moduleId}', [SuperAdminController::class, 'deleteRoleModule']);
     Route::put('/super-admin/upsert-role-module', [SuperAdminController::class, 'upsertRoleModule']);
     Route::put('/super-admin/upsert-config', [SuperAdminController::class, 'upsertConfig']);
-    Route::get('/super-admin/get-backups', [BackupController::class, 'getBackups']);
-    Route::patch('/super-admin/update-dias-antecipa-producao-arte-final', [SuperAdminController::class, 'updateDiasAntecipaProducaoArteFinal']);
-    Route::patch('/super-admin/update-dias-antecipa-producao-impressao', [SuperAdminController::class, 'updateDiasAntecipaProducaoImpressao']);
-    Route::patch('/super-admin/update-dias-antecipa-producao-confeccao', [SuperAdminController::class, 'updateDiasAntecipaProducaoConfeccao']);
-    Route::patch('/super-admin/update-dias-antecipa-producao-expedicao', [SuperAdminController::class, 'updateDiasAntecipaProducaoExpedicao']);    
+    Route::get('/super-admin/get-backups', [BackupController::class, 'getBackups']);   
+    Route::put('/super-admin/upsert-config-prazos', [SuperAdminController::class, 'upsertDiasAntecipaProducao']);
 });
 
 Route::middleware(['auth:sanctum', 'role:super-admin,admin'])->group(function () {
