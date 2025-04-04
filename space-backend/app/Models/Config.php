@@ -15,7 +15,8 @@ class Config extends Model
         'custo_tinta',
         'custo_papel',
         'custo_imposto',
-        'custo_final'
+        'custo_final',
+        'dias_antecipa_producao'
     ];
 
     public function user()

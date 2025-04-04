@@ -265,4 +265,28 @@ class SuperAdminController extends Controller
 
         return response()->json(['message' => 'Módulos do papel atualizados com sucesso.'], 200);
     }
+
+    public function updateDiasAntecipaProducao(Request $request)
+    {
+        $diasAntecipacao = $request->input('dias_antecipa');
+
+        if (!$diasAntecipacao) {
+            return response()->json(['message' => 'Dias de antecipação não informados.'], 422);
+        }
+
+        if ($diasAntecipacao < 0) {
+            return response()->json(['message' => 'Dias de antecipação não pode ser menor que 0.'], 422);
+        }
+
+        if ($diasAntecipacao > 15) {
+            return response()->json(['message' => 'Dias de antecipação não pode ser maior que 15.'], 422);
+        }
+
+        Config::updateOrCreate(
+            ['id' => 1],
+            ['dias_antecipa_producao' => $diasAntecipacao]
+        );
+    
+        return response()->json(['message' => 'Dias de antecipação atualizados com sucesso.'], 200);
+    }
 }

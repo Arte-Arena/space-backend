@@ -511,223 +511,6 @@ class PedidoArteFinalController extends Controller
         }
     }
 
-    // public function upsertPedidoArteFinal(Request $request)
-    // {
-    //     Log::info($request);
-
-    //     $pedidoUserId = Auth::id();
-    //     $vendedor_id = $request->input('vendedor_id');
-    //     $pedidoId = $request->input('pedido_id');
-    //     $pedidoNumero = $request->input('pedido_numero');
-    //     $pedidoPrazoArteFinal = $request->input('prazo_arte_final');
-    //     $pedidoPrazoConfeccao = $request->input('prazo_confeccao');
-    //     $dataPrevista = $request->input('data_prevista');
-    //     $pedidoObservacoes = $request->input('observacoes');
-    //     $pedidoRolo = $request->input('pedido_rolo');
-    //     $pedidoDesignerId = $request->input('pedido_designer_id');
-    //     $pedidoStatusId = $request->input('pedido_status_id');
-    //     $pedidoTipoId = $request->input('pedido_tipo_id');
-    //     $pedidoEstagio = $request->input('pedido_estagio') ?? 'D';
-    //     $pedidoUrlTrello = $request->input('pedido_url_trello');
-    //     $pedidoSituacao = $request->input('pedido_situacao');
-    //     $pedidoPrioridade = $request->input('pedido_prioridade');
-    //     $PedidoListaProdutos = $request->input('lista_produtos');
-    //     $observacao = $request->input('observacoes');
-    //     $orcamento_id = $request['orcamento_id'];
-    //     $tiny_block = $request['block_tiny'] === 'true';
-
-    //     Log::info($tiny_block ? 'true' : 'false');
-
-    //     if ($pedidoNumero) {
-    //         $existingPedidoNumero = PedidoArteFinal::where('numero_pedido', $pedidoNumero)
-    //             ->where(function ($query) use ($pedidoId) {
-    //                 if ($pedidoId) {
-    //                     $query->where('id', '!=', $pedidoId);
-    //                 }
-    //             })->exists();
-
-    //         if ($existingPedidoNumero) {
-    //             return response()->json([
-    //                 'message' => 'Já existe um pedido com o número ' . $pedidoNumero
-    //             ], 400);
-    //         }
-    //     }
-
-    //     $pedido = PedidoArteFinal::find($pedidoId);
-
-    //     $vendedor = User::where('id', $vendedor_id)->select('id')->first();
-    //     $vendedorId = $vendedor ? $vendedor->id : null;
-    //     $vendedoresTiny = [
-    //         '29' => 707100035,
-    //         '43' => 709683645,
-    //         '28' => 705062240,
-    //         '1' => 704446840,
-    //         '2' => 704446840,
-    //         '3' => 704446840,
-    //         '4' => 704446840,
-    //         '5' => 704446840,
-    //     ];
-    //     $idVendedorTiny = $vendedorId !== null ? ($vendedoresTiny[$vendedorId] ?? 704446840) : 704446840;
-    //     if (!$idVendedorTiny) {
-    //         return response()->json([
-    //             'message' => 'Vendedor não encontrado no sistema Tiny'
-    //         ], 400);
-    //     }
-
-    //     $produtos = $PedidoListaProdutos;
-    //     if (is_string($PedidoListaProdutos)) {
-    //         $produtos = json_decode($PedidoListaProdutos, true);
-    //     }
-    //     $itens = array_map(function ($produto) {
-    //         return [
-    //             "item" => [
-    //                 "descricao" => $produto["nome"] . " - " . $produto['esboco'],
-    //                 "unidade" => "UN",
-    //                 "quantidade" => (string)$produto["quantidade"],
-    //                 "valor_unitario" => number_format($produto["preco"], 2, '.', '')
-    //             ]
-    //         ];
-    //     }, $produtos);
-    //     Log::info($itens);
-
-    //     $pedidoTiny = [
-    //         "pedido" => [
-    //             "cliente" => [
-    //                 "nome" => $request['nome_cliente'] ?? 1,
-    //                 "codigo" => $request['cliente_codigo'] ?? 1,
-    //             ],
-    //             "itens" => $itens,
-    //             "valor_desconto" => $request['valor_desconto'],
-    //             "obs" => $observacao,
-    //             "numero_pedido_ecommerce" => $request['id'],
-    //             "id_vendedor" => $idVendedorTiny,
-    //             "data_pedido" => date('d/m/Y'),
-    //             "parcelas" => [],
-    //             "outras_despesas" => $request['taxa_antecipa'],
-    //             "situacao" => "aberto",
-    //             "nome_transportador" => $request['transportadora'],
-    //             "intermediador" => [
-    //                 "nome" => "",
-    //                 "cnpj" => ""
-    //             ],
-    //         ]
-    //     ];
-
-    //     if (!$pedido) {
-    //         $idTiny = null;
-
-    //         if (!$tiny_block) {
-    //             Log::info('PASSOU NO INSERT TINY');
-    //             $resultadoApi = $this->inserirTiny($pedidoTiny);
-
-    //             if ($resultadoApi['status'] == 'erro') {
-    //                 Log::info('Erro retorno 400 ', $resultadoApi);
-    //                 return response()->json([
-    //                     'message' => 'Erro ao criar pedido na API Tiny: ' . $resultadoApi['mensagem']
-    //                 ], 400);
-    //             }
-
-    //             Log::info('Resultado da API Tiny:', $resultadoApi);
-    //             $idTiny = $resultadoApi['idTiny'];
-    //             $pedidoNumero = $resultadoApi['numero'];
-    //         } else {
-    //             $idTiny = $this->getPedidoByNumeroTiny($pedidoNumero);
-    //             if (!$idTiny) {
-    //                 return response()->json([
-    //                     'message' => 'Pedido não encontrado ou erro na API Tiny',
-    //                 ], 404);
-    //             }
-    //         }
-
-    //         if (!$idTiny) {
-    //             Log::error('Tentativa de criar pedido sem ID Tiny válido');
-    //             return response()->json([
-    //                 'message' => 'Não é possível criar um pedido sem um ID Tiny válido'
-    //             ], 400);
-    //         }
-
-    //         $pedido = PedidoArteFinal::create([
-    //             'user_id' => $pedidoUserId,
-    //             'numero_pedido' => $pedidoNumero,
-    //             'prazo_confeccao' => $pedidoPrazoConfeccao,
-    //             'prazo_arte_final' => $pedidoPrazoArteFinal,
-    //             'lista_produtos' => $PedidoListaProdutos,
-    //             'observacoes' => $pedidoObservacoes,
-    //             'rolo' => $pedidoRolo,
-    //             'designer_id' => $pedidoDesignerId,
-    //             'pedido_status_id' => $pedidoStatusId,
-    //             'pedido_tipo_id' => $pedidoTipoId,
-    //             'estagio' => $pedidoEstagio,
-    //             'url_trello' => $pedidoUrlTrello,
-    //             'situacao' => $pedidoSituacao,
-    //             'prioridade' => $pedidoPrioridade,
-    //             'data_prevista' => $dataPrevista,
-    //             'vendedor_id' => $vendedor_id,
-    //             'orcamento_id' => $orcamento_id,
-    //             'tiny_pedido_id' => $idTiny
-    //         ]);
-
-    //         return response()->json([
-    //             'message' => 'Pedido criado com sucesso!',
-    //             'pedido' => $pedido
-    //         ], 200);
-    //     } else {
-    //         $tiny_id = $pedido->tiny_pedido_id;
-
-    //         if (!$tiny_id) {
-
-    //             $tiny_id = $this->getPedidoByNumeroTiny($pedidoNumero);
-    //             if (!$tiny_id) {
-    //                 return response()->json([
-    //                     'message' => 'Pedido não encontrado ou erro na API Tiny',
-    //                 ], 404);
-    //             }
-
-    //             $pedido->tiny_pedido_id = $tiny_id;
-    //         }
-
-    //         if (!$tiny_block) {
-    //             $updatedTiny = [
-    //                 "dados_pedido" => [
-    //                     "obs" => $observacao,
-    //                 ]
-    //             ];
-
-    //             $resultadoApi = $this->updateTiny($updatedTiny, $tiny_id);
-
-    //             if ($resultadoApi['status'] == 'erro') {
-    //                 return response()->json([
-    //                     'message' => 'Erro ao atualizar pedido na API Tiny: ' . $resultadoApi['mensagem']
-    //                 ], 400);
-    //             }
-    //         }
-
-    //         $pedido->user_id = $pedidoUserId;
-    //         $pedido->numero_pedido = $pedidoNumero;
-    //         $pedido->prazo_confeccao = $pedidoPrazoConfeccao;
-    //         $pedido->prazo_arte_final = $pedidoPrazoArteFinal;
-    //         $pedido->lista_produtos = $PedidoListaProdutos;
-    //         $pedido->observacoes = $pedidoObservacoes;
-    //         $pedido->rolo = $pedidoRolo;
-    //         $pedido->designer_id = $pedidoDesignerId;
-    //         $pedido->pedido_status_id = $pedidoStatusId;
-    //         $pedido->pedido_tipo_id = $pedidoTipoId;
-    //         $pedido->estagio = $pedidoEstagio;
-    //         $pedido->url_trello = $pedidoUrlTrello;
-    //         $pedido->situacao = $pedidoSituacao;
-    //         $pedido->prioridade = $pedidoPrioridade;
-    //         $pedido->data_prevista = $dataPrevista;
-    //         $pedido->orcamento_id = $orcamento_id;
-    //         $pedido->vendedor_id = $vendedor_id;
-    //         $pedido->save();
-
-    //         return response()->json([
-    //             'message' => 'Pedido atualizado com sucesso!',
-    //             'pedido' => $pedido
-    //         ], 200);
-    //     }
-    // }
-
     public function getPedidoArteFinal($id)
     {
         $pedido = PedidoArteFinal::find($id);
@@ -755,9 +538,9 @@ class PedidoArteFinalController extends Controller
 
         $data = [
             'token' => $token,
-            'id' => $pedido->tiny_pedido_id, // ID do pedido no Tiny
-            'situacao' => 'Cancelado', // Situação para cancelar o pedido
-            'formato' => 'json', // Formato da resposta
+            'id' => $pedido->tiny_pedido_id,
+            'situacao' => 'Cancelado',
+            'formato' => 'json',
         ];
 
         $response = Http::asForm()->post($url, $data);
@@ -796,6 +579,22 @@ class PedidoArteFinalController extends Controller
         $pedido->designer_id = $request['designer_id'];
         $pedido->save();
         return response()->json(['message' => 'Pedido atualizado com sucesso!'], 200);
+    }
+
+    public function trocarImpressoraArteFinalImpressao(Request $request, $id)
+    {
+        $pedido = PedidoArteFinal::find($id);
+        if (!$pedido) {
+            return response()->json(['error' => 'Pedido not found'], 500);
+        }
+    }
+
+    public function trocarCorteArteFinalImpressao(Request $request, $id)
+    {
+        $pedido = PedidoArteFinal::find($id);
+        if (!$pedido) {
+            return response()->json(['error' => 'Pedido not found'], 500);
+        }
     }
 
     private function inserirTiny($pedido)
