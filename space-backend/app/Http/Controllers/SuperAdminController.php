@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\{User, Config, Role, Module};
-
+use Illuminate\Support\Facades\Log;
 
 class SuperAdminController extends Controller
 {
@@ -268,6 +268,13 @@ class SuperAdminController extends Controller
 
     public function upsertDiasAntecipaProducao(Request $request)
     {
+        Log::info('Updaste dias de antecipacao de produ o: ', [
+            'dias_antecipa_producao_arte_final' => $request->input('dias_antecipa_producao_arte_final'),
+            'dias_antecipa_producao_impressao' => $request->input('dias_antecipa_producao_impressao'),
+            'dias_antecipa_producao_confeccao_sublimacao' => $request->input('dias_antecipa_producao_confeccao_sublimacao'),
+            'dias_antecipa_producao_producao_costura' => $request->input('dias_antecipa_producao_producao_costura'),
+        ]);
+        
         $diasAntecipacaoArteFinal = $request->input('dias_antecipa_producao_arte_final');
         $diasAntecipacaoImpressao = $request->input('dias_antecipa_producao_impressao');
         $diasAntecipacaoConfeccaoSublimacao = $request->input('dias_antecipa_producao_confeccao_sublimacao');

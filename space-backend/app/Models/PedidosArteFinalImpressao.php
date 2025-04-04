@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class PedidoArteFinal extends Model
+class PedidoArteFinalImpressao extends Model
 {
     use HasFactory;
 
@@ -14,5 +14,7 @@ class PedidoArteFinal extends Model
 
     protected $fillable = [
         'pedido_arte_final_id',
+        'impressora',
+        'tipo_corte',
     ];
 }

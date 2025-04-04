@@ -8,6 +8,7 @@ use App\Models\PedidoTipo;
 use App\Models\User;
 use App\Models\Orcamento;
 use App\Models\OrcamentoStatus;
+use App\Models\PedidoArteFinalImpressao;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
@@ -366,7 +367,7 @@ class PedidoArteFinalController extends Controller
         }
 
 
-        
+
         $novaListaDeProdutos = array_map(function ($produto) {
             $produto['medida_linear'] = 0;
             $produto['uid'] = $produto['id'] . rand(10, 99);
@@ -587,6 +588,19 @@ class PedidoArteFinalController extends Controller
         if (!$pedido) {
             return response()->json(['error' => 'Pedido not found'], 500);
         }
+
+        $pedidoImpressao = PedidoArteFinalImpressao::updateOrCreate(
+            ['pedido_arte_final_id' => $id],
+            [
+                'impressora' => $request['impressora'],
+            ]
+        );
+
+        if (!$pedidoImpressao) {
+            return response()->json(['error' => 'Erro ao atualizar impressão'], 500);
+        }
+
+        return response()->json(['message' => 'impressora da Impressão atualizada com sucesso!'], 200);
     }
 
     public function trocarCorteArteFinalImpressao(Request $request, $id)
@@ -595,6 +609,19 @@ class PedidoArteFinalController extends Controller
         if (!$pedido) {
             return response()->json(['error' => 'Pedido not found'], 500);
         }
+
+        $pedidoImpressao = PedidoArteFinalImpressao::updateOrCreate(
+            ['pedido_arte_final_id' => $id],
+            [
+                'tipo_corte' => $request['impressora_id']
+            ]
+        );
+
+        if (!$pedidoImpressao) {
+            return response()->json(['error' => 'Erro ao atualizar impressão'], 500);
+        }
+
+        return response()->json(['message' => 'Corte da Impressão atualizada com sucesso!'], 200);
     }
 
     private function inserirTiny($pedido)
