@@ -187,7 +187,7 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,de
     Route::patch('/producao/impressao/impressora-change/{id}', [PedidoArteFinalController::class, 'trocarImpressoraArteFinalImpressao']);
     Route::patch('/producao/impressao/corte-change/{id}', [PedidoArteFinalController::class, 'trocarCorteArteFinalImpressao']);
     Route::delete('/producao/delete-pedido-arte-final/{id}', [PedidoArteFinalController::class, 'deletePedidoArteFinal']);
-    Route::get('/producao/pedido-arte-final/{arteFinalId}/verificar-uniformes', [PedidosArteFinalUniformesController::class, 'verificarUniformes']);
+    Route::get('/producao/pedido-arte-final/{arteFinalId}/verificar-uniformes', [PedidosArteFinalUniformesController::class, 'verificarUniformes']); 
 
     // Route::get('/produto-personalizad', [ProdutosPersonalizadController::class, 'getAllProdutosPersonalizad']);
     // Route::get('/vendas/orcamentos-por-entrega', [VendasController::class, 'getQuantidadeOrcamentosEntrega']);
