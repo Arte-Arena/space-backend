@@ -1,0 +1,7 @@
+@token = 15|bkF5V848EUFCpC67OOXSk4Bap2YBxUa7A3YwiKxH350de6c1
+
+
+### Get All Users
+GET http://localhost:8000/api/super-admin/get-config-prazos
+Authorization: Bearer {{token}}
+Content-Type: application/json
