@@ -279,8 +279,13 @@ class SuperAdminController extends Controller
 
     public function upsertConfigPrazos(Request $request)
     {
-
-        Log::info($request->all());
+        Log::info('Update dias de antecipacao de produ o: ', [
+            'dias_antecipa_producao_arte_final' => $request->input('dias_antecipa_producao_arte_final'),
+            'dias_antecipa_producao_impressao' => $request->input('dias_antecipa_producao_impressao'),
+            'dias_antecipa_producao_confeccao_sublimacao' => $request->input('dias_antecipa_producao_confeccao_sublimacao'),
+            'dias_antecipa_producao_producao_costura' => $request->input('dias_antecipa_producao_producao_costura'),
+        ]);
+        
 
         $diasAntecipacaoArteFinal = $request->input('dias_antecipa_producao_arte_final');
         $diasAntecipacaoImpressao = $request->input('dias_antecipa_producao_impressao');
