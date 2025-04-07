@@ -83,7 +83,8 @@ Route::middleware(['auth:sanctum', 'role:super-admin'])->group(function () {
     Route::put('/super-admin/upsert-role-module', [SuperAdminController::class, 'upsertRoleModule']);
     Route::put('/super-admin/upsert-config', [SuperAdminController::class, 'upsertConfig']);
     Route::get('/super-admin/get-backups', [BackupController::class, 'getBackups']);   
-    Route::put('/super-admin/upsert-config-prazos', [SuperAdminController::class, 'upsertDiasAntecipaProducao']);
+    Route::put('/super-admin/upsert-config-prazos', [SuperAdminController::class, 'upsertConfigPrazos']);
+    Route::get('/super-admin/get-config-prazos', [SuperAdminController::class, 'getConfigPrazos']);
 });
 
 Route::middleware(['auth:sanctum', 'role:super-admin,admin'])->group(function () {
