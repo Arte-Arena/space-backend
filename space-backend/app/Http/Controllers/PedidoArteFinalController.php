@@ -59,7 +59,7 @@ class PedidoArteFinalController extends Controller
         $todosPedidos = $query->get();
 
         // Agrupa por data e calcula os valores necessários
-        $dadosPorData = $todosPedidos->groupBy('data_prevista')->map(function ($pedidosDoDia) { // tem que ver se é do created at ou do data prevista
+        $dadosPorData = $todosPedidos->groupBy('data_prevista')->orderBy('data_prevista', 'asc')->map(function ($pedidosDoDia) { // tem que ver se é do created at ou do data prevista
             return [
                 'quantidade_pedidos' => $pedidosDoDia->count(),
                 'total_medida_linear' => $pedidosDoDia->sum(function ($pedido) {
@@ -72,7 +72,6 @@ class PedidoArteFinalController extends Controller
             ];
         });
 
-        $query->orderBy('data_prevista', 'asc');
 
         return response()->json([
             'dados_por_data' => $dadosPorData
