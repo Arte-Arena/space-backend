@@ -50,7 +50,8 @@ class PedidoArteFinalController extends Controller
     {
         $query = PedidoArteFinal::query()
             ->whereNotNull('numero_pedido')
-            ->whereNotNull('tiny_pedido_id');
+            ->whereNotNull('tiny_pedido_id')
+            ->orderBy('data_prevista', 'asc');
 
         if ($request->has('fila')) {
             $fila = $request->query('fila');
@@ -76,8 +77,6 @@ class PedidoArteFinalController extends Controller
                 })
             ];
         });
-
-        $query->orderBy('data_prevista', 'asc');
 
         return response()->json([
             'dados_por_data' => $dadosPorData

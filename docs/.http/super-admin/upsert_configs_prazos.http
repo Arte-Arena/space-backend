@@ -1,0 +1,10 @@
+PUT http://localhost:8000/api/super-admin/upsert-config-prazos
+Content-Type: application/json
+Authorization: Bearer 15|bkF5V848EUFCpC67OOXSk4Bap2YBxUa7A3YwiKxH350de6c1
+
+{
+    "dias_antecipa_producao_arte_final": 3,
+    "dias_antecipa_producao_impressao": 2,
+    "dias_antecipa_producao_confeccao_sublimacao": 1,
+    "dias_antecipa_producao_confeccao_costura": 1
+}

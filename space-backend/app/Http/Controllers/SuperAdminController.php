@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use App\Models\{User, Config, Role, Module};
+use App\Models\{User, Config, Role, Module, ConfigPrazos};
 use Illuminate\Support\Facades\Log;
 
 class SuperAdminController extends Controller
@@ -266,19 +266,31 @@ class SuperAdminController extends Controller
         return response()->json(['message' => 'Módulos do papel atualizados com sucesso.'], 200);
     }
 
-    public function upsertDiasAntecipaProducao(Request $request)
+    public function getConfigPrazos()
     {
-        Log::info('Updaste dias de antecipacao de produ o: ', [
+        $diasAntecipacao = ConfigPrazos::first();
+
+        if (!$diasAntecipacao) {
+            return response()->json(['message' => 'Dias de antecipação não encontrados.'], 204);
+        }
+
+        return response()->json($diasAntecipacao);
+    }
+
+    public function upsertConfigPrazos(Request $request)
+    {
+        Log::info('Update dias de antecipacao de produ o: ', [
             'dias_antecipa_producao_arte_final' => $request->input('dias_antecipa_producao_arte_final'),
             'dias_antecipa_producao_impressao' => $request->input('dias_antecipa_producao_impressao'),
             'dias_antecipa_producao_confeccao_sublimacao' => $request->input('dias_antecipa_producao_confeccao_sublimacao'),
             'dias_antecipa_producao_producao_costura' => $request->input('dias_antecipa_producao_producao_costura'),
         ]);
         
+
         $diasAntecipacaoArteFinal = $request->input('dias_antecipa_producao_arte_final');
         $diasAntecipacaoImpressao = $request->input('dias_antecipa_producao_impressao');
         $diasAntecipacaoConfeccaoSublimacao = $request->input('dias_antecipa_producao_confeccao_sublimacao');
-        $diasAntecipacaoConfeccaoCostura = $request->input('dias_antecipa_producao_producao_costura');
+        $diasAntecipacaoConfeccaoCostura = $request->input('dias_antecipa_producao_confeccao_costura');
 
         if (!$diasAntecipacaoArteFinal || !$diasAntecipacaoImpressao || !$diasAntecipacaoConfeccaoSublimacao || !$diasAntecipacaoConfeccaoCostura) {
             return response()->json(['message' => 'Dias de antecipação precisam ser informados.'], 422);
@@ -292,7 +304,7 @@ class SuperAdminController extends Controller
             return response()->json(['message' => 'Dias de antecipação não podem ser maior que 15.'], 422);
         }
 
-        Config::updateOrCreate(
+        ConfigPrazos::updateOrCreate(
             ['id' => 1],
             [
                 'dias_antecipa_producao_arte_final' => $diasAntecipacaoArteFinal,
@@ -301,8 +313,10 @@ class SuperAdminController extends Controller
                 'dias_antecipa_producao_confeccao_costura' => $diasAntecipacaoConfeccaoCostura
             ]
         );
+
+        Log::info('Configurações de Prazo atualizadas com sucesso.');
     
-        return response()->json(['message' => 'Dias de antecipação atualizados com sucesso.'], 200);
+        return response()->json(['message' => 'Configurações de Prazo atualizadas com sucesso.'], 200);
     }
 
 }
