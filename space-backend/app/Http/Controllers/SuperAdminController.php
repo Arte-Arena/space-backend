@@ -292,8 +292,20 @@ class SuperAdminController extends Controller
         $diasAntecipacaoConfeccaoSublimacao = $request->input('dias_antecipa_producao_confeccao_sublimacao');
         $diasAntecipacaoConfeccaoCostura = $request->input('dias_antecipa_producao_confeccao_costura');
 
-        if (!$diasAntecipacaoArteFinal || !$diasAntecipacaoImpressao || !$diasAntecipacaoConfeccaoSublimacao || !$diasAntecipacaoConfeccaoCostura) {
-            return response()->json(['message' => 'Dias de antecipação precisam ser informados.'], 422);
+        if (!$diasAntecipacaoArteFinal) {
+            $diasAntecipacaoArteFinal = 0;
+        }
+
+        if (!$diasAntecipacaoImpressao) {
+            $diasAntecipacaoImpressao = 0;
+        }
+
+        if (!$diasAntecipacaoConfeccaoSublimacao) {
+            $diasAntecipacaoConfeccaoSublimacao = 0;
+        }
+
+        if (!$diasAntecipacaoConfeccaoCostura) {
+            $diasAntecipacaoConfeccaoCostura = 0;
         }
 
         if ($diasAntecipacaoArteFinal < 0 || $diasAntecipacaoImpressao < 0 || $diasAntecipacaoConfeccaoSublimacao < 0 || $diasAntecipacaoConfeccaoCostura < 0) {
