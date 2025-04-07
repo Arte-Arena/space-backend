@@ -1,0 +1,8 @@
+
+GET http://localhost:8000/api/producao/get-pedidos-por-data
+Content-Type: application/json
+Authorization: Bearer 16|aPEpd6u0QxpzCANlQKAKwsTGXYti2z9StaXgysKg1c4d8292
+
+
+
+
