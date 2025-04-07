@@ -8,7 +8,7 @@ use App\Models\PedidoTipo;
 use App\Models\User;
 use App\Models\Orcamento;
 use App\Models\OrcamentoStatus;
-use App\Models\PedidoArteFinalImpressao;
+use App\Models\PedidosArteFinalImpressao;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
@@ -27,6 +27,10 @@ class PedidoArteFinalController extends Controller
 
             if (in_array($fila, ['D', 'I', 'C', 'E'])) {
                 $query->where('estagio', $fila);
+            }
+
+            if($fila == 'I'){
+                $query->with('impressao');
             }
         }
 
@@ -589,7 +593,7 @@ class PedidoArteFinalController extends Controller
             return response()->json(['error' => 'Pedido not found'], 500);
         }
 
-        $pedidoImpressao = PedidoArteFinalImpressao::updateOrCreate(
+        $pedidoImpressao = PedidosArteFinalImpressao::updateOrCreate(
             ['pedido_arte_final_id' => $id],
             [
                 'impressora' => $request['impressora'],
@@ -610,10 +614,10 @@ class PedidoArteFinalController extends Controller
             return response()->json(['error' => 'Pedido not found'], 500);
         }
 
-        $pedidoImpressao = PedidoArteFinalImpressao::updateOrCreate(
+        $pedidoImpressao = PedidosArteFinalImpressao::updateOrCreate(
             ['pedido_arte_final_id' => $id],
             [
-                'tipo_corte' => $request['impressora_id']
+                'tipo_corte' => $request['tipo_corte']
             ]
         );
 
