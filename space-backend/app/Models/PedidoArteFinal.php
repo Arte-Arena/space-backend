@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Http\Controllers\PedidosArteFinalConfeccaoSublimacaoController;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
@@ -71,6 +72,11 @@ class PedidoArteFinal extends Model
     public function impressao()
     {
         return $this->hasOne(PedidosArteFinalImpressao::class, 'pedido_arte_final_id');
+    }
+
+    public function confeccaoSublimacao()
+    {
+        return $this->hasOne(PedidosArteFinalConfeccaoSublimacaoModel::class, 'pedido_arte_final_id');
     }
 
 }

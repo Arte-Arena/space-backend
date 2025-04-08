@@ -32,6 +32,10 @@ class PedidoArteFinalController extends Controller
             if ($fila == 'I') {
                 $query->with('impressao');
             }
+            
+            if ($fila == 'S') {
+                $query->with('confeccaoSublimacao');
+            }
         }
 
         // Aplica a ordenação
