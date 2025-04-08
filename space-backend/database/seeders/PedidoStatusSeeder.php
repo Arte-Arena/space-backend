@@ -56,15 +56,9 @@ class PedidoStatusSeeder extends Seeder
             ]);
         }
 
-        $statusConfeccao = [
-            'Prensa/clandra',
-            'Checagem',
-            'Corte/preparaçao',
-            'Prateleriera/pendente',
-            'Costura/confeccao',
-            'Conferencia final',
-            'Finalizado',
-            'Reposição',
+        $statusConfeccao = [ 
+            'Pendente',
+            'Costurado',
         ];
 
         for ($i = 0; $i < count($statusConfeccao); $i++) {
@@ -74,7 +68,46 @@ class PedidoStatusSeeder extends Seeder
             ]);
         }
 
-        $statusEntrega = [
+        $statusSulimacao = [ 
+            'Pendente',
+            'Calandra',
+            'Prensa',
+        ];
+
+        for ($i = 0; $i < count($statusSulimacao); $i++) {
+            PedidoStatus::create([
+                'nome'  => $statusSulimacao[$i],
+                'fila' => 'S',
+            ]);
+        }
+
+        $statusCostura = [ 
+            'Pendente',
+            'Calandra',
+            'Prensa',
+        ];
+
+        for ($i = 0; $i < count($statusCostura); $i++) {
+            PedidoStatus::create([
+                'nome'  => $statusCostura[$i],
+                'fila' => 'F',
+            ]);
+        }
+
+        $statusCorteConferencia = [ 
+            'Pendente',
+            'Calandra',
+            'Prensa',
+        ];
+
+        for ($i = 0; $i < count($statusCorteConferencia); $i++) {
+            PedidoStatus::create([
+                'nome'  => $statusCorteConferencia[$i],
+                'fila' => 'R',
+            ]);
+        }
+
+        $statusEntrega = [ 
             'Em Separação',
             'Retirada',
             'Em Entrega',
@@ -88,7 +121,5 @@ class PedidoStatusSeeder extends Seeder
                 'fila' => 'E',
             ]);
         }
-
-
     }
 }
