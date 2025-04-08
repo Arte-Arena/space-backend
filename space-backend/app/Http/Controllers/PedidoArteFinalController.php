@@ -29,7 +29,7 @@ class PedidoArteFinalController extends Controller
                 $query->where('estagio', $fila);
             }
 
-            if($fila == 'I'){
+            if ($fila == 'I') {
                 $query->with('impressao');
             }
         }
@@ -714,27 +714,39 @@ class PedidoArteFinalController extends Controller
             return response()->json(['error' => 'Pedido not found'], 400);
         }
 
-        if ($request['pedido_status_id'] >= 1 && $request['pedido_status_id'] <= 7) {
-            $pedido->estagio = 'D';
+        $pedidoStatus = PedidoStatus::where('fila', $request['estagio'])
+            ->where('nome', 'like', '%'.$request['pedido_status_nome'].'%')
+            ->first();
+
+        if (!$pedidoStatus) {
+            return response()->json(['error' => 'Status not found'], 400);
         }
 
-        if ($request['pedido_status_id'] >= 8 && $request['pedido_status_id'] <= 13) {
-            $pedido->estagio = 'I';
-        }
-
-        // colocar pra entrega caso seja maior que X
-        if ($request['pedido_status_id'] >= 14 && $request['pedido_status_id'] <= 21) {
-            $pedido->estagio = 'C';
-        }
-
-        if ($request['pedido_status_id'] > 21 && $request['pedido_status_id'] <= 26) {
-            $pedido->estagio = 'E';
-        }
-
-
-        $pedido->pedido_status_id = $request['pedido_status_id'];
-
+        $pedido->estagio = $pedidoStatus->fila;
+        $pedido->pedido_status_id = $pedidoStatus->id;
         $pedido->save();
+        
+        return response()->json(['message' => 'Pedido atualizado com sucesso!'], 200);
+    }
+
+    public function trocarEstagioArteFinal(Request $request, $id)
+    {
+
+        $pedido = PedidoArteFinal::find($id);
+        if (!$pedido) {
+            return response()->json(['error' => 'Pedido not found'], 400);
+        }
+
+        $estagio = $request['estagio'];
+        $pedidoStatus = PedidoStatus::where('fila', $estagio)->orderBy('id', 'asc')->first();
+        if (!$pedidoStatus) {
+            return response()->json(['error' => 'Status not found for this estagio'], 400);
+        }
+        
+        $pedido->estagio = $pedidoStatus->fila;
+        $pedido->pedido_status_id = $pedidoStatus->id;
+        $pedido->save();
+        
         return response()->json(['message' => 'Pedido atualizado com sucesso!'], 200);
     }
 
