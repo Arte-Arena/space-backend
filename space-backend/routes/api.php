@@ -186,6 +186,7 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,de
     Route::patch('/producao/pedido-estagio-change/{id}', [PedidoArteFinalController::class, 'trocarEstagioArteFinal']);
     Route::patch('/producao/pedido-medida-change/{id}', [PedidoArteFinalController::class, 'trocarMedidaLinear']);
     Route::patch('/producao/pedido-obs-change/{id}', [PedidoArteFinalController::class, 'trocarObsArteFinal']);
+    Route::patch('/producao/pedido-rolo-change/{id}', [PedidoArteFinalController::class, 'trocarRoloArteFinal']);
     Route::patch('/producao/impressao/impressora-change/{id}', [PedidoArteFinalController::class, 'trocarImpressoraArteFinalImpressao']);
     Route::patch('/producao/impressao/corte-change/{id}', [PedidoArteFinalController::class, 'trocarCorteArteFinalImpressao']);
     Route::delete('/producao/delete-pedido-arte-final/{id}', [PedidoArteFinalController::class, 'deletePedidoArteFinal']);
