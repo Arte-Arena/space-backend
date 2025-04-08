@@ -28,6 +28,10 @@ class PedidoArteFinalController extends Controller
             if (in_array($fila, ['D', 'I', 'C', 'F', 'R', "S", 'E'])) {
                 $query->where('estagio', $fila);
             }
+            
+            if ($fila == 'D') {
+                $query->with('design');
+            }
 
             if ($fila == 'I') {
                 $query->with('impressao');
@@ -36,6 +40,19 @@ class PedidoArteFinalController extends Controller
             if ($fila == 'S') {
                 $query->with('confeccaoSublimacao');
             }
+
+            // if ($fila == 'C') {
+            //     $query->with('corte');
+            // }
+            // if ($fila == 'R') {
+            //     $query->with('R');
+            // }
+            // if ($fila == 'F') {
+            //     $query->with('conferencia');
+            // }
+            // if ($fila == 'E') {
+            //     $query->with('expedicao');
+            // }
         }
 
         // Aplica a ordenação
@@ -589,6 +606,7 @@ class PedidoArteFinalController extends Controller
         return response()->json(['message' => 'Pedido atualizado com sucesso!'], 200);
     }
 
+    // Impressora (colocar no contrller de impressora)
     public function trocarImpressoraArteFinalImpressao(Request $request, $id)
     {
         $pedido = PedidoArteFinal::find($id);
@@ -733,7 +751,7 @@ class PedidoArteFinalController extends Controller
         return response()->json(['message' => 'Pedido atualizado com sucesso!'], 200);
     }
 
-    public function trocarEstagioArteFinal(Request $request, $id)
+    public function trocarEstagioArteFinal(Request $request, $id) // tem que inserir ou alterar os dados das tabelas novas de cada etapa
     {
 
         $pedido = PedidoArteFinal::find($id);
