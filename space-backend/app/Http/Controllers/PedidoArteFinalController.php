@@ -754,11 +754,22 @@ class PedidoArteFinalController extends Controller
     {
         $pedido = PedidoArteFinal::find($id);
         if (!$pedido) {
-            return response()->json(['error' => 'Pedido not found'], 500);
+            return response()->json(['error' => 'Pedido not found'], 400);
         }
         $pedido->observacoes = $request['observacoes'];
         $pedido->save();
         return response()->json(['message' => 'Pedido atualizado com sucesso!'], 200);
+    }
+
+    public function trocarRoloArteFinal(Request $request, $id)
+    {
+        $pedido = PedidoArteFinal::find($id);
+        if (!$pedido) {
+            return response()->json(['error' => 'Pedido not found'], 400);
+        }
+        $pedido->rolo = $request['rolo'];
+        $pedido->save();
+        return response()->json(['message' => 'Pedido atualizado com sucesso!', 'rolo' => $request['rolo']], 200);
     }
 
     public function trocarMedidaLinear(Request $request, $id)
