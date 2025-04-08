@@ -69,6 +69,11 @@ class PedidoArteFinal extends Model
         return $this->belongsTo(Orcamento::class, 'orcamento_id');
     }
 
+    public function desingn()
+    {
+        return $this->hasOne(PedidosArteFinalDesign::class, 'pedido_arte_final_id');
+    }
+
     public function impressao()
     {
         return $this->hasOne(PedidosArteFinalImpressao::class, 'pedido_arte_final_id');

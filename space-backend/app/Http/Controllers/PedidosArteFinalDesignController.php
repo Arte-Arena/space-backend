@@ -5,18 +5,19 @@ namespace App\Http\Controllers;
 use App\Models\PedidoArteFinal;
 use Illuminate\Http\Request;
 use App\Models\PedidosArteFinalConfeccaoSublimacaoModel;
+use App\Models\PedidosArteFinalImpressao;
 
 class PedidosArteFinalConfeccaoSublimacaoController extends Controller
 {
 
-    public function trocarStatusArteFinalSublimacao(Request $request, $id)
+    public function trocarStatusArteFinalDesign(Request $request, $id)
     {
         $pedido = PedidoArteFinal::find($id);
         if (!$pedido) {
             return response()->json(['error' => 'Pedido not found'], 500);
         }
 
-        $pedidoImpressao = PedidosArteFinalConfeccaoSublimacaoModel::updateOrCreate(
+        $pedidoImpressao = PedidosArteFinalImpressao::updateOrCreate(
             ['pedido_arte_final_id' => $id],
             [
                 'status' => $request['status'],
@@ -27,9 +28,9 @@ class PedidosArteFinalConfeccaoSublimacaoController extends Controller
             return response()->json(['error' => 'Erro ao atualizar impressão'], 500);
         }
 
-        return response()->json(['message' => 'status da Impressão atualizada com sucesso!'], 200);
+        return response()->json(['message' => 'impressora da Impressão atualizada com sucesso!'], 200);
     }
-
+    
     public function updateStatusConfeccaoSublimacao(Request $request)
     {
         $id = $request['pedido_arte_final_id'];

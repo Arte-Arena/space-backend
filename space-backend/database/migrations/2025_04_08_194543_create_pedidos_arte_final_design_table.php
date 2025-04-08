@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pedidos_arte_final_sublimacao', function (Blueprint $table) {
+        Schema::create('pedidos_arte_final_design', function (Blueprint $table) {
             $table->id();
             $table->foreignId('pedido_arte_final_id')->constrained('pedidos_arte_final')->onDelete('cascade')->unique();
             $table->string('status')->nullable();
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('pedidos_arte_final_sublimacao');
+        Schema::dropIfExists('pedidos_arte_final_design');
     }
 };
