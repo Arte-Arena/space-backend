@@ -25,7 +25,7 @@ class PedidoArteFinalController extends Controller
         if ($request->has('fila')) {
             $fila = $request->query('fila');
 
-            if (in_array($fila, ['D', 'I', 'C', 'E'])) {
+            if (in_array($fila, ['D', 'I', 'C', 'F', 'R', "S", 'E'])) {
                 $query->where('estagio', $fila);
             }
 
