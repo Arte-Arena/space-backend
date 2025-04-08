@@ -9,7 +9,7 @@ class PedidosArteFinalConfeccaoSublimacaoModel extends Model
 {
     use HasFactory;
 
-    protected $table = 'pedidos_arte_final_confeccao_sublimacao';
+    protected $table = 'pedidos_arte_final_sublimacao';
     public $timestamps = true;
 
     protected $fillable = [
