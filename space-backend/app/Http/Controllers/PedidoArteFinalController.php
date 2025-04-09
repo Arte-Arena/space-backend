@@ -30,7 +30,7 @@ class PedidoArteFinalController extends Controller
             }
             
             if ($fila == 'D') {
-                $query->with('desingn');
+                $query->with('design');
             }
 
             if ($fila == 'I') {
