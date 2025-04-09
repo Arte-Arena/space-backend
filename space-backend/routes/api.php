@@ -195,7 +195,7 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,de
     Route::patch('/producao/pedido-rolo-change/{id}', [PedidoArteFinalController::class, 'trocarRoloArteFinal']);
     Route::patch('/producao/impressao/impressora-change/{id}', [PedidoArteFinalController::class, 'trocarImpressoraArteFinalImpressao']);
     Route::patch('/producao/impressao/corte-change/{id}', [PedidoArteFinalController::class, 'trocarCorteArteFinalImpressao']);
-    Route::patch('/producao/impressao/status-change', [PedidosArteFinalImpressaoController::class, 'updateStatusImpressao']);
+    Route::patch('/producao/impressao/status-change', [PedidosArteFinalImpressaoController::class, 'trocarStatusArteFinalImpressao']);
     Route::patch('/producao/confeccao/costura/status-change', [PedidosArteFinalConfeccaoCosturaController::class, 'trocarStatusArteFinalCostura']);
     Route::patch('/producao/confeccao/corte-conferencia/status-change', [PedidosArteFinalConfeccaoCorteConferenciaController::class, 'trocarStatusArteFinalCorteConferencia']);
     Route::patch('/producao/confeccao/sublimacao/status-change', [PedidosArteFinalConfeccaoSublimacaoController::class, 'trocarStatusArteFinalSublimacao']);
