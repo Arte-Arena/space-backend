@@ -4,34 +4,33 @@ namespace App\Http\Controllers;
 
 use App\Models\PedidoArteFinal;
 use Illuminate\Http\Request;
-use App\Models\PedidosArteFinalConfeccaoSublimacaoModel;
-use App\Models\PedidosArteFinalDesign;
+use App\Models\PedidosArteFinalImpressao;
 
-class PedidosArteFinalConfeccaoSublimacaoController extends Controller
+class PedidosArteFinalImpressaoController extends Controller
 {
 
-    public function trocarStatusArteFinalDesign(Request $request, $id)
+    public function trocarStatusArteFinalImpressao(Request $request, $id)
     {
         $pedido = PedidoArteFinal::find($id);
         if (!$pedido) {
             return response()->json(['error' => 'Pedido not found'], 500);
         }
 
-        $pedidoDesign = PedidosArteFinalDesign::updateOrCreate(
+        $pedidoImpressao = PedidosArteFinalImpressao::updateOrCreate(
             ['pedido_arte_final_id' => $id],
             [
                 'status' => $request['status'],
             ]
         );
 
-        if (!$pedidoDesign) {
+        if (!$pedidoImpressao) {
             return response()->json(['error' => 'Erro ao atualizar impressão'], 500);
         }
 
         return response()->json(['message' => 'impressora da Impressão atualizada com sucesso!'], 200);
     }
     
-    public function updateStatusConfeccaoSublimacao(Request $request)
+    public function updateStatusImpressao(Request $request)
     {
         $id = $request['pedido_arte_final_id'];
         
@@ -39,15 +38,15 @@ class PedidosArteFinalConfeccaoSublimacaoController extends Controller
             return response()->json(['error' => 'Id não enviado'], 404);
         }
         
-        $sublimacao = PedidosArteFinalConfeccaoSublimacaoModel::where('pedido_arte_final_id', $id)->first();
+        $impressao = PedidosArteFinalImpressao::where('pedido_arte_final_id', $id)->first();
         
-        if (empty($sublimacao)) {
+        if (empty($impressao)) {
             return response()->json(['error' => 'Pedido não encontrado'], 400);
         }
         
-        $sublimacao->status = $request['status'];
-        $sublimacao->save();
+        $impressao->status = $request['status'];
+        $impressao->save();
         
-        return $sublimacao;
+        return $impressao;
     }
 }
