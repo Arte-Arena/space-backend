@@ -132,6 +132,31 @@ class OrcamentosUniformesController extends Controller
         }
     }
 
+    public function permitirEdicaoUniformeGoApi(Request $request)
+    {
+        try {
+            $request->validate([
+                'budget_id' => 'required|integer',
+            ]);
+
+            $response = Http::withHeaders([
+                'X-Admin-Key' => config('services.go_api.admin_key')
+            ])->patch(config('services.go_api.url') . '/v1/admin/uniforms', [
+                'budget_id' => $request->budget_id
+            ]);
+
+            if ($response->successful()) {
+                return response()->json(['message' => 'Permissão de edição concedida com sucesso'], 200);
+            }
+
+            return response()->json([
+                'message' => $response->json()['message'] ?? 'Erro ao permitir edição do uniforme'
+            ], $response->status());
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Erro ao permitir edição do uniforme: ' . $e->getMessage()], 500);
+        }
+    }
+
     public function criarUniformesGoApi(Request $request)
     {
         try {
