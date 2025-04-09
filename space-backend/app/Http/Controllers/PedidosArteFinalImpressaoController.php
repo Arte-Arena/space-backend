@@ -9,8 +9,15 @@ use App\Models\PedidosArteFinalImpressao;
 class PedidosArteFinalImpressaoController extends Controller
 {
 
-    public function trocarStatusArteFinalImpressao(Request $request, $id)
+    public function trocarStatusArteFinalImpressao(Request $request)
     {
+
+        $id = $request['pedido_arte_final_id'];
+
+        if (empty($id)) {
+            return response()->json(['error' => 'Id não enviado'], 400);
+        }
+
         $pedido = PedidoArteFinal::find($id);
         if (!$pedido) {
             return response()->json(['error' => 'Pedido not found'], 500);
@@ -27,7 +34,7 @@ class PedidosArteFinalImpressaoController extends Controller
             return response()->json(['error' => 'Erro ao atualizar impressão'], 500);
         }
 
-        return response()->json(['message' => 'impressora da Impressão atualizada com sucesso!'], 200);
+        return response()->json(['message' => 'Status da Impressão atualizado com sucesso!'], 200);
     }
     
     public function updateStatusImpressao(Request $request)
