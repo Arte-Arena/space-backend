@@ -256,9 +256,9 @@ class VendasController extends Controller
 
     public function getTotalOrcamentoPedido()
     {
-        $pedidos = DB::table('pedidos')
-            ->join('orcamentos', 'pedidos.orcamento_id', '=', 'orcamentos.id')
-            ->select('pedidos.*', 'orcamentos.total_orcamento')
+        $pedidos = DB::table('pedidos_arte_final')
+            ->join('orcamentos', 'pedidos_arte_final.orcamento_id', '=', 'orcamentos.id')
+            ->select('pedidos_arte_final.*', 'orcamentos.total_orcamento')
             ->get();
 
         return response()->json($pedidos);
