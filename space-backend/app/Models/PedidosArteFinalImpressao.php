@@ -14,6 +14,7 @@ class PedidosArteFinalImpressao extends Model
 
     protected $fillable = [
         'pedido_arte_final_id',
+        'status',
         'impressora',
         'tipo_corte',
     ];
