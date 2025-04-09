@@ -8,6 +8,7 @@ use App\Models\PedidoTipo;
 use App\Models\User;
 use App\Models\Orcamento;
 use App\Models\OrcamentoStatus;
+use App\Models\PedidosArteFinalConfeccaoSublimacaoModel;
 use App\Models\PedidosArteFinalImpressao;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -751,8 +752,12 @@ class PedidoArteFinalController extends Controller
         return response()->json(['message' => 'Pedido atualizado com sucesso!'], 200);
     }
 
-    public function trocarEstagioArteFinal(Request $request, $id) // tem que inserir ou alterar os dados das tabelas novas de cada etapa
+    public function trocarEstagioArteFinal(Request $request, $id) 
     {
+
+        if (empty($id)) {
+            return response()->json(['error' => 'Id não enviado'], 400);
+        }
 
         $pedido = PedidoArteFinal::find($id);
         if (!$pedido) {
@@ -768,6 +773,64 @@ class PedidoArteFinalController extends Controller
         $pedido->estagio = $pedidoStatus->fila;
         $pedido->pedido_status_id = $pedidoStatus->id;
         $pedido->save();
+
+        // cria ou atualiza o estagio de um pedido nas outras tabelas
+        if($estagio === 'I') {
+            $pedidoImpressao = PedidosArteFinalImpressao::updateOrCreate(
+                ['pedido_arte_final_id' => $id],
+                [
+                    'status' => $pedidoStatus,
+                ]
+            );
+
+            if (!$pedidoImpressao) {
+                return response()->json(['error' => 'Erro ao atualizar impressão'], 500);
+            }
+
+            return response()->json(['message' => 'Impressão criada ou atualizada com sucesso!'], 200);
+        }
+
+        if($estagio === 'S') {
+            $pedidoConfeccaoSublimacao = PedidosArteFinalConfeccaoSublimacaoModel::updateOrCreate(
+                ['pedido_arte_final_id' => $id],
+                [
+                    'status' => $pedidoStatus,
+                ]
+            );
+
+            if (!$pedidoConfeccaoSublimacao) {
+                return response()->json(['error' => 'Erro ao atualizar impressão'], 500);
+            }
+        }
+
+        if($estagio === 'F') {
+        //     $pedidoConfeccaoCorteConferencia = PedidosArteFinalCorteConferencia::updateOrCreate(
+        //         ['pedido_arte_final_id' => $id],
+        //         [
+        //             'status' => $pedidoStatus,
+        //         ]
+        //     );
+
+        //     if (!$pedidoConfeccaoCorteConferencia) {
+        //         return response()->json(['error' => 'Erro ao atualizar impressão'], 500);
+        //     }
+        return null; // resposta positiva
+        }
+
+        if($estagio === 'C') {
+            // $pedidoConfeccaoCostura = PedidosArteFinalConfeccaoCostura::updateOrCreate(
+            //     ['pedido_arte_final_id' => $id],
+            //     [
+            //         'status' => $pedidoStatus,
+            //     ]
+            // );
+
+            // if (!$pedidoConfeccaoCostura) {
+            //     return response()->json(['error' => 'Erro ao atualizar impressão'], 500);
+            // }
+            return null; 
+        }
+
         
         return response()->json(['message' => 'Pedido atualizado com sucesso!'], 200);
     }
