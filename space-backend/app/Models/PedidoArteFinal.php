@@ -83,5 +83,13 @@ class PedidoArteFinal extends Model
     {
         return $this->hasOne(PedidosArteFinalConfeccaoSublimacaoModel::class, 'pedido_arte_final_id');
     }
+    public function confeccaoCostura()
+    {
+        return $this->hasOne(PedidosArteFinalConfeccaoCostura::class, 'pedido_arte_final_id');
+    }
+    public function confeccaoCorteConferencia()
+    {
+        return $this->hasOne(PedidosArteFinalConfeccaoCorteConferencia::class, 'pedido_arte_final_id');
+    }
 
 }
