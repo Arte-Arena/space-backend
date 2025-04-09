@@ -8,6 +8,8 @@ use App\Models\PedidoTipo;
 use App\Models\User;
 use App\Models\Orcamento;
 use App\Models\OrcamentoStatus;
+use App\Models\PedidosArteFinalConfeccaoCorteConferencia;
+use App\Models\PedidosArteFinalConfeccaoCostura;
 use App\Models\PedidosArteFinalConfeccaoSublimacaoModel;
 use App\Models\PedidosArteFinalImpressao;
 use Illuminate\Http\Request;
@@ -29,7 +31,7 @@ class PedidoArteFinalController extends Controller
             if (in_array($fila, ['D', 'I', 'C', 'F', 'R', "S", 'E'])) {
                 $query->where('estagio', $fila);
             }
-            
+
             if ($fila == 'D') {
                 $query->with('design');
             }
@@ -37,20 +39,19 @@ class PedidoArteFinalController extends Controller
             if ($fila == 'I') {
                 $query->with('impressao');
             }
-            
+
             if ($fila == 'S') {
                 $query->with('confeccaoSublimacao');
             }
 
-            // if ($fila == 'C') {
-            //     $query->with('corte');
-            // }
-            // if ($fila == 'R') {
-            //     $query->with('R');
-            // }
-            // if ($fila == 'F') {
-            //     $query->with('conferencia');
-            // }
+            if ($fila == 'R' || $fila == 'C') {
+                $query->with('confeccaoCostura');
+            }
+
+            if ($fila == 'F') {
+                $query->with('confeccaoCorteConferencia');
+            }
+
             // if ($fila == 'E') {
             //     $query->with('expedicao');
             // }
@@ -738,7 +739,7 @@ class PedidoArteFinalController extends Controller
         }
 
         $pedidoStatus = PedidoStatus::where('fila', $request['estagio'])
-            ->where('nome', 'like', '%'.$request['pedido_status_nome'].'%')
+            ->where('nome', 'like', '%' . $request['pedido_status_nome'] . '%')
             ->first();
 
         if (!$pedidoStatus) {
@@ -748,11 +749,11 @@ class PedidoArteFinalController extends Controller
         $pedido->estagio = $pedidoStatus->fila;
         $pedido->pedido_status_id = $pedidoStatus->id;
         $pedido->save();
-        
+
         return response()->json(['message' => 'Pedido atualizado com sucesso!'], 200);
     }
 
-    public function trocarEstagioArteFinal(Request $request, $id) 
+    public function trocarEstagioArteFinal(Request $request, $id)
     {
 
         if (empty($id)) {
@@ -769,17 +770,29 @@ class PedidoArteFinalController extends Controller
         if (!$pedidoStatus) {
             return response()->json(['error' => 'Status not found for this estagio'], 400);
         }
-        
+
         $pedido->estagio = $pedidoStatus->fila;
         $pedido->pedido_status_id = $pedidoStatus->id;
         $pedido->save();
 
         // cria ou atualiza o estagio de um pedido nas outras tabelas
-        if($estagio === 'I') {
+        if ($estagio === 'I') {
+
+            $pedidoStatus = PedidoStatus::where('fila', $estagio)
+                ->where('nome', 'like', '%Pendente%')
+                ->orderBy('id', 'asc')
+                ->first();
+
+            if (!$pedidoStatus) {
+                $pedidoStatus = PedidoStatus::where('fila', $estagio)
+                    ->orderBy('id', 'asc')
+                    ->first();
+            }
+
             $pedidoImpressao = PedidosArteFinalImpressao::updateOrCreate(
                 ['pedido_arte_final_id' => $id],
                 [
-                    'status' => $pedidoStatus,
+                    'status' => $pedidoStatus->nome,
                 ]
             );
 
@@ -790,49 +803,88 @@ class PedidoArteFinalController extends Controller
             return response()->json(['message' => 'Impressão criada ou atualizada com sucesso!'], 200);
         }
 
-        if($estagio === 'S') {
+        if ($estagio === 'S') {
+
+            $pedidoStatus = PedidoStatus::where('fila', $estagio)
+                ->where('nome', 'like', '%Pendente%')
+                ->orderBy('id', 'asc')
+                ->first();
+
+            if (!$pedidoStatus) {
+                $pedidoStatus = PedidoStatus::where('fila', $estagio)
+                    ->orderBy('id', 'asc')
+                    ->first();
+            }
+
             $pedidoConfeccaoSublimacao = PedidosArteFinalConfeccaoSublimacaoModel::updateOrCreate(
                 ['pedido_arte_final_id' => $id],
                 [
-                    'status' => $pedidoStatus,
+                    'status' => $pedidoStatus->nome,
                 ]
             );
 
             if (!$pedidoConfeccaoSublimacao) {
-                return response()->json(['error' => 'Erro ao atualizar impressão'], 500);
+                return response()->json(['error' => 'Erro ao atualizar Sublimação'], 500);
             }
+
+            return response()->json(['message' => 'Sublimação criada ou atualizada com sucesso!'], 200);
         }
 
-        if($estagio === 'F') {
-        //     $pedidoConfeccaoCorteConferencia = PedidosArteFinalCorteConferencia::updateOrCreate(
-        //         ['pedido_arte_final_id' => $id],
-        //         [
-        //             'status' => $pedidoStatus,
-        //         ]
-        //     );
+        if ($estagio === 'F') {
 
-        //     if (!$pedidoConfeccaoCorteConferencia) {
-        //         return response()->json(['error' => 'Erro ao atualizar impressão'], 500);
-        //     }
-        return null; // resposta positiva
+            $pedidoStatus = PedidoStatus::where('fila', $estagio)
+                ->where('nome', 'like', '%Pendente%')
+                ->orderBy('id', 'asc')
+                ->first();
+
+            if (!$pedidoStatus) {
+                $pedidoStatus = PedidoStatus::where('fila', $estagio)
+                    ->orderBy('id', 'asc')
+                    ->first();
+            }
+
+            $pedidoConfeccaoCorteConferencia = PedidosArteFinalConfeccaoCorteConferencia::updateOrCreate(
+                ['pedido_arte_final_id' => $id],
+                [
+                    'status' => $pedidoStatus->nome,
+                ]
+            );
+
+            if (!$pedidoConfeccaoCorteConferencia) {
+                return response()->json(['error' => 'Erro ao atualizar Corte/Conferência'], 500);
+            }
+
+            return response()->json(['message' => 'Corte/Conferência criada ou atualizada com sucesso!'], 200);
         }
 
-        if($estagio === 'C') {
-            // $pedidoConfeccaoCostura = PedidosArteFinalConfeccaoCostura::updateOrCreate(
-            //     ['pedido_arte_final_id' => $id],
-            //     [
-            //         'status' => $pedidoStatus,
-            //     ]
-            // );
+        if ($estagio === 'C' || $estagio === 'R') {
 
-            // if (!$pedidoConfeccaoCostura) {
-            //     return response()->json(['error' => 'Erro ao atualizar impressão'], 500);
-            // }
-            return null; 
+            $pedidoStatus = PedidoStatus::where('fila', $estagio)
+                ->where('nome', 'like', '%Pendente%')
+                ->orderBy('id', 'asc')
+                ->first();
+
+            if (!$pedidoStatus) {
+                $pedidoStatus = PedidoStatus::where('fila', $estagio)
+                    ->orderBy('id', 'asc')
+                    ->first();
+            }
+            
+            $pedidoConfeccaoCostura = PedidosArteFinalConfeccaoCostura::updateOrCreate(
+                ['pedido_arte_final_id' => $id],
+                [
+                    'status' => $pedidoStatus->nome,
+                ]
+            );
+
+            if (!$pedidoConfeccaoCostura) {
+                return response()->json(['error' => 'Erro ao atualizar Costura'], 500);
+            }
+
+            return response()->json(['message' => 'Costura criada ou atualizada com sucesso!'], 200);
         }
 
-        
-        return response()->json(['message' => 'Pedido atualizado com sucesso!'], 200);
+        return response()->json(['message' => 'Costura criada ou atualizada com sucesso!'], 200);
     }
 
     public function trocarObsArteFinal(Request $request, $id)

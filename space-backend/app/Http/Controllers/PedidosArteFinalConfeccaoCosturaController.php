@@ -3,41 +3,40 @@
 namespace App\Http\Controllers;
 
 use App\Models\PedidoArteFinal;
+use App\Models\PedidosArteFinalConfeccaoCostura;
 use Illuminate\Http\Request;
-use App\Models\PedidosArteFinalConfeccaoSublimacaoModel;
 
-class PedidosArteFinalConfeccaoSublimacaoController extends Controller
+class PedidosArteFinalConfeccaoCosturaController extends Controller
 {
 
-    public function trocarStatusArteFinalSublimacao(Request $request)
+    public function trocarStatusArteFinalCostura(Request $request)
     {
-
         $id = $request['pedido_arte_final_id'];
         
         if (empty($id)) {
             return response()->json(['error' => 'Id não enviado'], 404);
         }
-
+        
         $pedido = PedidoArteFinal::find($id);
         if (!$pedido) {
             return response()->json(['error' => 'Pedido not found'], 500);
         }
 
-        $pedidoImpressao = PedidosArteFinalConfeccaoSublimacaoModel::updateOrCreate(
+        $pedidoCorteConferencia = PedidosArteFinalConfeccaoCostura::updateOrCreate(
             ['pedido_arte_final_id' => $id],
             [
                 'status' => $request['status'],
             ]
         );
 
-        if (!$pedidoImpressao) {
-            return response()->json(['error' => 'Erro ao atualizar Sublimação'], 500);
+        if (!$pedidoCorteConferencia) {
+            return response()->json(['error' => 'Erro ao atualizar Corte e conferencia'], 500);
         }
 
-        return response()->json(['message' => 'status da Sublimação atualizada com sucesso!'], 200);
+        return response()->json(['message' => 'status do Corte e Conferencia atualizada com sucesso!'], 200);
     }
 
-    public function updateStatusConfeccaoSublimacao(Request $request)
+    public function updateStatusConfeccaoCostura(Request $request)
     {
         $id = $request['pedido_arte_final_id'];
         
@@ -45,15 +44,15 @@ class PedidosArteFinalConfeccaoSublimacaoController extends Controller
             return response()->json(['error' => 'Id não enviado'], 404);
         }
         
-        $sublimacao = PedidosArteFinalConfeccaoSublimacaoModel::where('pedido_arte_final_id', $id)->first();
+        $costura = PedidosArteFinalConfeccaoCostura::where('pedido_arte_final_id', $id)->first();
         
-        if (empty($sublimacao)) {
+        if (empty($costura)) {
             return response()->json(['error' => 'Pedido não encontrado'], 400);
         }
         
-        $sublimacao->status = $request['status'];
-        $sublimacao->save();
+        $costura->status = $request['status'];
+        $costura->save();
         
-        return $sublimacao;
+        return $costura;
     }
 }
