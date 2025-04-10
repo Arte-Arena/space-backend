@@ -14,6 +14,7 @@ class PedidosArteFinalConfeccaoCorteConferencia extends Model
 
     protected $fillable = [
         'pedido_arte_final_id',
-        'status',
+        'status_corte',
+        'status_conferencia',
     ];
 }

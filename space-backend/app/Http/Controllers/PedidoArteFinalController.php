@@ -30,10 +30,16 @@ class PedidoArteFinalController extends Controller
         if ($request->has('fila')) {
             $fila = $request->query('fila');
 
+            // 
             if (in_array($fila, ['D', 'I', 'C', 'F', 'R', "S", 'E'])) {
-                $query->where('estagio', $fila);
+                if($fila == 'F'){
+                    $query->whereIn('estagio', ['R', 'F']);
+                }else{
+                    $query->where('estagio', $fila);
+                }
             }
 
+            // so relaciona as tabelas cm a tabela de arte final
             if ($fila == 'D') {
                 $query->with('design');
             }
@@ -46,11 +52,11 @@ class PedidoArteFinalController extends Controller
                 $query->with('confeccaoSublimacao');
             }
 
-            if ($fila == 'R' || $fila == 'C') {
+            if ($fila == 'C') {
                 $query->with('confeccaoCostura');
             }
 
-            if ($fila == 'F') {
+            if ($fila == 'R' || $fila == 'F') {
                 $query->with('confeccaoCorteConferencia');
             }
 
