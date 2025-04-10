@@ -137,24 +137,22 @@ class OrcamentosUniformesController extends Controller
         try {
             $request->validate([
                 'budget_id' => 'required|integer',
-                'players' => 'array|nullable',
-                'players.*.ready' => 'nullable|boolean',
-                'players.*.observations' => 'nullable|string',
+                'updates' => 'array|nullable',
+                'updates.*.sketch_id' => 'required|string|max:1',
+                'updates.*.players' => 'required|array',
+                'updates.*.players.*.ready' => 'nullable|boolean',
+                'updates.*.players.*.observations' => 'nullable|string',
                 'editable' => 'nullable|boolean',
             ]);
 
             $requestData = [
-                'budget_id' => $request->budget_id
+                'updates' => $request->updates
             ];
 
-            if ($request->has('players')) {
-                $requestData['players'] = $request->players;
-            }
-
-            $url = config('services.go_api.url') . '/v1/admin/uniforms';
+            $url = config('services.go_api.url') . '/v1/admin/uniforms?budget_id=' . $request->budget_id;
             
             if ($request->has('editable') && $request->editable) {
-                $url .= '?editable=true';
+                $url .= '&editable=true';
             }
 
             $response = Http::withHeaders([
