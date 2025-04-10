@@ -12,6 +12,8 @@ use App\Models\PedidosArteFinalConfeccaoCorteConferencia;
 use App\Models\PedidosArteFinalConfeccaoCostura;
 use App\Models\PedidosArteFinalConfeccaoSublimacaoModel;
 use App\Models\PedidosArteFinalImpressao;
+use App\Models\Role;
+use App\Models\RoleUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
@@ -28,10 +30,16 @@ class PedidoArteFinalController extends Controller
         if ($request->has('fila')) {
             $fila = $request->query('fila');
 
+            // 
             if (in_array($fila, ['D', 'I', 'C', 'F', 'R', "S", 'E'])) {
-                $query->where('estagio', $fila);
+                if($fila == 'F'){
+                    $query->whereIn('estagio', ['R', 'F']);
+                }else{
+                    $query->where('estagio', $fila);
+                }
             }
 
+            // so relaciona as tabelas cm a tabela de arte final
             if ($fila == 'D') {
                 $query->with('design');
             }
@@ -44,11 +52,11 @@ class PedidoArteFinalController extends Controller
                 $query->with('confeccaoSublimacao');
             }
 
-            if ($fila == 'R' || $fila == 'C') {
+            if ($fila == 'C') {
                 $query->with('confeccaoCostura');
             }
 
-            if ($fila == 'F') {
+            if ($fila == 'R' || $fila == 'F') {
                 $query->with('confeccaoCorteConferencia');
             }
 
@@ -603,6 +611,12 @@ class PedidoArteFinalController extends Controller
         if (!$pedido) {
             return response()->json(['error' => 'Pedido not found'], 500);
         }
+
+        $roleUser = RoleUser::where('user_id', $request['designer_id'])->first();
+        if (!$roleUser || !in_array($roleUser->role_id, [6, 7])) {
+            return response()->json(['error' => 'Role de designer inválida'], 400);
+        }
+
         $pedido->designer_id = $request['designer_id'];
         $pedido->save();
         return response()->json(['message' => 'Pedido atualizado com sucesso!'], 200);
@@ -869,7 +883,7 @@ class PedidoArteFinalController extends Controller
                     ->orderBy('id', 'asc')
                     ->first();
             }
-            
+
             $pedidoConfeccaoCostura = PedidosArteFinalConfeccaoCostura::updateOrCreate(
                 ['pedido_arte_final_id' => $id],
                 [
