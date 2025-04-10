@@ -155,7 +155,7 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,de
     Route::post('/orcamento/uniformes', [OrcamentosUniformesController::class, 'store']);
     Route::get('/orcamento/uniformes-go/{orcamento_id}', [OrcamentosUniformesController::class, 'verificarUniformesGoApi']);
     Route::post('/orcamento/uniformes-go', [OrcamentosUniformesController::class, 'criarUniformesGoApi']);
-    Route::patch('/orcamento/uniformes-go/permitir-edicao', [OrcamentosUniformesController::class, 'permitirEdicaoUniformeGoApi']);
+    Route::patch('/orcamento/uniformes-go', [OrcamentosUniformesController::class, 'atualizarDadosJogadoresGoApi']);
     Route::get('/clientes-consolidados', [ClientesConsolidadosController::class, 'consolidateDataPaginated']);
     Route::get('/search-clientes-consolidados', [ClientesConsolidadosController::class, 'searchConsolidateDataPaginated']);
     Route::get('/vendas/quantidade-orcamentos', [VendasController::class, 'getQuantidadeOrcamentos']);
