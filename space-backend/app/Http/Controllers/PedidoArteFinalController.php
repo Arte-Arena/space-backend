@@ -22,7 +22,13 @@ class PedidoArteFinalController extends Controller
 {
     public function getAllPedidosArteFinal(Request $request)
     {
+        // filtro principal não deixa passar pedidos que não tenham id tiny nem numero de pedido
+        $query = PedidoArteFinal::query()
+            ->whereNotNull('numero_pedido')
+            ->whereNotNull('tiny_pedido_id');
 
+
+        // filtros condicionais caso haja query string pra filtrar
         if ($request->has('per_page')) {
             $perPage = $request->query('per_page');
             if (!in_array($perPage, [15, 25, 50])) {
@@ -31,30 +37,35 @@ class PedidoArteFinalController extends Controller
         } else {
             $perPage = 15;
         }
-        
+
+        // Paginação caso o usuário mudar a pagina
+        if ($request->has('page')) {
+            $page = $request->query('page');
+            $query->offset(($page - 1) * $perPage)->limit($perPage);
+        }
+
+        // Filtro o pedido
         if ($request->has('q')) {
             $q = $request->query('q');
+            $query->where('numero_pedido', 'like', '%' . $q . '%');
+        }
 
-            $query = PedidoArteFinal::query()
-            ->whereNotNull('numero_pedido')
-            ->whereNotNull('tiny_pedido_id')
-            ->where('numero_pedido', 'like', '%' . $q . '%');
-            ;
-        } else {
-            $query = PedidoArteFinal::query()
-                ->whereNotNull('numero_pedido')
-                ->whereNotNull('tiny_pedido_id')
-                ;
-        }           
+        // Filtro de data
+        if ($request->has('data_inicial') && $request->has('data_final')) {
+            $dataInicial = $request->query('data_inicial');
+            $dataFinal = $request->query('data_final');
+            $query->whereBetween('data_prevista', [$dataInicial, $dataFinal]);
+        }
 
+        // Filtros de Fila 
         if ($request->has('fila')) {
             $fila = $request->query('fila');
 
             // 
             if (in_array($fila, ['D', 'I', 'C', 'F', 'R', "S", 'E'])) {
-                if($fila == 'F'){
+                if ($fila == 'F') {
                     $query->whereIn('estagio', ['R', 'F']);
-                }else{
+                } else {
                     $query->where('estagio', $fila);
                 }
             }
