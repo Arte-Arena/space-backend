@@ -52,9 +52,11 @@ class PedidoArteFinalController extends Controller
 
         // Filtro de data
         if ($request->has('data_inicial') && $request->has('data_final')) {
-            $dataInicial = $request->query('data_inicial');
-            $dataFinal = $request->query('data_final');
-            $query->whereBetween('data_prevista', [$dataInicial, $dataFinal]);
+            if (($request->query('data_inicial') !== 'null') && ($request->query('data_final') !== 'null')) {
+                $dataInicial = $request->query('data_inicial');
+                $dataFinal = $request->query('data_final');
+                $query->whereBetween('data_prevista', [$dataInicial, $dataFinal]);
+            }
         }
 
         // Filtros de Fila 
