@@ -32,9 +32,9 @@ class PedidoArteFinalController extends Controller
 
             // 
             if (in_array($fila, ['D', 'I', 'C', 'F', 'R', "S", 'E'])) {
-                if($fila == 'F'){
+                if ($fila == 'F') {
                     $query->whereIn('estagio', ['R', 'F']);
-                }else{
+                } else {
                     $query->where('estagio', $fila);
                 }
             }
@@ -846,13 +846,26 @@ class PedidoArteFinalController extends Controller
 
         if ($estagio === 'F') {
 
-            $pedidoStatus = PedidoStatus::where('fila', $estagio)
+            $pedidoStatusCorte = PedidoStatus::where('fila', $estagio)
                 ->where('nome', 'like', '%Pendente%')
+                ->orWhere('nome', 'like', '%Não Cortado%')
                 ->orderBy('id', 'asc')
                 ->first();
 
-            if (!$pedidoStatus) {
-                $pedidoStatus = PedidoStatus::where('fila', $estagio)
+            if (!$pedidoStatusCorte) {
+                $pedidoStatusCorte = PedidoStatus::where('fila', $estagio)
+                    ->orderBy('id', 'asc')
+                    ->first();
+            }
+
+            $pedidoStatusConferencia = PedidoStatus::where('fila', $estagio)
+                ->where('nome', 'like', '%Pendente%')
+                ->orWhere('nome', 'like', '%Não Conferido%')
+                ->orderBy('id', 'asc')
+                ->first();
+
+            if (!$pedidoStatusConferencia) {
+                $pedidoStatusConferencia = PedidoStatus::where('fila', $estagio)
                     ->orderBy('id', 'asc')
                     ->first();
             }
@@ -860,13 +873,15 @@ class PedidoArteFinalController extends Controller
             $pedidoConfeccaoCorteConferencia = PedidosArteFinalConfeccaoCorteConferencia::updateOrCreate(
                 ['pedido_arte_final_id' => $id],
                 [
-                    'status' => $pedidoStatus->nome,
+                    'status_corte' => $pedidoStatusCorte->nome,
+                    'status_conferencia' => $pedidoStatusConferencia->nome,
                 ]
             );
 
             if (!$pedidoConfeccaoCorteConferencia) {
                 return response()->json(['error' => 'Erro ao atualizar Corte/Conferência'], 500);
             }
+            
 
             return response()->json(['message' => 'Corte/Conferência criada ou atualizada com sucesso!'], 200);
         }
