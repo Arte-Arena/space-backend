@@ -291,6 +291,58 @@ class OrcamentoController extends Controller
             ];
         }, $orcamentos);
 
+        $orcamentoIds = array_map(function ($orcamento) {
+            return $orcamento['id'];
+        }, $transformedOrcamentos);
+
+        if (!empty($orcamentoIds)) {
+            try {
+                $budgetIdsQuery = implode(',', $orcamentoIds);
+                
+                $response = Http::withHeaders([
+                    'X-Admin-Key' => config('services.go_api.admin_key')
+                ])->get(config('services.go_api.url') . '/v1/admin/clients', [
+                    'budget_ids' => $budgetIdsQuery,
+                    'with_uniform' => 'true'
+                ]);
+
+                if ($response->successful()) {
+                    $clientsData = $response->json('data', []);
+                    
+                    $clientsMap = [];
+                    foreach ($clientsData as $client) {
+                        if (isset($client['budget_ids']) && is_array($client['budget_ids'])) {
+                            foreach ($client['budget_ids'] as $budgetId) {
+                                $hasUniform = isset($client['has_uniform'][$budgetId]) ? $client['has_uniform'][$budgetId] : false;
+                                $clientsMap[$budgetId] = [
+                                    'client_id' => $client['id'],
+                                    'client_name' => $client['contact']['name'] ?? '',
+                                    'client_email' => $client['contact']['email'] ?? '',
+                                    'has_uniform' => $hasUniform
+                                ];
+                            }
+                        }
+                    }
+                    
+                    foreach ($transformedOrcamentos as &$orcamento) {
+                        $orcamentoId = $orcamento['id'];
+                        if (isset($clientsMap[$orcamentoId])) {
+                            $orcamento['client_info'] = $clientsMap[$orcamentoId];
+                        } else {
+                            $orcamento['client_info'] = [
+                                'client_id' => null,
+                                'client_name' => null,
+                                'client_email' => null,
+                                'has_uniform' => false
+                            ];
+                        }
+                    }
+                }
+            } catch (\Exception $e) {
+                Log::error('Erro ao consultar a API Go para clientes/uniformes: ' . $e->getMessage());
+            }
+        }
+
         return response()->json([
             'current_page' => $orcamentosPaginated->currentPage(),
             'data' => $transformedOrcamentos,
@@ -475,5 +527,44 @@ class OrcamentoController extends Controller
         }
 
         return response()->json($segunda_etapa);
+    }
+
+    public function linkClientEmail(Request $request, $orcamento_id)
+    {
+        try {
+            $request->validate([
+                'client_email' => 'required|email',
+            ]);
+
+            $clientEmail = $request->input('client_email');
+            
+            $response = Http::withHeaders([
+                'X-Admin-Key' => config('services.go_api.admin_key')
+            ])->patch(config('services.go_api.url') . '/v1/admin/clients', [
+                'budget_id' => (int) $orcamento_id,
+                'email' => $clientEmail,
+            ]);
+
+            if (!$response->successful()) {
+                $errorMessage = 'Erro ao vincular cliente ao orçamento';
+                
+                $responseBody = json_decode($response->body(), true);
+                if (isset($responseBody['message'])) {
+                    $errorMessage = $responseBody['message'];
+                }
+                
+                Log::error('Erro ao vincular cliente ao orçamento: ' . $response->body());
+                return response()->json(['message' => $errorMessage], $response->status());
+            }
+
+            return response()->json([
+                'message' => 'Cliente vinculado ao orçamento com sucesso!',
+                'client_email' => $clientEmail,
+                'orcamento_id' => $orcamento_id,
+            ], 200);
+        } catch (\Exception $e) {
+            Log::error('Erro ao vincular cliente ao orçamento: ' . $e->getMessage());
+            return response()->json(['message' => 'Erro ao vincular cliente ao orçamento: ' . $e->getMessage()], 500);
+        }
     }
 }
