@@ -116,7 +116,7 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin'])->group(function ()
     
 });
 
-Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,designer,backoffice'])->group(function () {
+Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,designer,backoffice,producao'])->group(function () {
     Route::get('/url/{id}', [ClienteCadastroShortUrlController::class, 'createShortUrl']);
     Route::post('/payment/generate-checkout', [MercadoPagoController::class, 'generateCheckoutLink']);
     Route::get('/chat-octa', [ChatOctaController::class, 'getAllChatOcta']);
@@ -124,9 +124,9 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,de
     Route::put('/produto', [ProdutoController::class, 'upsertProduto']);
     Route::get('/produto', [ProdutoController::class, 'getAllProdutos']);
     Route::get('/produto-orcamento-query', [ProdutoController::class, 'getAllProdutosOrcamento']);
-    Route::get('/produto-categoria', [ProdutoCategoriaController::class, 'getAllProdutosCategorias']); // categorias
-    Route::get('/material', [MaterialController::class, 'getAllMaterial']); // material
-    Route::get('/user-role/get-users-by-role', [UserRoleController::class, 'getUsersByRole']); // UserRole
+    Route::get('/produto-categoria', [ProdutoCategoriaController::class, 'getAllProdutosCategorias']);
+    Route::get('/material', [MaterialController::class, 'getAllMaterial']);
+    Route::get('/user-role/get-users-by-role', [UserRoleController::class, 'getUsersByRole']);
     Route::get('/produto-orcamento-consolidado', [ProdutoOrcamentoController::class, 'getAllProdutosOrcamento']);
     Route::get('/produto/pacote/uniforme', [ProdutoPacoteUniformeController::class, 'getPacotesUniforme']);
     Route::put('/produto/pacote/uniforme/{pacote_id?}/', [ProdutoPacoteUniformeController::class, 'upsertPacoteUniforme']);
@@ -188,25 +188,35 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,de
     Route::patch('/producao/pedido-designer-change/{id}', [PedidoArteFinalController::class, 'atribuirDesigner']);
     Route::patch('/orcamento/backoffice/update-arte-final-com-orcamento', [PedidoArteFinalController::class, 'updatePedidoArteFinalComOrcamento']);
     Route::patch('/producao/edit-block-tiny-with-brush', [PedidoArteFinalController::class, 'updatePedidoArteFinalBlockTinyWithBrush']);
-    Route::patch('/producao/pedido-status-change/{id}', [PedidoArteFinalController::class, 'trocarStatusArteFinal']);
     Route::patch('/producao/pedido-estagio-change/{id}', [PedidoArteFinalController::class, 'trocarEstagioArteFinal']);
     Route::patch('/producao/pedido-medida-change/{id}', [PedidoArteFinalController::class, 'trocarMedidaLinear']);
     Route::patch('/producao/pedido-obs-change/{id}', [PedidoArteFinalController::class, 'trocarObsArteFinal']);
     Route::patch('/producao/pedido-rolo-change/{id}', [PedidoArteFinalController::class, 'trocarRoloArteFinal']);
     Route::patch('/producao/impressao/impressora-change/{id}', [PedidoArteFinalController::class, 'trocarImpressoraArteFinalImpressao']);
     Route::patch('/producao/impressao/corte-change/{id}', [PedidoArteFinalController::class, 'trocarCorteArteFinalImpressao']);
-    Route::patch('/producao/impressao/status-change', [PedidosArteFinalImpressaoController::class, 'trocarStatusArteFinalImpressao']);
-    Route::patch('/producao/confeccao/costura/status-change', [PedidosArteFinalConfeccaoCosturaController::class, 'trocarStatusArteFinalCostura']);
     Route::patch('/producao/confeccao/corte-conferencia/status-corte-change', [PedidosArteFinalConfeccaoCorteConferenciaController::class, 'trocarStatusArteFinalCorte']);
     Route::patch('/producao/confeccao/corte-conferencia/status-conferencia-change', [PedidosArteFinalConfeccaoCorteConferenciaController::class, 'trocarStatusArteFinalConferencia']);
-    Route::patch('/producao/confeccao/sublimacao/status-change', [PedidosArteFinalConfeccaoSublimacaoController::class, 'trocarStatusArteFinalSublimacao']);
     Route::get('/producao/pedido-arte-final/{arteFinalId}/verificar-uniformes', [PedidosArteFinalUniformesController::class, 'verificarUniformes']); 
     Route::delete('/producao/delete-pedido-arte-final/{id}', [PedidoArteFinalController::class, 'deletePedidoArteFinal']);
-
+    
     // Route::get('/produto-personalizad', [ProdutosPersonalizadController::class, 'getAllProdutosPersonalizad']);
     // Route::get('/vendas/orcamentos-por-entrega', [VendasController::class, 'getQuantidadeOrcamentosEntrega']);
     // Route::put('/producao/pedido-arte-final', [PedidoArteFinalController::class, 'upsertPedidoArteFinal']);
+    
+});
 
+
+Route::middleware(['auth:sanctum', 'role:super-admin,ti,designer-coordenar'])->group(function () {
+    Route::patch('/producao/pedido-status-change/{id}', [PedidoArteFinalController::class, 'trocarStatusArteFinal']);
+});
+
+Route::middleware(['auth:sanctum', 'role:super-admin,ti,producao-impressao,producao-coordenador,admin-coordenador'])->group(function () {
+    Route::patch('/producao/impressao/status-change', [PedidosArteFinalImpressaoController::class, 'trocarStatusArteFinalImpressao']);
+});
+
+Route::middleware(['auth:sanctum', 'role:super-admin,ti,producao-coordenador,admin-coordenador'])->group(function () {
+    Route::patch('/producao/confeccao/sublimacao/status-change', [PedidosArteFinalConfeccaoSublimacaoController::class, 'trocarStatusArteFinalSublimacao']);
+    Route::patch('/producao/confeccao/costura/status-change', [PedidosArteFinalConfeccaoCosturaController::class, 'trocarStatusArteFinalCostura']);
 });
 
 Route::middleware(['auth:sanctum', 'role:super-admin,admin,comercial,designer,producao'])->group(function () {
