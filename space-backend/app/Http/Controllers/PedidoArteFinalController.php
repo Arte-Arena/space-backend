@@ -12,7 +12,6 @@ use App\Models\PedidosArteFinalConfeccaoCorteConferencia;
 use App\Models\PedidosArteFinalConfeccaoCostura;
 use App\Models\PedidosArteFinalConfeccaoSublimacaoModel;
 use App\Models\PedidosArteFinalImpressao;
-use App\Models\Role;
 use App\Models\RoleUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -23,9 +22,30 @@ class PedidoArteFinalController extends Controller
 {
     public function getAllPedidosArteFinal(Request $request)
     {
-        $query = PedidoArteFinal::query()
+
+        if ($request->has('per_page')) {
+            $perPage = $request->query('per_page');
+            if (!in_array($perPage, [15, 25, 50])) {
+                $perPage = 15;
+            }
+        } else {
+            $perPage = 15;
+        }
+        
+        if ($request->has('q')) {
+            $q = $request->query('q');
+
+            $query = PedidoArteFinal::query()
             ->whereNotNull('numero_pedido')
-            ->whereNotNull('tiny_pedido_id');
+            ->whereNotNull('tiny_pedido_id')
+            ->where('numero_pedido', 'like', '%' . $q . '%');
+            ;
+        } else {
+            $query = PedidoArteFinal::query()
+                ->whereNotNull('numero_pedido')
+                ->whereNotNull('tiny_pedido_id')
+                ;
+        }           
 
         if ($request->has('fila')) {
             $fila = $request->query('fila');
@@ -71,7 +91,7 @@ class PedidoArteFinalController extends Controller
 
 
         // Pagina os pedidos
-        $pedidosPaginados = $query->paginate(200);
+        $pedidosPaginados = $query->paginate($perPage);
 
         return response()->json($pedidosPaginados);
     }
