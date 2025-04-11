@@ -132,6 +132,7 @@ class PedidoArteFinalController extends Controller
         $vendedor = User::where('id', $vendedor_id)->select('id')->first();
         $vendedorId = $vendedor ? $vendedor->id : null;
         $vendedoresTiny = [
+            '53' => 710154473,
             '29' => 707100035,
             '43' => 709683645,
             '28' => 705062240,
@@ -463,6 +464,7 @@ class PedidoArteFinalController extends Controller
         $vendedor = User::where('id', $vendedor_id)->select('id')->first();
         $vendedorId = $vendedor ? $vendedor->id : null;
         $vendedoresTiny = [
+            '53' => 710154473,
             '29' => 707100035,
             '43' => 709683645,
             '28' => 705062240,
