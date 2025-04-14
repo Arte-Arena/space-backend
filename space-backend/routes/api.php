@@ -36,12 +36,11 @@ use App\Http\Controllers\{
     PedidosArteFinalImpressaoController,
     PedidosArteFinalUniformesController
 };
-use App\Models\PedidosArteFinalConfeccaoSublimacaoModel;
-use App\Models\PedidosArteFinalImpressao;
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/octa-webhook', [ChatOctaController::class, 'webhook']);
 Route::get('/super-admin/get-config', [SuperAdminController::class, 'getConfig']);
+Route::get('/super-admin/get-config-prazos', [SuperAdminController::class, 'getConfigPrazos']);
 Route::get('/url/resolve/{id}', [ClienteCadastroShortUrlController::class, 'resolveShortUrl']);
 Route::post('/orcamento/backoffice/cliente-cadastro', [ClienteCadastroController::class, 'createClienteCadastro']);
 Route::put('/orcamento/backoffice/cliente-cadastro/{id}', [ClienteCadastroController::class, 'updateClienteCadastro']);
@@ -90,7 +89,6 @@ Route::middleware(['auth:sanctum', 'role:super-admin'])->group(function () {
     Route::put('/super-admin/upsert-config', [SuperAdminController::class, 'upsertConfig']);
     Route::get('/super-admin/get-backups', [BackupController::class, 'getBackups']);   
     Route::put('/super-admin/upsert-config-prazos', [SuperAdminController::class, 'upsertConfigPrazos']);
-    Route::get('/super-admin/get-config-prazos', [SuperAdminController::class, 'getConfigPrazos']);
 });
 
 Route::middleware(['auth:sanctum', 'role:super-admin,admin'])->group(function () {
