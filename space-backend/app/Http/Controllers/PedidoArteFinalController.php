@@ -647,25 +647,16 @@ class PedidoArteFinalController extends Controller
             return response()->json(['error' => 'Pedido not found'], 500);
         }
 
-        $roleUser = RoleUser::where('user_id', $request['designer_id'])->first();
-        if (!$roleUser) {
-            return response()->json(['error' => 'Designer não encotrado'], 400);
+        $roleUser = RoleUser::where('user_id', $request['designer_id'])->get();
+        $hasDesignerRole = $roleUser->contains('role_id', 6) || $roleUser->contains('role_id', 7);
+
+        if (!$hasDesignerRole) {
+            return response()->json(['error' => 'User does not have designer role'], 500);
         }
 
-        $user = Auth::user();
-        if ($user->id !== $request['designer_id']) {
-            if (in_array(7, $user->roles->pluck('id')->toArray())) {
-                $pedido->designer_id = $request['designer_id'];
-                $pedido->save();
-                return response()->json(['message' => 'Pedido atualizado com sucesso!'], 200);
-            }
-        } else if (in_array(6, $user->roles->pluck('id')->toArray())) {
-            $pedido->designer_id = $request['designer_id'];
-            $pedido->save();
-            return response()->json(['message' => 'Pedido atualizado com sucesso!'], 200);
-        } else {
-            return response()->json(['error' => 'Role de designer inválida'], 400);
-        }
+        $pedido->designer_id = $request['designer_id'];
+        $pedido->save();
+        return response()->json(['message' => 'Pedido atualizado com sucesso!'], 200);
     }
 
     // Impressora (colocar no contrller de impressora)
