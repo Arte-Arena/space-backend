@@ -648,13 +648,24 @@ class PedidoArteFinalController extends Controller
         }
 
         $roleUser = RoleUser::where('user_id', $request['designer_id'])->first();
-        if (!$roleUser || !in_array($roleUser->role_id, [6, 7])) {
-            return response()->json(['error' => 'Role de designer inválida'], 400);
+        if (!$roleUser) {
+            return response()->json(['error' => 'Designer não encotrado'], 400);
         }
 
-        $pedido->designer_id = $request['designer_id'];
-        $pedido->save();
-        return response()->json(['message' => 'Pedido atualizado com sucesso!'], 200);
+        $user = Auth::user();
+        if ($user->id !== $request['designer_id']) {
+            if (in_array(7, $user->roles->pluck('id')->toArray())) {
+                $pedido->designer_id = $request['designer_id'];
+                $pedido->save();
+                return response()->json(['message' => 'Pedido atualizado com sucesso!'], 200);
+            }
+        } else if (in_array(6, $user->roles->pluck('id')->toArray())) {
+            $pedido->designer_id = $request['designer_id'];
+            $pedido->save();
+            return response()->json(['message' => 'Pedido atualizado com sucesso!'], 200);
+        } else {
+            return response()->json(['error' => 'Role de designer inválida'], 400);
+        }
     }
 
     // Impressora (colocar no contrller de impressora)
@@ -916,7 +927,7 @@ class PedidoArteFinalController extends Controller
             if (!$pedidoConfeccaoCorteConferencia) {
                 return response()->json(['error' => 'Erro ao atualizar Corte/Conferência'], 500);
             }
-            
+
 
             return response()->json(['message' => 'Corte/Conferência criada ou atualizada com sucesso!'], 200);
         }
