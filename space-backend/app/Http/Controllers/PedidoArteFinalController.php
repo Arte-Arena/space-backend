@@ -647,9 +647,11 @@ class PedidoArteFinalController extends Controller
             return response()->json(['error' => 'Pedido not found'], 500);
         }
 
-        $roleUser = RoleUser::where('user_id', $request['designer_id'])->first();
-        if (!$roleUser || !in_array($roleUser->role_id, [6, 7])) {
-            return response()->json(['error' => 'Role de designer inválida'], 400);
+        $roleUser = RoleUser::where('user_id', $request['designer_id'])->get();
+        $hasDesignerRole = $roleUser->contains('role_id', 6) || $roleUser->contains('role_id', 7);
+
+        if (!$hasDesignerRole) {
+            return response()->json(['error' => 'User does not have designer role'], 500);
         }
 
         $pedido->designer_id = $request['designer_id'];
@@ -916,7 +918,7 @@ class PedidoArteFinalController extends Controller
             if (!$pedidoConfeccaoCorteConferencia) {
                 return response()->json(['error' => 'Erro ao atualizar Corte/Conferência'], 500);
             }
-            
+
 
             return response()->json(['message' => 'Corte/Conferência criada ou atualizada com sucesso!'], 200);
         }
