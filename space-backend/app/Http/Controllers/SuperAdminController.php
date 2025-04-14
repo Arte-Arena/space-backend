@@ -283,6 +283,7 @@ class SuperAdminController extends Controller
             'dias_antecipa_producao_arte_final' => $request->input('dias_antecipa_producao_arte_final'),
             'dias_antecipa_producao_impressao' => $request->input('dias_antecipa_producao_impressao'),
             'dias_antecipa_producao_confeccao_sublimacao' => $request->input('dias_antecipa_producao_confeccao_sublimacao'),
+            'dias_antecipa_producao_confeccao_corte_conferencia' => $request->input('dias_antecipa_producao_confeccao_corte_conferencia'),
             'dias_antecipa_producao_producao_costura' => $request->input('dias_antecipa_producao_producao_costura'),
         ]);
         
@@ -290,6 +291,7 @@ class SuperAdminController extends Controller
         $diasAntecipacaoArteFinal = $request->input('dias_antecipa_producao_arte_final');
         $diasAntecipacaoImpressao = $request->input('dias_antecipa_producao_impressao');
         $diasAntecipacaoConfeccaoSublimacao = $request->input('dias_antecipa_producao_confeccao_sublimacao');
+        $diasAntecipacaoConfeccaoCorteConferencia = $request->input('dias_antecipa_producao_confeccao_corte_conferencia');
         $diasAntecipacaoConfeccaoCostura = $request->input('dias_antecipa_producao_confeccao_costura');
 
         if (!$diasAntecipacaoArteFinal) {
@@ -302,6 +304,10 @@ class SuperAdminController extends Controller
 
         if (!$diasAntecipacaoConfeccaoSublimacao) {
             $diasAntecipacaoConfeccaoSublimacao = 0;
+        }
+
+        if (!$diasAntecipacaoConfeccaoCorteConferencia) {
+            $diasAntecipacaoConfeccaoCorteConferencia = 0;
         }
 
         if (!$diasAntecipacaoConfeccaoCostura) {
