@@ -157,6 +157,10 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,de
     Route::get('/orcamento/orcamentos-last-status/{id}', [OrcamentoController::class, 'getAllOrcamentosEtapas']);
     Route::get('/orcamento/get-orcamentos-aprovados', [OrcamentoController::class, 'getAllOrcamentosAprovados']);
     Route::post('/orcamento/uniformes', [OrcamentosUniformesController::class, 'store']);
+    Route::get('/orcamento/uniformes-go/{orcamento_id}', [OrcamentosUniformesController::class, 'verificarUniformesGoApi']);
+    Route::post('/orcamento/uniformes-go', [OrcamentosUniformesController::class, 'criarUniformesGoApi']);
+    Route::patch('/orcamento/uniformes-go', [OrcamentosUniformesController::class, 'atualizarDadosJogadoresGoApi']);
+    Route::post('/orcamento/{orcamento_id}/link-client', [OrcamentoController::class, 'linkClientEmail']);
     Route::get('/clientes-consolidados', [ClientesConsolidadosController::class, 'consolidateDataPaginated']);
     Route::get('/search-clientes-consolidados', [ClientesConsolidadosController::class, 'searchConsolidateDataPaginated']);
     Route::get('/vendas/quantidade-orcamentos', [VendasController::class, 'getQuantidadeOrcamentos']);
@@ -204,7 +208,7 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,de
 });
 
 
-Route::middleware(['auth:sanctum', 'role:super-admin,ti,designer-coordenar'])->group(function () {
+Route::middleware(['auth:sanctum', 'role:super-admin,ti,designer-coordenador,designer,admin-coordenador'])->group(function () {
     Route::patch('/producao/pedido-status-change/{id}', [PedidoArteFinalController::class, 'trocarStatusArteFinal']);
 });
 

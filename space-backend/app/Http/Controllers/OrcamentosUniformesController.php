@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\OrcamentosUniformes;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Http;
 
 class OrcamentosUniformesController extends Controller
 {
@@ -110,5 +111,95 @@ class OrcamentosUniformesController extends Controller
 
         $orcamentosUniforme->update(['configuracoes' => $request->configuracoes]);
         return $orcamentosUniforme;
+    }
+
+    public function verificarUniformesGoApi($orcamento_id)
+    {
+        try {
+            $response = Http::withHeaders([
+                'X-Admin-Key' => config('services.go_api.admin_key')
+            ])->get(config('services.go_api.url') . '/v1/admin/uniforms', [
+                'budget_id' => $orcamento_id
+            ]);
+
+            if ($response->successful()) {
+                return response()->json($response->json());
+            }
+
+            return response()->json(['message' => $response->json()['message'] ?? 'Uniforme não encontrado'], 404);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Erro ao verificar uniformes: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function atualizarDadosJogadoresGoApi(Request $request)
+    {
+        try {
+            $request->validate([
+                'budget_id' => 'required|integer',
+                'updates' => 'array|nullable',
+                'updates.*.sketch_id' => 'required|string|max:1',
+                'updates.*.players' => 'required|array',
+                'updates.*.players.*.ready' => 'nullable|boolean',
+                'updates.*.players.*.observations' => 'nullable|string',
+                'editable' => 'nullable|boolean',
+            ]);
+
+            $requestData = [
+                'updates' => $request->updates
+            ];
+
+            $url = config('services.go_api.url') . '/v1/admin/uniforms?budget_id=' . $request->budget_id;
+            
+            if ($request->has('editable') && $request->editable) {
+                $url .= '&editable=true';
+            }
+
+            $response = Http::withHeaders([
+                'X-Admin-Key' => config('services.go_api.admin_key')
+            ])->patch($url, $requestData);
+
+            if ($response->successful()) {
+                return response()->json(['message' => 'Dados dos jogadores atualizados com sucesso'], 200);
+            }
+
+            return response()->json([
+                'message' => $response->json()['message'] ?? 'Erro ao atualizar dados dos jogadores'
+            ], $response->status());
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Erro ao atualizar dados dos jogadores: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function criarUniformesGoApi(Request $request)
+    {
+        try {
+            $request->validate([
+                'budget_id' => 'required|integer',
+                'client_email' => 'required|email',
+                'sketches' => 'required|array',
+                'sketches.*.id' => 'required|string|max:1',
+                'sketches.*.player_count' => 'required|integer|min:1',
+                'sketches.*.package_type' => 'required|string'
+            ]);
+
+            $response = Http::withHeaders([
+                'X-Admin-Key' => config('services.go_api.admin_key')
+            ])->post(config('services.go_api.url') . '/v1/admin/uniforms', [
+                'budget_id' => $request->budget_id,
+                'client_email' => $request->client_email,
+                'sketches' => $request->sketches
+            ]);
+
+            if ($response->successful()) {
+                return response()->json($response->json(), 201);
+            }
+
+            return response()->json([
+                'message' => $response->json()['message'] ?? 'Erro ao criar uniformes'
+            ], $response->status());
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Erro ao criar uniformes: ' . $e->getMessage()], 500);
+        }
     }
 }

@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'go_api' => [
+        'url' => env('GO_API_URL', 'http://localhost:8080'),
+        'admin_key' => env('GO_API_ADMIN_KEY'),
+    ],
+
 ];
