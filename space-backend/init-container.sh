@@ -18,6 +18,8 @@ echo "FRETE_MELHORENVIO_API_TOKEN=$FRETE_MELHORENVIO_API_TOKEN" >> .env
 echo "FRETE_LALAMOVE_KEY=$FRETE_LALAMOVE_KEY" >> .env
 echo "FRETE_LALAMOVE_SECRET=$FRETE_LALAMOVE_SECRET" >> .env
 echo "TINY_TOKEN=$TINY_TOKEN" >> .env
+echo "GO_API_URL=$GO_API_URL" >> .env
+echo "GO_API_ADMIN_KEY=$GO_API_ADMIN_KEY" >> .env
 
 echo "[arte arena security] Configurando variáveis de ambiente..."
 
