@@ -208,7 +208,7 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,de
 });
 
 
-Route::middleware(['auth:sanctum', 'role:super-admin,ti,designer-coordenar'])->group(function () {
+Route::middleware(['auth:sanctum', 'role:super-admin,ti,designer-coordenador,designer,admin-coordenador'])->group(function () {
     Route::patch('/producao/pedido-status-change/{id}', [PedidoArteFinalController::class, 'trocarStatusArteFinal']);
 });
 
