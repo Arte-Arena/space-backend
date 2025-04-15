@@ -15,6 +15,7 @@ class ConfigPrazos extends Model
         'dias_antecipa_producao_arte_final',
         'dias_antecipa_producao_impressao',
         'dias_antecipa_producao_confeccao_sublimacao',
+        'dias_antecipa_producao_confeccao_corte_conferencia',
         'dias_antecipa_producao_confeccao_costura'
     ];
 }
