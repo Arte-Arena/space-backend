@@ -114,7 +114,7 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin'])->group(function ()
     
 });
 
-Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,designer,backoffice,producao'])->group(function () {
+Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,designer,backoffice,producao,producao-coordenador,producao-impressao,admin-coodenador,designer-coordenador'])->group(function () {
     Route::get('/url/{id}', [ClienteCadastroShortUrlController::class, 'createShortUrl']);
     Route::post('/payment/generate-checkout', [MercadoPagoController::class, 'generateCheckoutLink']);
     Route::get('/chat-octa', [ChatOctaController::class, 'getAllChatOcta']);
