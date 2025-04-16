@@ -173,6 +173,7 @@ class OrcamentoController extends Controller
             return [
                 'id' => $orcamento->id,
                 'user_id' => $orcamento->user_id,
+                'vendedor_id' => $latestStatus ? $latestStatus->user_id : null,
                 'cliente_octa_number' => $orcamento->cliente_octa_number,
                 'nome_cliente' => $orcamento->nome_cliente,
                 'lista_produtos' => $orcamento->lista_produtos,
