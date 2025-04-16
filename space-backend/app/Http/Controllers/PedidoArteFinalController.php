@@ -401,7 +401,7 @@ class PedidoArteFinalController extends Controller
         ], 200);
     }
 
-
+    // botão brush (cria um pedido ou atualiza)
     public function createPedidoFromBackoffice($orcamentoId)
     {
         $orcamento = Orcamento::find($orcamentoId);
@@ -434,8 +434,6 @@ class PedidoArteFinalController extends Controller
             ], 404);
         }
 
-
-
         $novaListaDeProdutos = array_map(function ($produto) {
             $produto['medida_linear'] = 0;
             $produto['uid'] = $produto['id'] . rand(10, 99);
@@ -444,13 +442,14 @@ class PedidoArteFinalController extends Controller
             return $produto;
         }, json_decode($orcamento->lista_produtos, true));
 
+
         $pedido = PedidoArteFinal::create([
-            'user_id' => Auth::id(),
+            'user_id' => $orcamentoStatus->user_id,
             'lista_produtos' => $novaListaDeProdutos,
             'orcamento_id' => $orcamento->id,
             'pedido_status_id' => 1,
             'pedido_tipo_id' => $orcamento->antecipado ? 2 : 1,
-            'observacoes' => $orcamento->comentarios,
+            'observacoes' => $orcamentoStatus->comentarios,
             'url_trello' => $orcamentoStatus->link_trello,
             'vendedor_id' => $orcamento->user_id,
             'data_prevista' => $orcamento->prev_entrega
@@ -462,6 +461,7 @@ class PedidoArteFinalController extends Controller
         ], 201);
     }
 
+    // insere no tiny
     public function updatePedidoArteFinalComOrcamento(Request $request)
     {
 
@@ -587,6 +587,7 @@ class PedidoArteFinalController extends Controller
         if (!$pedido) {
             return response()->json(['error' => 'Pedido not found'], 404);
         }
+
         return response()->json($pedido);
     }
 
