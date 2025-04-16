@@ -452,7 +452,7 @@ class PedidoArteFinalController extends Controller
             'observacoes' => $orcamentoStatus->comentarios,
             'url_trello' => $orcamentoStatus->link_trello,
             'vendedor_id' => $orcamento->user_id,
-            'data_prevista' => $orcamento->prev_entrega
+            'data_prevista' => $orcamento->prev_entrega ?? $orcamentoStatus->data_entrega ?? null,
         ]);
 
         return response()->json([
