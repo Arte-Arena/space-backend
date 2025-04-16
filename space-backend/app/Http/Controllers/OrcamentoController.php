@@ -103,6 +103,10 @@ class OrcamentoController extends Controller
         $dataEntrega = $request->input('data_entrega');
         $dataEntregaFormatada = date('Y-m-d H:i:s', strtotime($dataEntrega));
 
+        $valor_faturamento = str_replace(',', '.', $request->input('valor_faturamento'));
+        $valor_faturamento_2 = str_replace(',', '.', $request->input('valor_faturamento_2'));
+        $valor_faturamento_3 = str_replace(',', '.', $request->input('valor_faturamento_3'));
+
 
         OrcamentoStatus::create([
             'orcamento_id' => $id->id,
@@ -114,9 +118,9 @@ class OrcamentoController extends Controller
             'data_faturamento' => $dataFaturaFormatada,
             'data_faturamento_2' => $dataFaturaFormatada2,
             'data_faturamento_3' => $dataFaturaFormatada3,
-            'valor_faturamento' => $request->input('valor_faturamento'),
-            'valor_faturamento_2' => $request->input('valor_faturamento_2'),
-            'valor_faturamento_3' => $request->input('valor_faturamento_3'),
+            'valor_faturamento' => $valor_faturamento,
+            'valor_faturamento_2' => $valor_faturamento_2,
+            'valor_faturamento_3' => $valor_faturamento_3,
             'link_trello' => $request->input('link_trello'),
             'comentarios' => $request->input('comentarios'),
             'data_entrega' => $dataEntregaFormatada,
@@ -298,7 +302,7 @@ class OrcamentoController extends Controller
         if (!empty($orcamentoIds)) {
             try {
                 $budgetIdsQuery = implode(',', $orcamentoIds);
-                
+
                 $response = Http::withHeaders([
                     'X-Admin-Key' => config('services.go_api.admin_key')
                 ])->get(config('services.go_api.url') . '/v1/admin/clients', [
@@ -308,7 +312,7 @@ class OrcamentoController extends Controller
 
                 if ($response->successful()) {
                     $clientsData = $response->json('data', []);
-                    
+
                     $clientsMap = [];
                     foreach ($clientsData as $client) {
                         if (isset($client['budget_ids']) && is_array($client['budget_ids'])) {
@@ -323,7 +327,7 @@ class OrcamentoController extends Controller
                             }
                         }
                     }
-                    
+
                     foreach ($transformedOrcamentos as &$orcamento) {
                         $orcamentoId = $orcamento['id'];
                         if (isset($clientsMap[$orcamentoId])) {
@@ -537,7 +541,7 @@ class OrcamentoController extends Controller
             ]);
 
             $clientEmail = $request->input('client_email');
-            
+
             $response = Http::withHeaders([
                 'X-Admin-Key' => config('services.go_api.admin_key')
             ])->patch(config('services.go_api.url') . '/v1/admin/clients', [
@@ -547,12 +551,12 @@ class OrcamentoController extends Controller
 
             if (!$response->successful()) {
                 $errorMessage = 'Erro ao vincular cliente ao orçamento';
-                
+
                 $responseBody = json_decode($response->body(), true);
                 if (isset($responseBody['message'])) {
                     $errorMessage = $responseBody['message'];
                 }
-                
+
                 Log::error('Erro ao vincular cliente ao orçamento: ' . $response->body());
                 return response()->json(['message' => $errorMessage], $response->status());
             }
