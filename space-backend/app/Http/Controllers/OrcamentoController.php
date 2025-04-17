@@ -323,7 +323,23 @@ class OrcamentoController extends Controller
                                     'client_id' => $client['id'],
                                     'client_name' => $client['contact']['name'] ?? '',
                                     'client_email' => $client['contact']['email'] ?? '',
-                                    'has_uniform' => $hasUniform
+                                    'has_uniform' => $hasUniform,
+                                    'contact' => [
+                                        'person_type' => $client['contact']['person_type'] ?? '',
+                                        'identity_card' => $client['contact']['identity_card'] ?? '',
+                                        'cpf' => $client['contact']['cpf'] ?? '',
+                                        'cell_phone' => $client['contact']['cell_phone'] ?? '',
+                                        'zip_code' => $client['contact']['zip_code'] ?? '',
+                                        'address' => $client['contact']['address'] ?? '',
+                                        'number' => $client['contact']['number'] ?? '',
+                                        'complement' => $client['contact']['complement'] ?? '',
+                                        'neighborhood' => $client['contact']['neighborhood'] ?? '',
+                                        'city' => $client['contact']['city'] ?? '',
+                                        'state' => $client['contact']['state'] ?? '',
+                                        'company_name' => $client['contact']['company_name'] ?? '',
+                                        'cnpj' => $client['contact']['cnpj'] ?? '',
+                                        'state_registration' => $client['contact']['state_registration'] ?? '',
+                                    ]
                                 ];
                             }
                         }
@@ -338,7 +354,23 @@ class OrcamentoController extends Controller
                                 'client_id' => null,
                                 'client_name' => null,
                                 'client_email' => null,
-                                'has_uniform' => false
+                                'has_uniform' => false,
+                                'contact' => [
+                                    'person_type' => '',
+                                    'identity_card' => '',
+                                    'cpf' => '',
+                                    'cell_phone' => '',
+                                    'zip_code' => '',
+                                    'address' => '',
+                                    'number' => '',
+                                    'complement' => '',
+                                    'neighborhood' => '',
+                                    'city' => '',
+                                    'state' => '',
+                                    'company_name' => '',
+                                    'cnpj' => '',
+                                    'state_registration' => '',
+                                ]
                             ];
                         }
                     }
