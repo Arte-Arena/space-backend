@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\{ChatOcta, OctaWebHook};
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 
@@ -87,5 +88,31 @@ class ChatOctaController extends Controller
         $octaWebhook = OctaWebhook::create($data);
 
         return response()->json(['message' => 'Dados recebidos com sucesso!', 'data' => $octaWebhook], 200);
+    }
+
+    public function getAllOctaChats()
+    {
+        $apiKey = env('X_API_KEY_OCTA');
+        try {
+            $response = Http::withHeaders([
+                'X-API-KEY' => $apiKey,
+                'Accept' => 'application/json',
+            ])->get('https://artearena.api004.octadesk.services/chat', [
+                'page' => 1,
+                'limit' => 20,
+                'sort[direction]' => 'desc',
+            ]);
+
+            if ($response->failed()) {
+                return response()->json(['error' => 'Erro ao buscar dados da Octadesk'], 500);
+            }
+
+            return response()->json($response->json(), 200);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'error' => 'Erro na requisição',
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
 }

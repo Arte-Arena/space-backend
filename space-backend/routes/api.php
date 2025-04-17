@@ -119,6 +119,9 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,de
     Route::post('/payment/generate-checkout', [MercadoPagoController::class, 'generateCheckoutLink']);
     Route::get('/chat-octa', [ChatOctaController::class, 'getAllChatOcta']);
     Route::put('/chat-octa', [ChatOctaController::class, 'upsertChatOcta']);
+    Route::get('/chats-octa', [ChatOctaController::class, 'getAllOctaChats']);
+
+
     Route::put('/produto', [ProdutoController::class, 'upsertProduto']);
     Route::get('/produto', [ProdutoController::class, 'getAllProdutos']);
     Route::get('/produto-orcamento-query', [ProdutoController::class, 'getAllProdutosOrcamento']);
