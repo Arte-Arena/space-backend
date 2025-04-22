@@ -1,0 +1,10 @@
+GET {{baseUrl}}/octa/get-octa-chats-msgs/{{chatId}}
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+###
+# Variables
+@baseUrl = {{$dotenv BASE_URL}}
+@token = {{$dotenv TOKEN}}
+@chatId = teste

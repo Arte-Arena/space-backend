@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\{ChatOcta, OctaWebHook};
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 
@@ -87,5 +88,110 @@ class ChatOctaController extends Controller
         $octaWebhook = OctaWebhook::create($data);
 
         return response()->json(['message' => 'Dados recebidos com sucesso!', 'data' => $octaWebhook], 200);
+    }
+
+    public function getAllOctaChats()
+    {
+        $apiKey = env('X_API_KEY_OCTA');
+        try {
+            $response = Http::withHeaders([
+                'X-API-KEY' => $apiKey,
+                'Accept' => 'application/json',
+            ])->get('https://artearena.api004.octadesk.services/chat?sort[direction]=desc&sort[property]=updatedAt', [
+                'page' => 1,
+                'limit' => 30
+            ]);
+
+            if ($response->failed()) {
+                return response()->json(['error' => 'Erro ao buscar dados da Octadesk'], 500);
+            }
+
+            return response()->json($response->json(), 200);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'error' => 'Erro na requisição',
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function getAllOctaChatsMsgs($chatId)
+    {
+        $apiKey = env('X_API_KEY_OCTA');
+        try {
+            $response = Http::withHeaders([
+                'X-API-KEY' => $apiKey,
+                'Accept' => 'application/json',
+                'Content-Type' => 'application/json',
+            ])->get("https://artearena.api004.octadesk.services/chat/{$chatId}");
+
+            if ($response->failed()) {
+                return response()->json([
+                    'error' => 'Erro ao buscar detalhes do chat na Octadesk',
+                    'status' => $response->status()
+                ], $response->status());
+            }
+
+            return response()->json($response->json(), 200);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'error' => 'Erro na requisição',
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function postOctaMsg(Request $request, $chatId)
+    {
+        $apiKey = env('X_API_KEY_OCTA');
+        $response = Http::withHeaders([
+            'X-API-KEY' => $apiKey,
+            'Accept' => 'application/json',
+            'Content-Type' => 'application/json',
+        ])->post("https://artearena.api004.octadesk.services/chat/{$chatId}/messages", $request->all());
+
+
+        
+        return response()->json($response->json(), 200);
+    }
+
+    public function postOctaMsgWithAttachments(Request $request, $chatId)
+    {
+        $apiKey = env('X_API_KEY_OCTA');
+        
+        $payload = [
+            'type' => $request->input('type', 'public'),
+            'channel' => $request->input('channel', 'whatsapp'),
+            'body' => $request->input('body', ''),
+            'attachments' => $request->input('attachments', [])
+        ];
+
+        try {
+            $response = Http::withHeaders([
+                'X-API-KEY' => $apiKey,
+                'Accept' => 'application/json',
+                'Content-Type' => 'application/json',
+            ])->post("https://artearena.api004.octadesk.services/chat/{$chatId}/messages", $payload);
+
+            if ($response->failed()) {
+                return response()->json([
+                    'error' => 'Erro ao enviar mensagem para Octadesk',
+                    'status' => $response->status(),
+                    'message' => $response->body()
+                ], $response->status());
+            }
+
+            return response()->json($response->json(), 200);
+        } catch (\Throwable $e) {
+            Log::error('Erro ao enviar mensagem com anexos para Octadesk', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return response()->json([
+                'error' => 'Erro na requisição',
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
 }
