@@ -20,8 +20,8 @@ echo "FRETE_LALAMOVE_SECRET=$FRETE_LALAMOVE_SECRET" >> .env
 echo "TINY_TOKEN=$TINY_TOKEN" >> .env
 echo "GO_API_URL=$GO_API_URL" >> .env
 echo "GO_API_ADMIN_KEY=$GO_API_ADMIN_KEY" >> .env
-echo "OCTA_BASE_URL=$OCTA_BASE_URL" >> .env
-echo "OCTA_API_KEY=$OCTA_API_KEY" >> .env
+echo "X_API_KEY_OCTA=$X_API_KEY_OCTA" >> .env
+
 
 
 echo "[arte arena security] Configurando variáveis de ambiente..."
