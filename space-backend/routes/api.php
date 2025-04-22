@@ -200,11 +200,13 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,de
     Route::patch('/producao/confeccao/corte-conferencia/status-conferencia-change', [PedidosArteFinalConfeccaoCorteConferenciaController::class, 'trocarStatusArteFinalConferencia']);
     Route::get('/producao/pedido-arte-final/{arteFinalId}/verificar-uniformes', [PedidosArteFinalUniformesController::class, 'verificarUniformes']); 
     Route::delete('/producao/delete-pedido-arte-final/{id}', [PedidoArteFinalController::class, 'deletePedidoArteFinal']);
-    
     // Route::get('/produto-personalizad', [ProdutosPersonalizadController::class, 'getAllProdutosPersonalizad']);
     // Route::get('/vendas/orcamentos-por-entrega', [VendasController::class, 'getQuantidadeOrcamentosEntrega']);
     // Route::put('/producao/pedido-arte-final', [PedidoArteFinalController::class, 'upsertPedidoArteFinal']);
-    
+    Route::get('/octa/get-all-octa-chats', [ChatOctaController::class, 'getAllOctaChats']);
+    Route::get('/octa/get-octa-chats-msgs/{chatId}', [ChatOctaController::class, 'getAllOctaChatsMsgs']);
+    Route::post('/octa/post-octa-chat-msg/{chatId}/messages', [ChatOctaController::class, 'postOctaMsg']);
+    Route::post('/octa/post-octa-chat-msg-with-attachments/{chatId}/messages', [ChatOctaController::class, 'postOctaMsgWithAttachments']);
 });
 
 

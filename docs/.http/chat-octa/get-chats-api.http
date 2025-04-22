@@ -1,0 +1,4 @@
+GET https://artearena.api004.octadesk.services/chat?limit=100&sort[direction]=desc&sort[property]=updatedAt
+Accept: application/json
+Content-Type: application/json
+X-Api-Key: teste

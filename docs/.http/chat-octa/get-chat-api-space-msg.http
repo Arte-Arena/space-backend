@@ -1,0 +1,4 @@
+GET http://localhost:8000/api/octa/get-octa-chats-msgs/00b5250e-4c19-477d-93b3-8f4f48c3ce4e
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer 21|4Z39JfdsWfln352H8HDAfSMFrs9Ve5Mo7Bug7LGY48b059e8
