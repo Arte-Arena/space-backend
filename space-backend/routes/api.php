@@ -30,6 +30,7 @@ use App\Http\Controllers\{
     MercadoPagoController,
     UserRoleController,
     BancoInterController,
+    ErrosController,
     PedidosArteFinalConfeccaoCorteConferenciaController,
     PedidosArteFinalConfeccaoCosturaController,
     PedidosArteFinalConfeccaoSublimacaoController,
@@ -207,6 +208,11 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,de
     Route::get('/octa/get-octa-chats-msgs/{chatId}', [ChatOctaController::class, 'getAllOctaChatsMsgs']);
     Route::post('/octa/post-octa-chat-msg/{chatId}/messages', [ChatOctaController::class, 'postOctaMsg']);
     Route::post('/octa/post-octa-chat-msg-with-attachments/{chatId}/messages', [ChatOctaController::class, 'postOctaMsgWithAttachments']);
+    Route::post('erros', [ErrosController::class, 'createErro']);
+    Route::put('erros', [ErrosController::class, 'upsertErro']);
+    Route::patch('erros/solucao/{id}', [ErrosController::class, 'updateSolucaoErro']);
+    Route::patch('erros/status/{id}', [ErrosController::class, 'updateStatusErro']);
+    Route::delete('erros/delete/{id}', [ErrosController::class, 'deleteErro']);
 });
 
 
