@@ -208,6 +208,8 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,de
     Route::get('/octa/get-octa-chats-msgs/{chatId}', [ChatOctaController::class, 'getAllOctaChatsMsgs']);
     Route::post('/octa/post-octa-chat-msg/{chatId}/messages', [ChatOctaController::class, 'postOctaMsg']);
     Route::post('/octa/post-octa-chat-msg-with-attachments/{chatId}/messages', [ChatOctaController::class, 'postOctaMsgWithAttachments']);
+    Route::get('erros', [ErrosController::class, 'getAllErros']);
+    Route::get('erros/{id}', [ErrosController::class, 'getErro']);
     Route::post('erros', [ErrosController::class, 'createErro']);
     Route::put('erros', [ErrosController::class, 'upsertErro']);
     Route::patch('erros/solucao/{id}', [ErrosController::class, 'updateSolucaoErro']);
