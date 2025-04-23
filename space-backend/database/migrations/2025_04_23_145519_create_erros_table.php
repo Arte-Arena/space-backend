@@ -13,13 +13,12 @@ return new class extends Migration
     {
         Schema::create('erros', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('numero_pedido');
-            $table->foreign('numero_pedido')->references('numero_pedido')->on('pedidos_arte_final')->onDelete('cascade');
-            $table->string('link_trello');
-            $table->string('setor');
-            $table->string('detalhes');
-            $table->string('solucao');
-            $table->string('status');
+            $table->string('numero_pedido')->nullable();
+            $table->string('link_trello')->nullable();
+            $table->string('setor')->nullable();
+            $table->string('detalhes')->nullable(); 
+            $table->string('solucao')->nullable();  
+            $table->string('status')->nullable();
             $table->timestamps();
         });
     }
