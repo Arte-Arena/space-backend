@@ -93,7 +93,7 @@ class PedidoArteFinal extends Model
     }
     public function erros()
     {
-        return $this->hasOne(Erros::class, 'numero_pedido', 'numero_pedido');
+        return $this->hasMany(Erros::class, 'numero_pedido', 'numero_pedido');
     }
 
 

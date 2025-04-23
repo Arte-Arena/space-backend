@@ -53,7 +53,7 @@ class ErrosController extends Controller
             ]);
 
             // Opcional: Registrar ação no histórico/log
-            Log::create([
+            Log::info([
                 'action' => 'create',
                 'model' => 'Erro',
                 'model_id' => $erro->id,
@@ -67,6 +67,7 @@ class ErrosController extends Controller
                 'data' => $erro,
                 'message' => 'Erro registrado com sucesso.'
             ], 201);
+            
         } catch (\Exception $e) {
             DB::rollBack();
 
@@ -109,7 +110,7 @@ class ErrosController extends Controller
             );
 
             // Opcional: Registrar ação no histórico/log
-            Log::create([
+            Log::info([
                 'action' => $id ? 'update' : 'create',
                 'model' => 'Erro',
                 'model_id' => $erro->id,
@@ -155,7 +156,7 @@ class ErrosController extends Controller
             ]);
 
             // Opcional: Registrar ação no histórico/log
-            Log::create([
+            Log::info([
                 'action' => 'update',
                 'model' => 'Erro',
                 'model_id' => $erro->id,
@@ -203,7 +204,7 @@ class ErrosController extends Controller
             ]);
 
             // Opcional: Registrar ação no histórico/log
-            Log::create([
+            Log::info([
                 'action' => 'update',
                 'model' => 'Erro',
                 'model_id' => $erro->id,
@@ -244,7 +245,7 @@ class ErrosController extends Controller
             $erro->delete();
 
             // Opcional: Registrar ação no histórico/log
-            Log::create([
+            Log::info([
                 'action' => 'delete',
                 'model' => 'Erro',
                 'model_id' => $erro->id,
