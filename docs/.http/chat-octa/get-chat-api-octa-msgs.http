@@ -1,0 +1,4 @@
+GET https://artearena.api004.octadesk.services/chat/e46ce92c-e82d-4078-90db-4fb1e3c1b239
+Accept: application/json
+Content-Type: application/json
+X-Api-Key: teste

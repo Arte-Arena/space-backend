@@ -91,5 +91,10 @@ class PedidoArteFinal extends Model
     {
         return $this->hasOne(PedidosArteFinalConfeccaoCorteConferencia::class, 'pedido_arte_final_id');
     }
+    public function erros()
+    {
+        return $this->hasMany(Erros::class, 'numero_pedido', 'numero_pedido');
+    }
+
 
 }

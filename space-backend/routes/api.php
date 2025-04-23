@@ -30,6 +30,7 @@ use App\Http\Controllers\{
     MercadoPagoController,
     UserRoleController,
     BancoInterController,
+    ErrosController,
     PedidosArteFinalConfeccaoCorteConferenciaController,
     PedidosArteFinalConfeccaoCosturaController,
     PedidosArteFinalConfeccaoSublimacaoController,
@@ -176,6 +177,7 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,de
     Route::get('/vendas/orcamentos-por-dia-filtered', [VendasController::class, 'getFilteredOrcamentosPorDia']);
     Route::get('/vendas/orcamentos-user-names', [VendasController::class, 'getUsersForFilter']);
     Route::get('/vendas/pedido-total', [VendasController::class, 'getTotalOrcamentoPedido']);
+    Route::get('/vendas/crm/leads', [ClientesConsolidadosController::class, 'getLeads']);
     Route::get('/pedidos/get-pedido-arte-final-&-orcamento/{id}', [PedidoArteFinalController::class, 'getPedidoWithOrcamento']);
     Route::get('/pedidos/get-pedido-arte-final-orcamento/{id}', [PedidoArteFinalController::class, 'getPedidoWithOrcamento']);
     Route::get('/producao/get-pedidos-arte-final', [PedidoArteFinalController::class, 'getAllPedidosArteFinal']);
@@ -200,11 +202,18 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,de
     Route::patch('/producao/confeccao/corte-conferencia/status-conferencia-change', [PedidosArteFinalConfeccaoCorteConferenciaController::class, 'trocarStatusArteFinalConferencia']);
     Route::get('/producao/pedido-arte-final/{arteFinalId}/verificar-uniformes', [PedidosArteFinalUniformesController::class, 'verificarUniformes']); 
     Route::delete('/producao/delete-pedido-arte-final/{id}', [PedidoArteFinalController::class, 'deletePedidoArteFinal']);
-    
     // Route::get('/produto-personalizad', [ProdutosPersonalizadController::class, 'getAllProdutosPersonalizad']);
     // Route::get('/vendas/orcamentos-por-entrega', [VendasController::class, 'getQuantidadeOrcamentosEntrega']);
     // Route::put('/producao/pedido-arte-final', [PedidoArteFinalController::class, 'upsertPedidoArteFinal']);
-    
+    Route::get('/octa/get-all-octa-chats', [ChatOctaController::class, 'getAllOctaChats']);
+    Route::get('/octa/get-octa-chats-msgs/{chatId}', [ChatOctaController::class, 'getAllOctaChatsMsgs']);
+    Route::post('/octa/post-octa-chat-msg/{chatId}/messages', [ChatOctaController::class, 'postOctaMsg']);
+    Route::post('/octa/post-octa-chat-msg-with-attachments/{chatId}/messages', [ChatOctaController::class, 'postOctaMsgWithAttachments']);
+    Route::post('erros', [ErrosController::class, 'createErro']);
+    Route::put('erros', [ErrosController::class, 'upsertErro']);
+    Route::patch('erros/solucao/{id}', [ErrosController::class, 'updateSolucaoErro']);
+    Route::patch('erros/status/{id}', [ErrosController::class, 'updateStatusErro']);
+    Route::delete('erros/delete/{id}', [ErrosController::class, 'deleteErro']);
 });
 
 
