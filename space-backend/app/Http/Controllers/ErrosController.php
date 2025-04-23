@@ -11,13 +11,47 @@ class ErrosController extends Controller
 {
     public function getAllErros(Request $request)
     {
-        $page = $request->input('page', 1); // Página atual
-        $perPage = 100; // Número de itens por página
+        $erros = Erros::query();
 
-        $erros = Erros::orderBy('id')
-            ->paginate($perPage, ['*'], 'page', $page);
+        // filtros condicionais caso haja query string pra filtrar
+        if ($request->has('per_page')) {
+            $perPage = $request->query('per_page');
+            if (!in_array($perPage, [15, 25, 50])) {
+                $perPage = 15;
+            }
+        } else {
+            $perPage = 15;
+        }
 
-        return response()->json($erros);
+        // Paginação caso o usuário mudar a pagina
+        if ($request->has('page')) {
+            $page = $request->query('page');
+            $erros->offset(($page - 1) * $perPage)->limit($perPage);
+        }
+
+        // Filtro o pedido
+        if ($request->has('q')) {
+            $q = $request->query('q');
+            $erros->where('numero_pedido', 'like', '%' . $q . '%');
+        }
+
+        // Filtro de data
+        if ($request->has('data_inicial') && $request->has('data_final')) {
+            if (($request->query('data_inicial') !== 'null') && ($request->query('data_final') !== 'null')) {
+                $dataInicial = $request->query('data_inicial');
+                $dataFinal = $request->query('data_final');
+                $erros->whereBetween('created_at', [$dataInicial, $dataFinal]);
+            }
+        }
+
+        $erros->orderBy('created_at', 'asc')
+            ->orderBy('numero_pedido', 'asc');
+
+
+        // Pagina os pedidos
+        $errosPaginados = $erros->paginate($perPage);
+
+        return response()->json($errosPaginados);
     }
 
     public function getErro(Request $request, $id)
@@ -67,7 +101,6 @@ class ErrosController extends Controller
                 'data' => $erro,
                 'message' => 'Erro registrado com sucesso.'
             ], 201);
-            
         } catch (\Exception $e) {
             DB::rollBack();
 
@@ -170,7 +203,6 @@ class ErrosController extends Controller
                 'data' => $erro,
                 'message' => 'Solu o do erro atualizada com sucesso.'
             ], 200);
-
         } catch (\Exception $e) {
             DB::rollBack();
 
@@ -187,7 +219,7 @@ class ErrosController extends Controller
         }
     }
 
-    
+
     public function updateStatusErro(Request $request, $id)
     {
         $validatedData = $request->validate([
@@ -218,7 +250,6 @@ class ErrosController extends Controller
                 'data' => $erro,
                 'message' => 'Status do erro atualizado com sucesso.'
             ], 200);
-
         } catch (\Exception $e) {
             DB::rollBack();
 
@@ -234,7 +265,7 @@ class ErrosController extends Controller
             ], 500);
         }
     }
-    
+
     public function deleteErro($id)
     {
         $erro = Erros::findOrFail($id);
@@ -257,7 +288,6 @@ class ErrosController extends Controller
                 'success' => true,
                 'message' => 'Erro exclu do com sucesso.'
             ], 200);
-
         } catch (\Exception $e) {
             DB::rollBack();
 
