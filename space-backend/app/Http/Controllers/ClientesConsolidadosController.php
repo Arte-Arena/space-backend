@@ -181,11 +181,24 @@ class ClientesConsolidadosController extends Controller
                 'origem' => $webhook->origem,
                 'criado_em' => $webhook->created_at,
                 'existe_em_orcamento' => $existeEmOrcamento,
+                'orcamento_id' => $existeEmOrcamento ? $orcamento->id : null,
+                'orcamento_status' => null,
+                'tem_pedido' => false,
                 'client_info' => null
             ];
             
             if ($existeEmOrcamento) {
                 $orcamentoIds[$webhook->id] = $orcamento->id;
+                
+                $orcamentoStatus = \App\Models\OrcamentoStatus::where('orcamento_id', $orcamento->id)->first();
+                if ($orcamentoStatus) {
+                    $item['orcamento_status'] = $orcamentoStatus->status;
+                }
+                
+                $pedido = \App\Models\Pedido::where('orcamento_id', $orcamento->id)->first();
+                if ($pedido) {
+                    $item['tem_pedido'] = true;
+                }
             }
             
             $resultado[] = $item;
