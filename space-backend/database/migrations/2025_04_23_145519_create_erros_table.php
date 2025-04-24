@@ -16,6 +16,8 @@ return new class extends Migration
             $table->string('numero_pedido')->nullable();
             $table->string('link_trello')->nullable();
             $table->string('setor')->nullable();
+            $table->string('responsavel')->nullable();
+            $table->decimal('prejuizo', 10, 2)->nullable();
             $table->string('detalhes')->nullable(); 
             $table->string('solucao')->nullable();  
             $table->string('status')->nullable();
