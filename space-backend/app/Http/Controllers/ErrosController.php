@@ -47,8 +47,6 @@ class ErrosController extends Controller
         $erros->orderBy('created_at', 'asc')
             ->orderBy('numero_pedido', 'asc');
 
-
-        // Pagina os pedidos
         $errosPaginados = $erros->paginate($perPage);
 
         return response()->json($errosPaginados);
@@ -64,70 +62,20 @@ class ErrosController extends Controller
         return response()->json($erro);
     }
 
-    public function createErro(Request $request)
-    {
-        $validatedData = $request->validate([
-            'detalhes' => 'required|string|max:500',
-            'numero_pedido' => 'required|integer|exists:pedidos_arte_final,numero_pedido',
-            'setor' => 'required|string',
-            'link_trello' => 'required|url|max:255',
-            'status' => 'required|string'
-        ]);
-
-        try {
-            DB::beginTransaction();
-
-            $erro = Erros::create([
-                'detalhes' => $validatedData['detalhes'],
-                'numero_pedido' => $validatedData['numero_pedido'],
-                'setor' => $validatedData['setor'],
-                'link_trello' => $validatedData['link_trello'],
-                'status' => $validatedData['status'],
-                'solucao' => $request->input('solucao') ?? null,
-            ]);
-
-            // Opcional: Registrar ação no histórico/log
-            Log::info([
-                'action' => 'create',
-                'model' => 'Erro',
-                'model_id' => $erro->id,
-                'changes' => $erro->toJson()
-            ]);
-
-            DB::commit();
-
-            return response()->json([
-                'success' => true,
-                'data' => $erro,
-                'message' => 'Erro registrado com sucesso.'
-            ], 201);
-        } catch (\Exception $e) {
-            DB::rollBack();
-
-            Log::error('Falha ao criar erro', [
-                'exception' => $e->getMessage(),
-                'input' => $request->all()
-            ]);
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Falha ao registrar o erro.',
-                'error' => config('app.debug') ? $e->getMessage() : null
-            ], 500);
-        }
-    }
-
     public function upsertErro(Request $request, $id = null)
     {
         $validatedData = $request->validate([
             'detalhes' => 'required|string|max:500',
-            'numero_pedido' => 'required|integer|exists:pedidos_arte_final,numero_pedido',
+            'responsavel' => 'string|max:500',
+            'prejuizo' => 'numeric|regex:/^\d+(\.\d{1,2})?$/|lte:999999.99',
+            'numero_pedido' => 'integer|exists:pedidos_arte_final,numero_pedido',
             'setor' => 'required|string',
-            'link_trello' => 'required|url|max:255',
+            'link_trello' => 'url|max:255',
             'status' => 'required|string'
         ]);
 
         try {
+
             DB::beginTransaction();
 
             $erro = Erros::updateOrCreate(
@@ -136,13 +84,14 @@ class ErrosController extends Controller
                     'detalhes' => $validatedData['detalhes'],
                     'numero_pedido' => $validatedData['numero_pedido'],
                     'setor' => $validatedData['setor'],
+                    'responsavel' => $validatedData['responsavel'],
+                    'prejuizo' => $validatedData['prejuizo'],
                     'link_trello' => $validatedData['link_trello'],
                     'status' => $validatedData['status'],
                     'solucao' => $request->input('solucao') ?? null,
                 ]
             );
 
-            // Opcional: Registrar ação no histórico/log
             Log::info([
                 'action' => $id ? 'update' : 'create',
                 'model' => 'Erro',
@@ -158,6 +107,7 @@ class ErrosController extends Controller
                 'message' => $id ? 'Erro atualizado com sucesso.' : 'Erro registrado com sucesso.'
             ], $id ? 200 : 201);
         } catch (\Exception $e) {
+
             DB::rollBack();
 
             Log::error('Falha ao ' . ($id ? 'atualizar' : 'criar') . ' erro', [
