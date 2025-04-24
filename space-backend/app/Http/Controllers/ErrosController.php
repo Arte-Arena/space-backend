@@ -62,18 +62,9 @@ class ErrosController extends Controller
         return response()->json($erro);
     }
 
-    public function upsertErro(Request $request, $id = null)
+    public function upsertErro(Request $request)
     {
-        $validatedData = $request->validate([
-            'detalhes' => 'required|string|max:500',
-            'responsavel' => 'string|max:500',
-            'prejuizo' => 'numeric|regex:/^\d+(\.\d{1,2})?$/|lte:999999.99',
-            'numero_pedido' => 'integer|exists:pedidos_arte_final,numero_pedido',
-            'setor' => 'required|string',
-            'link_trello' => 'url|max:255',
-            'status' => 'required|string'
-        ]);
-
+        $id = $request['id'];
         try {
 
             DB::beginTransaction();
@@ -81,17 +72,18 @@ class ErrosController extends Controller
             $erro = Erros::updateOrCreate(
                 ['id' => $id],
                 [
-                    'detalhes' => $validatedData['detalhes'],
-                    'numero_pedido' => $validatedData['numero_pedido'],
-                    'setor' => $validatedData['setor'],
-                    'responsavel' => $validatedData['responsavel'],
-                    'prejuizo' => $validatedData['prejuizo'],
-                    'link_trello' => $validatedData['link_trello'],
-                    'status' => $validatedData['status'],
+                    'detalhes' => $request['detalhes'],
+                    'numero_pedido' => $request['numero_pedido'],
+                    'setor' => $request['setor'],
+                    'responsavel' => $request['responsavel'],
+                    'prejuizo' => $request['prejuizo'],
+                    'link_trello' => $request['link_trello'],
+                    'status' => $request['status'],
                     'solucao' => $request->input('solucao') ?? null,
                 ]
             );
 
+            // Opcional: Registrar ação no histórico/log
             Log::info([
                 'action' => $id ? 'update' : 'create',
                 'model' => 'Erro',
@@ -127,15 +119,11 @@ class ErrosController extends Controller
     {
         $erro = Erros::findOrFail($id);
 
-        $validatedData = $request->validate([
-            'solucao' => 'required|string|max:500',
-        ]);
-
         try {
             DB::beginTransaction();
 
             $erro->update([
-                'solucao' => $validatedData['solucao'],
+                'solucao' => $request['solucao'],
             ]);
 
             // Opcional: Registrar ação no histórico/log
@@ -154,6 +142,50 @@ class ErrosController extends Controller
                 'message' => 'Solu o do erro atualizada com sucesso.'
             ], 200);
         } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            Log::error('Falha ao atualizar solu o do erro', [
+                'exception' => $e->getMessage(),
+                'input' => $request->all()
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Falha ao atualizar a solu o do erro.',
+                'error' => config('app.debug') ? $e->getMessage() : null
+            ], 500);
+        }
+    }
+
+    public function updateDetalhesErro(Request $request, int $id)
+    {
+        $erro = Erros::findOrFail($id);
+
+        try {
+            DB::beginTransaction();
+
+            $erro->update([
+                'detalhes' => $request['detalhes'],
+            ]);
+
+            // Opcional: Registrar ação no histórico/log
+            Log::info([
+                'action' => 'update',
+                'model' => 'Erro',
+                'model_id' => $erro->id,
+                'changes' => $erro->toJson()
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'data' => $erro,
+                'message' => 'Solu o do erro atualizada com sucesso.'
+            ], 200);
+        } catch (\Exception $e) {
+
             DB::rollBack();
 
             Log::error('Falha ao atualizar solu o do erro', [
@@ -172,17 +204,13 @@ class ErrosController extends Controller
 
     public function updateStatusErro(Request $request, $id)
     {
-        $validatedData = $request->validate([
-            'status' => 'required|string'
-        ]);
-
         $erro = Erros::findOrFail($id);
 
         try {
             DB::beginTransaction();
 
             $erro->update([
-                'status' => $validatedData['status'],
+                'status' => $request['status'],
             ]);
 
             // Opcional: Registrar ação no histórico/log
@@ -200,7 +228,9 @@ class ErrosController extends Controller
                 'data' => $erro,
                 'message' => 'Status do erro atualizado com sucesso.'
             ], 200);
+
         } catch (\Exception $e) {
+
             DB::rollBack();
 
             Log::error('Falha ao atualizar status do erro', [

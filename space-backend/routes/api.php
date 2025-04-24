@@ -213,6 +213,7 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,de
     Route::get('erros/{id}', [ErrosController::class, 'getErro']);
     Route::post('erros', [ErrosController::class, 'createErro']);
     Route::put('erros', [ErrosController::class, 'upsertErro']);
+    Route::patch('erros/detalhes/{id}', [ErrosController::class, 'updateDetalhesErro']);
     Route::patch('erros/solucao/{id}', [ErrosController::class, 'updateSolucaoErro']);
     Route::patch('erros/status/{id}', [ErrosController::class, 'updateStatusErro']);
     Route::delete('erros/delete/{id}', [ErrosController::class, 'deleteErro']);

@@ -13,6 +13,8 @@ class Erros extends Model
     protected $fillable = [
         'id',
         'detalhes',
+        'prejuizo',
+        'responsavel',
         'numero_pedido',
         'setor',
         'link_trello',
