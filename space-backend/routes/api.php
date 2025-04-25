@@ -178,6 +178,7 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,de
     Route::get('/vendas/orcamentos-user-names', [VendasController::class, 'getUsersForFilter']);
     Route::get('/vendas/pedido-total', [VendasController::class, 'getTotalOrcamentoPedido']);
     Route::get('/vendas/crm/leads', [ClientesConsolidadosController::class, 'getLeads']);
+    Route::get('/vendas/quantidades', [VendasController::class, 'getQuantidades']);
     Route::get('/pedidos/get-pedido-arte-final-&-orcamento/{id}', [PedidoArteFinalController::class, 'getPedidoWithOrcamento']);
     Route::get('/pedidos/get-pedido-arte-final-orcamento/{id}', [PedidoArteFinalController::class, 'getPedidoWithOrcamento']);
     Route::get('/producao/get-pedidos-arte-final', [PedidoArteFinalController::class, 'getAllPedidosArteFinal']);
