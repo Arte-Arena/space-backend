@@ -263,4 +263,40 @@ class VendasController extends Controller
 
         return response()->json($pedidos);
     }
+
+    public function getQuantidades()
+    {
+        $pedidos = DB::table('pedidos_arte_final')
+            ->selectRaw('COUNT(*) as quantidade_pedidos')
+            ->get();
+
+        $produtos = DB::table('produtos')
+            ->selectRaw('COUNT(*) as quantidade_produtos')
+            ->get();
+
+        $valorTotalVendas = DB::table('orcamentos')
+            ->join('orcamentos_status', 'orcamentos.id', '=', 'orcamentos_status.orcamento_id')
+            ->join('pedidos_arte_final', 'orcamentos.id', '=', 'pedidos_arte_final.orcamento_id')
+            ->where('orcamentos_status.status', 'aprovado')
+            ->whereNotNull('pedidos_arte_final.numero_pedido')
+            ->selectRaw('COUNT(DISTINCT orcamentos.id) as quantidade_orcamentos, SUM(orcamentos.total_orcamento) as valor_total')
+            ->first();
+
+        $clientes = DB::table('octa_webhook')
+            ->selectRaw('COUNT(*) as quantidade_clientes')
+            ->get();
+
+        $funcionarios = DB::table('users')
+            ->selectRaw('COUNT(*) as quantidade_funcionarios')
+            ->get();    
+
+        return response()->json([
+            'quantidade_pedidos' => (int) $pedidos[0]->quantidade_pedidos,
+            'quantidade_produtos' => (int) $produtos[0]->quantidade_produtos,
+            'quantidade_orcamentos' => (int) $valorTotalVendas->quantidade_orcamentos,
+            'valor_total_orcamentos' => (int) $valorTotalVendas->valor_total,
+            'quantidade_clientes' => (int) $clientes[0]->quantidade_clientes,
+            'quantidade_funcionarios' => (int) $funcionarios[0]->quantidade_funcionarios,
+        ]);
+    }
 }
