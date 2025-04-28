@@ -74,7 +74,7 @@ class ErrosController extends Controller
                 [
                     'detalhes' => $request['detalhes'],
                     'numero_pedido' => $request['numero_pedido'],
-                    'setor' => $request['setor'],
+                    'setor' => is_array($request['setor']) ? implode(', ', $request['setor']) : $request['setor'],
                     'responsavel' => $request['responsavel'],
                     'prejuizo' => $request['prejuizo'],
                     'link_trello' => $request['link_trello'],
