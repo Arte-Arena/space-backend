@@ -12,18 +12,36 @@ class ProdutoController extends Controller
 {
     public function getAllProdutos(Request $request): JsonResponse
     {
-        $query = $request->input('q', ''); // Termo de busca
-        $page = $request->input('page', 1); // Página atual
-        $perPage = 10; // Número de itens por página
+        $search = $request->query('q', '');
+        $cat    = $request->query('cat', '');
+        $preco  = $request->query('preco', '');
+        $peso   = $request->query('peso', '');
+        $page   = $request->query('page', 1);
+        $perPage = 10;
 
-        $cacheKey = "produtos_busca_{$query}_page_{$page}";
+        // chave de cache única para cada combinação de filtros e paginação
+        $cacheKey = "produtos_busca_{$search}_cat_{$cat}_preco_{$preco}_peso_{$peso}_page_{$page}";
 
-        // Verificar se existe cache
-        $produtos = Cache::remember($cacheKey, 600, function () use ($query, $page, $perPage) {
+        $produtos = Cache::remember($cacheKey, 600, function () use ($search, $cat, $preco, $peso, $page, $perPage) {
             return Produto::query()
-                ->when($query, function ($queryBuilder) use ($query) {
-                    $queryBuilder->where('nome', 'like', "%{$query}%")
-                        ->orWhere('codigo', 'like', "%{$query}%");
+                // filtro de busca geral (nome ou código)
+                ->when($search, function ($qb) use ($search) {
+                    $qb->where(function ($q) use ($search) {
+                        $q->where('nome',   'like', "%{$search}%")
+                            ->orWhere('codigo', 'like', "%{$search}%");
+                    });
+                })
+                // filtro por categoria
+                ->when($cat, function ($qb) use ($cat) {
+                    $qb->where('categoria', 'like', "%{$cat}%");
+                })
+                // filtro por preço (string "like"; para range seria outro tratamento)
+                ->when($preco, function ($qb) use ($preco) {
+                    $qb->where('preco', 'like', "%{$preco}%");
+                })
+                // filtro por peso
+                ->when($peso, function ($qb) use ($peso) {
+                    $qb->where('peso', 'like', "%{$peso}%");
                 })
                 ->orderBy('nome')
                 ->paginate($perPage, ['*'], 'page', $page);
@@ -32,9 +50,10 @@ class ProdutoController extends Controller
         return response()->json($produtos);
     }
 
-    
+
+
     public function getProduto(Request $request, int $id): JsonResponse
-    {   
+    {
         if (!$id) {
             return response()->json(['error' => 'ID de produto não informado'], 400);
         }
