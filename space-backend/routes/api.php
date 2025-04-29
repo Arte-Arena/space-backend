@@ -25,6 +25,7 @@ use App\Http\Controllers\{
     MaterialController,
     ProdutoPacoteUniformeController,
     OrcamentosUniformesController,
+    OrcamentosUniformesMedidasController,
     PedidoArteFinalController,
     ProdutoCategoriaController,
     MercadoPagoController,
@@ -53,6 +54,8 @@ Route::post('/encurtador-link/resolve/{code}', [LinkController::class, 'resolve'
 Route::put('/super-admin/upsert-backup', [BackupController::class, 'upsertBackup']);
 Route::get('/orcamento/uniformes/{orcamento_id}', [OrcamentosUniformesController::class, 'getUniforms']);
 Route::put('/orcamento/uniformes/{id}/configuracoes', [OrcamentosUniformesController::class, 'updateConfiguracoes']);
+
+Route::get('/orcamento/uniformes/medidas', [OrcamentosUniformesMedidasController::class, 'index']);
 
 Route::get('/producao/pedido-arte-final/uniformes/{arteFinalId}', [PedidosArteFinalUniformesController::class, 'getUniformes']);
 Route::put('/producao/pedido-arte-final/uniformes/{id}/configuracoes', [PedidosArteFinalUniformesController::class, 'updateConfiguracoes']);
@@ -90,6 +93,7 @@ Route::middleware(['auth:sanctum', 'role:super-admin'])->group(function () {
     Route::put('/super-admin/upsert-config', [SuperAdminController::class, 'upsertConfig']);
     Route::get('/super-admin/get-backups', [BackupController::class, 'getBackups']);   
     Route::put('/super-admin/upsert-config-prazos', [SuperAdminController::class, 'upsertConfigPrazos']);
+    Route::patch('/orcamento/uniformes/medidas', [OrcamentosUniformesMedidasController::class, 'update']);
 });
 
 Route::middleware(['auth:sanctum', 'role:super-admin,admin'])->group(function () {
@@ -122,6 +126,7 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,de
     Route::put('/chat-octa', [ChatOctaController::class, 'upsertChatOcta']);
     Route::put('/produto', [ProdutoController::class, 'upsertProduto']);
     Route::get('/produto', [ProdutoController::class, 'getAllProdutos']);
+    Route::get('produto/categories', [ProdutoController::class, 'getCategoryCounts']);
     Route::get('/produto/{id}', [ProdutoController::class, 'getProduto']);
     Route::get('/produto-orcamento-query', [ProdutoController::class, 'getAllProdutosOrcamento']);
     Route::get('/produto-categoria', [ProdutoCategoriaController::class, 'getAllProdutosCategorias']);
