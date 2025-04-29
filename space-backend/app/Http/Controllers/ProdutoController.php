@@ -7,6 +7,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Cache;
 use App\Models\Produto;
 use GuzzleHttp\Client;
+use Illuminate\Support\Facades\DB;
 
 class ProdutoController extends Controller
 {
@@ -50,7 +51,21 @@ class ProdutoController extends Controller
         return response()->json($produtos);
     }
 
+    public function getCategoryCounts(Request $request): JsonResponse
+    {
+        // Cacheia por 10 minutos
+        $cacheKey = 'produto_categories_counts';
 
+        $categories = Cache::remember($cacheKey, 600, function () {
+            return Produto::query()
+                ->select('categoria', DB::raw('COUNT(*) as count'))
+                ->groupBy('categoria')
+                ->orderBy('categoria')
+                ->get();
+        });
+
+        return response()->json($categories);
+    }
 
     public function getProduto(Request $request, int $id): JsonResponse
     {
