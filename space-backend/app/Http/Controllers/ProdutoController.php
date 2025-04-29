@@ -32,6 +32,22 @@ class ProdutoController extends Controller
         return response()->json($produtos);
     }
 
+    
+    public function getProduto(Request $request, int $id): JsonResponse
+    {   
+        if (!$id) {
+            return response()->json(['error' => 'ID de produto não informado'], 400);
+        }
+
+        $produto = Produto::find($id);
+
+        if (!$produto) {
+            return response()->json(['error' => 'Produto não Encontrado'], 500);
+        }
+
+        return response()->json($produto);
+    }
+
     public function upsertProduto(Request $request)
     {
         $produtoId = $request->input('produto_id');
@@ -43,11 +59,11 @@ class ProdutoController extends Controller
         $produtoPrecoCustoMedio = $request->input('produto_preco_custo_medio');
         $produtoPesoLiquido = $request->input('produto_peso_liquido');
         $produtoPesoBruto = $request->input('produto_peso_bruto');
-        $produtoTipoEmbalagem = $request->input('produto_tipoEmbalagem');
-        $produtoAlturaEmbalagem = $request->input('produto_alturaEmbalagem');
-        $produtoComprimentoEmbalagem = $request->input('produto_comprimentoEmbalagem');
-        $produtoLarguraEmbalagem = $request->input('produto_larguraEmbalagem');
-        $produtoDiametroEmbalagem = $request->input('produto_diametroEmbalagem');
+        $produtoTipoEmbalagem = $request->input('produto_tipo_Embalagem');
+        $produtoAlturaEmbalagem = $request->input('produto_altura_Embalagem');
+        $produtoComprimentoEmbalagem = $request->input('produto_comprimento_Embalagem');
+        $produtoLarguraEmbalagem = $request->input('produto_largura_Embalagem');
+        $produtoDiametroEmbalagem = $request->input('produto_diametro_Embalagem');
         $produtoUnidade = $request->input('produto_unidade');
         $produtoGtin = $request->input('produto_gtin');
         $produtoGtinEmbalagem = $request->input('produto_gtin_embalagem');
@@ -73,7 +89,7 @@ class ProdutoController extends Controller
         $produtoObs = $request->input('produto_obs');
         $produtoTipoVariacao = $request->input('produto_tipoVariacao');
         $produtoVariacoes = $request->input('produto_variacoes');
-        $produtoIdProdutoPai = $request->input('produto_idProdutoPai');
+        $produtoIdProdutoPai = $request->input('produto_id_Produto_Pai');
         $produtoSobEncomenda = $request->input('produto_sob_encomenda');
         $produtoDiasPreparacao = $request->input('produto_dias_preparacao');
         $produtoMarca = $request->input('produto_marca');
