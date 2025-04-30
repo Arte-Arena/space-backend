@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Cache;
 use App\Models\Produto;
+use App\Models\ProdutoBandeiraOficial;
+use App\Models\ProdutoPersonalizad;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\DB;
 
@@ -278,6 +280,114 @@ class ProdutoController extends Controller
                 ->get();
         });
         return response()->json($produtos);
+    }
+
+    // vai pegar de todas as tabelas de produto e pesquisar nelas.
+    public function searchProdutosConsolidadosPaginado(Request $request)
+    {
+        $pageSize = (int) $request->get('pageSize', 20);
+        $page = (int) $request->get('page', 1);
+        $searchTerm = $request->get('search', '');
+        
+        $p1 = $this->getPagedProdutosPersonalizad($searchTerm, $pageSize, $page);
+        $p2 = $this->getPagedProdutos($searchTerm, $pageSize, $page);
+        $p3 = $this->getPagedBandeirasOficiais($searchTerm, $pageSize, $page);
+
+        $consolidatedData = collect($p1['data'])
+            ->merge($p2['data'])
+            ->merge($p3['data'])
+            ->sortByDesc('created_at')
+            ->values()
+            ->all();
+
+        $totalItems = $p1['total'] + $p2['total'] + $p3['total'];
+        $totalPages = ceil($totalItems / $pageSize);
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $consolidatedData,
+            'pagination' => [
+                'current_page' => $page,
+                'total_pages' => $totalPages,
+                'total_items' => $totalItems,
+            ],
+        ]);
+    }
+
+    private function getPagedProdutosPersonalizad(string $searchTerm, int $pageSize, int $page)
+    {
+        $query = ProdutoPersonalizad::select(['id', 'nome', 'created_at']);
+
+        if ($searchTerm) {
+            $query->where('id', 'like', "%{$searchTerm}%")
+                ->orWhere('nome', 'like', "%{$searchTerm}%");
+        }
+
+        $pg = $query->orderByDesc('created_at')
+            ->paginate($pageSize, ['*'], 'page', $page);
+
+        // adiciona o tipo em cada item
+        $data = collect($pg->items())
+            ->map(fn($item) => array_merge(
+                $item->toArray(),
+                ['type' => 'produtosPersonalizad']
+            ))
+            ->all();
+
+        return [
+            'data'  => $data,
+            'total' => $pg->total(),
+        ];
+    }
+
+    private function getPagedProdutos(string $searchTerm, int $pageSize, int $page)
+    {
+        $query = Produto::select(['id', 'nome', 'created_at']);
+
+        if ($searchTerm) {
+            $query->where('id', 'like', "%{$searchTerm}%")
+                ->orWhere('nome', 'like', "%{$searchTerm}%");
+        }
+
+        $pg = $query->orderByDesc('created_at')
+            ->paginate($pageSize, ['*'], 'page', $page);
+
+        $data = collect($pg->items())
+            ->map(fn($item) => array_merge(
+                $item->toArray(),
+                ['type' => 'produtosBase']
+            ))
+            ->all();
+
+        return [
+            'data'  => $data,
+            'total' => $pg->total(),
+        ];
+    }
+
+    private function getPagedBandeirasOficiais(string $searchTerm, int $pageSize, int $page)
+    {
+        $query = ProdutoBandeiraOficial::select(['id', 'nome', 'created_at']);
+
+        if ($searchTerm) {
+            $query->where('id', 'like', "%{$searchTerm}%")
+                ->orWhere('nome', 'like', "%{$searchTerm}%");
+        }
+
+        $pg = $query->orderByDesc('created_at')
+            ->paginate($pageSize, ['*'], 'page', $page);
+
+        $data = collect($pg->items())
+            ->map(fn($item) => array_merge(
+                $item->toArray(),
+                ['type' => 'produtosBandeirasOficiais']
+            ))
+            ->all();
+
+        return [
+            'data'  => $data,
+            'total' => $pg->total(),
+        ];
     }
 }
 

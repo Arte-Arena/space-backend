@@ -29,6 +29,7 @@ return new class extends Migration
             $table->string('razao_social')->nullable();
             $table->string('cnpj')->nullable();
             $table->string('inscricao_estadual')->nullable();
+            $table->json('produtos')->nullable();
             $table->timestamps();
         });
     }

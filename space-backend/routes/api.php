@@ -130,6 +130,7 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,de
     Route::get('/produto/{id}', [ProdutoController::class, 'getProduto']);
     Route::get('/produto-orcamento-query', [ProdutoController::class, 'getAllProdutosOrcamento']);
     Route::get('/produto-categoria', [ProdutoCategoriaController::class, 'getAllProdutosCategorias']);
+    Route::get('/search-produtos-consolidados', [ProdutoController::class, 'searchProdutosConsolidadosPaginado']);
     Route::get('/material', [MaterialController::class, 'getAllMaterial']);
     Route::get('/user-role/get-users-by-role', [UserRoleController::class, 'getUsersByRole']);
     Route::get('/produto-orcamento-consolidado', [ProdutoOrcamentoController::class, 'getAllProdutosOrcamento']);

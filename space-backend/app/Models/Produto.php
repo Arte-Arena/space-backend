@@ -24,11 +24,18 @@ class Produto extends Model
         'idProdutoPai', 'sob_encomenda', 'dias_preparacao', 'marca', 'qtd_volumes', 'categoria', 'anexos',
         'imagens_externas', 'classe_produto', 'seo_title', 'seo_keywords', 'link_video', 'seo_description', 'slug'
     ];
-
+    
     public function orcamentos() {
         return $this->belongsToMany(Orcamento::class, 'budget_products')
-                    ->withPivot('quantity', 'unit_price', 'subtotal')
-                    ->withTimestamps();
+        ->withPivot('quantity', 'unit_price', 'subtotal')
+        ->withTimestamps();
+    }
+    
+    protected $appends = ['type'];
+    
+    public function getTypeAttribute(): string
+    {
+        return 'produtosBase';
     }
 
 }
