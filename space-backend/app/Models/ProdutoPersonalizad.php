@@ -25,4 +25,11 @@ class ProdutoPersonalizad extends Model
         'altura' => 'decimal:2',
         'comprimento' => 'decimal:2',
     ];
+
+    protected $appends = ['type'];
+
+    public function getTypeAttribute(): string
+    {
+        return 'produtosPersonalizad';
+    }
 }

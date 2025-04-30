@@ -4,10 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class ProdutoOrcamento extends Model
+class ProdutoBandeiraOficial extends Model
 {
-    protected $table = 'produtos_orcamento';
-
+    protected $table = 'produtos_bandeiras_oficiais';
+    
     protected $fillable = [
         'nome',
         'preco',
@@ -30,6 +30,6 @@ class ProdutoOrcamento extends Model
 
     public function getTypeAttribute(): string
     {
-        return 'produtosOrcamento';
+        return 'produtosBandeirasOficiais';
     }
 }
