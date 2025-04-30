@@ -76,7 +76,7 @@ class ProdutoController extends Controller
         $produto = Produto::find($id);
 
         if (!$produto) {
-            return response()->json(['error' => 'Produto não Encontrado'], 500);
+            return response()->json(['error' => 'Produto não Encontrado'], 404);
         }
 
         return response()->json($produto);
@@ -280,3 +280,14 @@ class ProdutoController extends Controller
         return response()->json($produtos);
     }
 }
+
+// CREATE TABLE movimentacao_estoque (
+//     id             SERIAL PRIMARY KEY,
+//     produto_id     INT NOT NULL REFERENCES produto(id),
+//     movimento_tipo  TEXT NOT NULL,      -- ex.: 'entrada','saída','ajuste'
+//     fornecedor_id  INT,
+//     quantidade     INT NOT NULL,
+//     referencia     TEXT                -- nota fiscal, pedido, etc.
+//     localizacao    TEXT,
+//     data_movimento TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+//   );
