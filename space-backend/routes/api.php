@@ -55,7 +55,7 @@ Route::put('/super-admin/upsert-backup', [BackupController::class, 'upsertBackup
 Route::get('/orcamento/uniformes/{orcamento_id}', [OrcamentosUniformesController::class, 'getUniforms']);
 Route::put('/orcamento/uniformes/{id}/configuracoes', [OrcamentosUniformesController::class, 'updateConfiguracoes']);
 
-Route::get('/orcamento/uniformes/medidas', [OrcamentosUniformesMedidasController::class, 'index']);
+Route::get('/orcamento/uniformes-medidas', [OrcamentosUniformesMedidasController::class, 'index']);
 
 Route::get('/producao/pedido-arte-final/uniformes/{arteFinalId}', [PedidosArteFinalUniformesController::class, 'getUniformes']);
 Route::put('/producao/pedido-arte-final/uniformes/{id}/configuracoes', [PedidosArteFinalUniformesController::class, 'updateConfiguracoes']);
