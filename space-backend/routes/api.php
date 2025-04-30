@@ -32,6 +32,7 @@ use App\Http\Controllers\{
     UserRoleController,
     BancoInterController,
     ErrosController,
+    FornecedorController,
     PedidosArteFinalConfeccaoCorteConferenciaController,
     PedidosArteFinalConfeccaoCosturaController,
     PedidosArteFinalConfeccaoSublimacaoController,
@@ -225,6 +226,8 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,de
     Route::patch('erros/solucao/{id}', [ErrosController::class, 'updateSolucaoErro']);
     Route::patch('erros/status/{id}', [ErrosController::class, 'updateStatusErro']);
     Route::delete('erros/delete/{id}', [ErrosController::class, 'deleteErro']);
+    Route::post('fornecedor', [FornecedorController::class, 'createFornecedor']);
+    Route::put('fornecedor/{id}', [FornecedorController::class, 'updateFornecedor']);
 });
 
 
