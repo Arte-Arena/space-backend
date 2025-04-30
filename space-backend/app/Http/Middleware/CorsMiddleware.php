@@ -14,6 +14,7 @@ class CorsMiddleware
             'https://spacearena.net',
             'https://www.spacearena.net',
             'https://homolog.spacearena.net',
+            'https://my.spacearena.net',
         ];
 
         $origin = $request->headers->get('Origin');
