@@ -229,8 +229,8 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,de
     Route::patch('erros/status/{id}', [ErrosController::class, 'updateStatusErro']);
     Route::delete('erros/delete/{id}', [ErrosController::class, 'deleteErro']);
     
-    Route::get('fornecedor/{id}', [FornecedorController::class, 'getFornecedor']);
     Route::get('fornecedores', [FornecedorController::class, 'getAllFornecedores']);
+    Route::get('fornecedor/{id}', [FornecedorController::class, 'getFornecedor']);
     Route::post('fornecedor', [FornecedorController::class, 'createFornecedor']);
     Route::put('fornecedor/{id}', [FornecedorController::class, 'updateFornecedor']);
 
@@ -244,7 +244,7 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,de
     Route::get('movimentacoes', [MovimentacaoEstoqueController::class, 'getAllMovimentacoes']);
     Route::get('movimentacao/{id}', [MovimentacaoEstoqueController::class, 'getMovimentacao']);
     Route::post('movimentacao', [MovimentacaoEstoqueController::class, 'createMovimentacao']);
-    Route::patch('movimentacao/upsert', [MovimentacaoEstoqueController::class, 'upsert']);
+    Route::put('movimentacao/upsert', [MovimentacaoEstoqueController::class, 'upsert']);
     Route::patch('movimentacao/documento/{id}', [MovimentacaoEstoqueController::class, 'uploadDocumento']);
     Route::patch('movimentacao/pedido/{id}', [MovimentacaoEstoqueController::class, 'uploadNumeroPedido']);
     Route::delete('movimentacao/{id}', [MovimentacaoEstoqueController::class, 'destroy']);

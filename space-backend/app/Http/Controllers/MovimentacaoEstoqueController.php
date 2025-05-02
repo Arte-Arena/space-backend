@@ -96,7 +96,6 @@ class MovimentacaoEstoqueController extends Controller
                 'data'    => $mov,
                 'message' => 'Movimentação criada com sucesso.'
             ], Response::HTTP_CREATED);
-
         } catch (\Exception $e) {
 
             DB::rollBack();
@@ -109,7 +108,7 @@ class MovimentacaoEstoqueController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Falha ao criar movimentação.',
-                'error'   => config('app.debug') ? 'Erro desconhecido.' : null,
+                'error'   => config('app.debug') ? $e->getMessage() : null,
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
@@ -156,7 +155,6 @@ class MovimentacaoEstoqueController extends Controller
                 'data'    => $mov,
                 'message' => $id ? 'Movimentação atualizada com sucesso.' : 'Movimentação criada com sucesso.'
             ], $id ? Response::HTTP_OK : Response::HTTP_CREATED);
-
         } catch (\Exception $e) {
 
             DB::rollBack();
@@ -169,109 +167,59 @@ class MovimentacaoEstoqueController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Falha ao processar movimentação.',
-                'error'   => config('app.debug') ? 'Erro desconhecido.' : null,
+                'error'   => config('app.debug') ? $e->getMessage() : null,
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
     public function uploadDocumento(Request $request, $id)
     {
-        if (!$request->input('documento')) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Falha ao anexar documento.',
-                'error'   => config('app.debug') ? 'Erro desconhecido.' : null,
-            ]);
+
+        if (!$id) {
+            return response()->json(['error' => 'Movimentação not found'], 400);
         }
 
-        $documento = $request->input('documento');
+        Log::info('Requisição uploadNumeroPedido', [
+            'input' => $request->all(),
+        ]);
+        
+        $movimentacao = MovimentacaoEstoque::find($id);
 
-        try {
-            DB::beginTransaction();
-
-            $mov = MovimentacaoEstoque::findOrFail($id);
-            $mov->update(['documento' => $documento]);
-
-            Log::info([
-                'action'   => 'upload_documento',
-                'model'    => 'MovimentacaoEstoque',
-                'model_id' => $mov->id,
-                'file'     => $documento,
-            ]);
-
-            DB::commit();
-
-            return response()->json([
-                'success' => true,
-                'data'    => $mov,
-                'message' => 'Documento anexado com sucesso.'
-            ], Response::HTTP_OK);
-
-        } catch (\Exception $e) {
-
-            DB::rollBack();
-
-            Log::error('Falha ao anexar documento', [
-                'exception' => $e->getMessage(),
-                'input'     => $request->all(),
-            ]);
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Falha ao anexar documento.',
-                'error'   => config('app.debug') ? 'Erro desconhecido.' : null,
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        if (!$movimentacao) {
+            return response()->json(['error' => 'Movimentação not found'], 400);
         }
+
+        $movimentacao->documento = $request->input('documento');
+        $movimentacao->save();
+
+        if(!$movimentacao) return response()->json(['error' => 'Erro ao fazer mudança'], 500);
+
+        return response()->json(['message' => 'Movimentação atualizado com sucesso!'], 200);
     }
 
     public function uploadNumeroPedido(Request $request, $id)
     {
-        if (!$request->input('numero_pedido')) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Falha ao anexar Pedido.',
-                'error'   => config('app.debug') ? 'Erro desconhecido.' : null,
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+
+        if (!$id) {
+            return response()->json(['error' => 'Movimentação not found'], 400);
         }
 
-        $numero_pedido = $request->input('numero_pedido');
+        Log::info('Requisição uploadNumeroPedido', [
+            'input' => $request->all(),
+        ]);
 
-        try {
-            DB::beginTransaction();
+        $movimentacao = MovimentacaoEstoque::find($id);
 
-            $mov = MovimentacaoEstoque::findOrFail($id);
-            $mov->update(['documento' => $numero_pedido]);
-
-            Log::info([
-                'action'   => 'upload_numero_pedido',
-                'model'    => 'MovimentacaoEstoque',
-                'model_id' => $mov->id,
-                'numero_pedido' => $numero_pedido,
-            ]);
-
-            DB::commit();
-
-            return response()->json([
-                'success' => true,
-                'data'    => $mov,
-                'message' => 'Pedido anexado com sucesso.'
-            ], Response::HTTP_OK);
-
-        } catch (\Exception $e) {
-
-            DB::rollBack();
-
-            Log::error('Falha ao anexar Pedido', [
-                'exception' => $e->getMessage(),
-                'input'     => $request->all(),
-            ]);
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Falha ao anexar Pedido.',
-                'error'   => config('app.debug') ? $e->getMessage() : null,
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        if (!$movimentacao) {
+            return response()->json(['error' => 'Movimentação not found'], 400);
         }
+
+        $movimentacao->numero_pedido = $request->input('numero_pedido');
+        $movimentacao->save();
+
+        if (!$movimentacao) return response()->json(['error' => 'Erro ao fazer mudança'], 500);
+
+        return response()->json(['message' => 'Movimentação atualizado com sucesso!'], 200);
     }
 
     public function destroy($id)
@@ -294,7 +242,7 @@ class MovimentacaoEstoqueController extends Controller
                 'success' => true,
                 'message' => 'Movimentação removida com sucesso.'
             ], Response::HTTP_NO_CONTENT);
-
+            
         } catch (\Exception $e) {
 
             DB::rollBack();

@@ -1,0 +1,3 @@
+DELETE http://localhost:8000/api/estoque/delete/8
+Content-Type: application/json
+Authorization: Bearer 68|sxYJvqDwYVPe4HHil4PFytKTVcH3Rx12PSiZf2eC98dfecb3

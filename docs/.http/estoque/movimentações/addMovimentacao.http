@@ -1,0 +1,16 @@
+POST http://localhost:8000/api/movimentacao
+Content-Type: application/json
+Authorization: Bearer 68|sxYJvqDwYVPe4HHil4PFytKTVcH3Rx12PSiZf2eC98dfecb3
+
+{
+  "estoque_id": 2,
+  "data_movimentacao": "2025-05-01",
+  "tipo_movimentacao": "entrada",
+  "documento": "NF-2025-0001",
+  "numero_pedido": "PED-12345",
+  "fornecedor_id": 1,
+  "localizacao_origem": "Armazém Central",
+  "quantidade": 150.75,
+  "observacoes": "Reabastecimento mensal do estoque"
+}
+
