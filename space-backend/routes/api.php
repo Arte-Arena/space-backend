@@ -226,6 +226,8 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,de
     Route::patch('erros/solucao/{id}', [ErrosController::class, 'updateSolucaoErro']);
     Route::patch('erros/status/{id}', [ErrosController::class, 'updateStatusErro']);
     Route::delete('erros/delete/{id}', [ErrosController::class, 'deleteErro']);
+    Route::get('fornecedor/{id}', [FornecedorController::class, 'getFornecedor']);
+    Route::get('fornecedores', [FornecedorController::class, 'getAllFornecedores']);
     Route::post('fornecedor', [FornecedorController::class, 'createFornecedor']);
     Route::put('fornecedor/{id}', [FornecedorController::class, 'updateFornecedor']);
 });

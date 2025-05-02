@@ -10,6 +10,51 @@ use Illuminate\Support\Facades\DB;
 
 class FornecedorController extends Controller
 {
+    public function getAllFornecedores(Request $request)
+    {
+        $fornecedor = Fornecedor::query();
+
+        // filtros condicionais caso haja query string pra filtrar
+        if ($request->has('per_page')) {
+            $perPage = $request->query('per_page');
+            if (!in_array($perPage, [15, 25, 50])) {
+                $perPage = 15;
+            }
+        } else {
+            $perPage = 15;
+        }
+
+        // Paginação caso o usuário mudar a pagina
+        if ($request->has('page')) {
+            $page = $request->query('page');
+            $fornecedor->offset(($page - 1) * $perPage)->limit($perPage);
+        }
+
+        // Filtro o pedido
+        if ($request->has('q')) {
+            $q = $request->query('q');
+            $fornecedor->where('nome_completo', 'like', '%' . $q . '%')
+                ->orWhere('email', 'like', '%' . $q . '%')
+                ->orWhere('celular', 'like', '%' . $q . '%');
+        }
+
+        // Filtro de data
+        if ($request->has('data_inicial') && $request->has('data_final')) {
+            if (($request->query('data_inicial') !== 'null') && ($request->query('data_final') !== 'null')) {
+                $dataInicial = $request->query('data_inicial');
+                $dataFinal = $request->query('data_final');
+                $fornecedor->whereBetween('created_at', [$dataInicial, $dataFinal]);
+            }
+        }
+
+        $fornecedor->orderBy('created_at', 'desc');
+
+        $fornecedorPaginados = $fornecedor->paginate($perPage);
+
+        return response()->json($fornecedorPaginados);
+    }
+
+
     public function getFornecedor(Request $request, $id)
     {
         try {
@@ -40,16 +85,13 @@ class FornecedorController extends Controller
 
         $tipo_pessoa = '';
         $nome = '';
-        $ie = '';
 
-        if ($request['tipo_pessoa'] == 'J') {
+        if ($request['tipo_pessoa'] = 'J' || $request['tipo_pessoa'] = 'PJ') {
             $tipo_pessoa = 'PJ';
             $nome = $request['razao_social'];
-            $ie = $request->has('ie') ? $request['ie'] : $request['inscricao_estadual'];
-        } else {
+        } else if($request['tipo_pessoa'] = 'F' || $request['tipo_pessoa'] = 'PF') {
             $tipo_pessoa = 'PF';
-            $nome = $request['nome'];
-            $ie = $request['ie'];
+            $nome = $request['nome_completo'];
         }
 
         $fornecedorData = [
@@ -61,7 +103,6 @@ class FornecedorController extends Controller
             "razao_social" => $request['razao_social'],
             "inscricao_estadual" => $request['inscricao_estadual'],
             "cnpj" => $cnpj,
-            "ie" => $ie,
             "endereco" => $request['endereco'],
             "numero" => $request['numero'],
             "complemento" => $request['complemento'],
@@ -108,21 +149,23 @@ class FornecedorController extends Controller
         $cpf = preg_replace('/\D/', '', $request['cpf']);
         $cnpj = preg_replace('/\D/', '', $request['cnpj']);
 
-        if ($request['tipo_pessoa'] == 'J') {
+        if ($request['tipo_pessoa'] = 'J' || $request['tipo_pessoa'] = 'PJ') {
             $tipo_pessoa = 'PJ';
-        } else {
+            $nome = $request['razao_social'];
+        } else if($request['tipo_pessoa'] = 'F' || $request['tipo_pessoa'] = 'PF') {
             $tipo_pessoa = 'PF';
+            $nome = $request['nome_completo'];
         }
 
         $fornecedorData = [
-            "nome_completo" => $request['nome'],
+            "nome_completo" => $nome,
             "tipo_pessoa" => $tipo_pessoa,
             "rg" => $request['rg'],
             "cpf" => $cpf,
             "razao_social" => $request['razao_social'],
             "inscricao_estadual" => $request['inscricao_estadual'],
             "cnpj" => $cnpj,
-            "ie" => $request['ie'],
+            "inscricao_estadual" => $request['inscricao_estadual'],
             "endereco" => $request['endereco'],
             "numero" => $request['numero'],
             "complemento" => $request['complemento'],
