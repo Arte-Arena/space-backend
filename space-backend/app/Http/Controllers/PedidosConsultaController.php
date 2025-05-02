@@ -32,10 +32,7 @@ class PedidosConsultaController extends Controller
             ->get()
             ->keyBy('id');
 
-        $pedidos = PedidoArteFinal::whereIn('orcamento_id', $orcamentoIds)
-            ->with(['pedidoStatus', 'design', 'impressao', 'confeccaoSublimacao', 
-                   'confeccaoCostura', 'confeccaoCorteConferencia', 'pedidoTipo'])
-            ->get();
+        $pedidos = PedidoArteFinal::whereIn('orcamento_id', $orcamentoIds)->get();
 
         $resultados = [];
 
