@@ -32,6 +32,7 @@ use App\Http\Controllers\{
     UserRoleController,
     BancoInterController,
     ErrosController,
+    FornecedorController,
     PedidosArteFinalConfeccaoCorteConferenciaController,
     PedidosArteFinalConfeccaoCosturaController,
     PedidosArteFinalConfeccaoSublimacaoController,
@@ -130,6 +131,7 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,de
     Route::get('/produto/{id}', [ProdutoController::class, 'getProduto']);
     Route::get('/produto-orcamento-query', [ProdutoController::class, 'getAllProdutosOrcamento']);
     Route::get('/produto-categoria', [ProdutoCategoriaController::class, 'getAllProdutosCategorias']);
+    Route::get('/search-produtos-consolidados', [ProdutoController::class, 'searchProdutosConsolidadosPaginado']);
     Route::get('/material', [MaterialController::class, 'getAllMaterial']);
     Route::get('/user-role/get-users-by-role', [UserRoleController::class, 'getUsersByRole']);
     Route::get('/produto-orcamento-consolidado', [ProdutoOrcamentoController::class, 'getAllProdutosOrcamento']);
@@ -224,6 +226,10 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,de
     Route::patch('erros/solucao/{id}', [ErrosController::class, 'updateSolucaoErro']);
     Route::patch('erros/status/{id}', [ErrosController::class, 'updateStatusErro']);
     Route::delete('erros/delete/{id}', [ErrosController::class, 'deleteErro']);
+    Route::get('fornecedor/{id}', [FornecedorController::class, 'getFornecedor']);
+    Route::get('fornecedores', [FornecedorController::class, 'getAllFornecedores']);
+    Route::post('fornecedor', [FornecedorController::class, 'createFornecedor']);
+    Route::put('fornecedor/{id}', [FornecedorController::class, 'updateFornecedor']);
 });
 
 
