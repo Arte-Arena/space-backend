@@ -37,7 +37,8 @@ use App\Http\Controllers\{
     PedidosArteFinalConfeccaoCosturaController,
     PedidosArteFinalConfeccaoSublimacaoController,
     PedidosArteFinalImpressaoController,
-    PedidosArteFinalUniformesController
+    PedidosArteFinalUniformesController,
+    PedidosConsultaController
 };
 
 Route::post('/login', [AuthController::class, 'login']);
@@ -57,6 +58,8 @@ Route::get('/orcamento/uniformes/{orcamento_id}', [OrcamentosUniformesController
 Route::put('/orcamento/uniformes/{id}/configuracoes', [OrcamentosUniformesController::class, 'updateConfiguracoes']);
 
 Route::get('/orcamento/uniformes-medidas', [OrcamentosUniformesMedidasController::class, 'index']);
+
+Route::get('/pedidos/consultar-multiplos', [PedidosConsultaController::class, 'consultarMultiplosPedidos']);
 
 Route::get('/producao/pedido-arte-final/uniformes/{arteFinalId}', [PedidosArteFinalUniformesController::class, 'getUniformes']);
 Route::put('/producao/pedido-arte-final/uniformes/{id}/configuracoes', [PedidosArteFinalUniformesController::class, 'updateConfiguracoes']);
