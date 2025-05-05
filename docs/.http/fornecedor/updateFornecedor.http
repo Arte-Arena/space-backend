@@ -1,0 +1,23 @@
+### Atualizar status de um pedido de arte final
+PUT http://localhost:8000/api/fornecedor/4
+Content-Type: application/json
+Authorization: Bearer 68|sxYJvqDwYVPe4HHil4PFytKTVcH3Rx12PSiZf2eC98dfecb3
+
+{
+    "nome_completo": "Fulano de tal",
+    "tipo_pessoa": "PF",
+    "rg": "123456789",
+    "cpf": "12345678909",
+    "razao_social": "Fulano de tal",
+    "inscricao_estadual": "123456789",
+    "cnpj": "12345678901234",
+    "endereco": "Rua tal",
+    "numero": "123",
+    "complemento": "",
+    "bairro": "Bairro tal",
+    "cep": "12345678",
+    "cidade": "Cidade tal",
+    "uf": "SP",
+    "celular": "11987654321",
+    "email": "fulano@tal.com"
+}

@@ -32,12 +32,15 @@ use App\Http\Controllers\{
     UserRoleController,
     BancoInterController,
     ErrosController,
+    EstoqueController,
     FornecedorController,
+    MovimentacaoEstoqueController,
     PedidosArteFinalConfeccaoCorteConferenciaController,
     PedidosArteFinalConfeccaoCosturaController,
     PedidosArteFinalConfeccaoSublimacaoController,
     PedidosArteFinalImpressaoController,
-    PedidosArteFinalUniformesController
+    PedidosArteFinalUniformesController,
+    PedidosConsultaController
 };
 
 Route::post('/login', [AuthController::class, 'login']);
@@ -57,6 +60,8 @@ Route::get('/orcamento/uniformes/{orcamento_id}', [OrcamentosUniformesController
 Route::put('/orcamento/uniformes/{id}/configuracoes', [OrcamentosUniformesController::class, 'updateConfiguracoes']);
 
 Route::get('/orcamento/uniformes-medidas', [OrcamentosUniformesMedidasController::class, 'index']);
+
+Route::get('/pedidos/consultar-multiplos', [PedidosConsultaController::class, 'consultarMultiplosPedidos']);
 
 Route::get('/producao/pedido-arte-final/uniformes/{arteFinalId}', [PedidosArteFinalUniformesController::class, 'getUniformes']);
 Route::put('/producao/pedido-arte-final/uniformes/{id}/configuracoes', [PedidosArteFinalUniformesController::class, 'updateConfiguracoes']);
@@ -92,7 +97,7 @@ Route::middleware(['auth:sanctum', 'role:super-admin'])->group(function () {
     Route::delete('/super-admin/delete-role-module/{roleId}/{moduleId}', [SuperAdminController::class, 'deleteRoleModule']);
     Route::put('/super-admin/upsert-role-module', [SuperAdminController::class, 'upsertRoleModule']);
     Route::put('/super-admin/upsert-config', [SuperAdminController::class, 'upsertConfig']);
-    Route::get('/super-admin/get-backups', [BackupController::class, 'getBackups']);   
+    Route::get('/super-admin/get-backups', [BackupController::class, 'getBackups']);
     Route::put('/super-admin/upsert-config-prazos', [SuperAdminController::class, 'upsertConfigPrazos']);
     Route::patch('/orcamento/uniformes/medidas', [OrcamentosUniformesMedidasController::class, 'update']);
 });
@@ -111,13 +116,12 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin'])->group(function ()
     Route::put('/cliente', [ContaController::class, 'upsertConta']);
     Route::delete('/cliente/{id}', [ContaController::class, 'deleteConta']);
     Route::get('/cliente-and-recorrentes', [ContaController::class, 'getAllContasAndRecorrentes']);
-    
+
     Route::get('/conta', [ContaController::class, 'getAllContas']);
     Route::get('/conta/{id}', [ContaController::class, 'getConta']);
     Route::put('/conta', [ContaController::class, 'upsertConta']);
     Route::delete('/conta/{id}', [ContaController::class, 'deleteConta']);
     Route::get('/contas-and-recorrentes', [ContaController::class, 'getAllContasAndRecorrentes']);
-    
 });
 
 Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,designer,backoffice,producao,producao-coordenador,producao-impressao,admin-coodenador,designer-coordenador'])->group(function () {
@@ -170,6 +174,7 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,de
     Route::post('/orcamento/uniformes-go', [OrcamentosUniformesController::class, 'criarUniformesGoApi']);
     Route::patch('/orcamento/uniformes-go', [OrcamentosUniformesController::class, 'atualizarDadosJogadoresGoApi']);
     Route::post('/orcamento/{orcamento_id}/link-client', [OrcamentoController::class, 'linkClientEmail']);
+    Route::patch('/orcamento/backoffice/update-arte-final-com-orcamento', [PedidoArteFinalController::class, 'updatePedidoArteFinalComOrcamento']);
     Route::get('/clientes-consolidados', [ClientesConsolidadosController::class, 'consolidateDataPaginated']);
     Route::get('/search-clientes-consolidados', [ClientesConsolidadosController::class, 'searchConsolidateDataPaginated']);
     Route::get('/vendas/quantidade-orcamentos', [VendasController::class, 'getQuantidadeOrcamentos']);
@@ -193,13 +198,12 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,de
     Route::get('/producao/pedido-arte-final/{id}', [PedidoArteFinalController::class, 'getPedidoArteFinal']);
     Route::get('/producao/get-pedido-status', [PedidoArteFinalController::class, 'getAllStatusPedido']);
     Route::get('/producao/get-pedido-tipos', [PedidoArteFinalController::class, 'getAllTiposPedido']);
-    Route::get('/producao/get-pedidos-por-data', [PedidoArteFinalController::class, 'getAllPedidosArteFinalRelatorios']);   
+    Route::get('/producao/get-pedidos-por-data', [PedidoArteFinalController::class, 'getAllPedidosArteFinalRelatorios']);
     Route::post('/producao/pedido-arte-final/from-backoffice/{orcamentoId}', [PedidoArteFinalController::class, 'createPedidoFromBackoffice']);
     Route::post('/producao/add-block-tiny-block-brush', [PedidoArteFinalController::class, 'createPedidoArteFinalBlockTinyBlockBrush']);
     Route::post('/producao/import-pedido-from-tiny', [PedidoArteFinalController::class, 'createPedidoArteFinalImportFromTiny']);
     Route::post('/producao/add-with-tiny', [PedidoArteFinalController::class, 'createPedidoArteFinalWithTiny']);
     Route::patch('/producao/pedido-designer-change/{id}', [PedidoArteFinalController::class, 'atribuirDesigner']);
-    Route::patch('/orcamento/backoffice/update-arte-final-com-orcamento', [PedidoArteFinalController::class, 'updatePedidoArteFinalComOrcamento']);
     Route::patch('/producao/edit-block-tiny-with-brush', [PedidoArteFinalController::class, 'updatePedidoArteFinalBlockTinyWithBrush']);
     Route::patch('/producao/pedido-estagio-change/{id}', [PedidoArteFinalController::class, 'trocarEstagioArteFinal']);
     Route::patch('/producao/pedido-medida-change/{id}', [PedidoArteFinalController::class, 'trocarMedidaLinear']);
@@ -209,7 +213,7 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,de
     Route::patch('/producao/impressao/corte-change/{id}', [PedidoArteFinalController::class, 'trocarCorteArteFinalImpressao']);
     Route::patch('/producao/confeccao/corte-conferencia/status-corte-change', [PedidosArteFinalConfeccaoCorteConferenciaController::class, 'trocarStatusArteFinalCorte']);
     Route::patch('/producao/confeccao/corte-conferencia/status-conferencia-change', [PedidosArteFinalConfeccaoCorteConferenciaController::class, 'trocarStatusArteFinalConferencia']);
-    Route::get('/producao/pedido-arte-final/{arteFinalId}/verificar-uniformes', [PedidosArteFinalUniformesController::class, 'verificarUniformes']); 
+    Route::get('/producao/pedido-arte-final/{arteFinalId}/verificar-uniformes', [PedidosArteFinalUniformesController::class, 'verificarUniformes']);
     Route::delete('/producao/delete-pedido-arte-final/{id}', [PedidoArteFinalController::class, 'deletePedidoArteFinal']);
     // Route::get('/produto-personalizad', [ProdutosPersonalizadController::class, 'getAllProdutosPersonalizad']);
     // Route::get('/vendas/orcamentos-por-entrega', [VendasController::class, 'getQuantidadeOrcamentosEntrega']);
@@ -218,6 +222,7 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,de
     Route::get('/octa/get-octa-chats-msgs/{chatId}', [ChatOctaController::class, 'getAllOctaChatsMsgs']);
     Route::post('/octa/post-octa-chat-msg/{chatId}/messages', [ChatOctaController::class, 'postOctaMsg']);
     Route::post('/octa/post-octa-chat-msg-with-attachments/{chatId}/messages', [ChatOctaController::class, 'postOctaMsgWithAttachments']);
+    
     Route::get('erros', [ErrosController::class, 'getAllErros']);
     Route::get('erros/{id}', [ErrosController::class, 'getErro']);
     Route::post('erros', [ErrosController::class, 'createErro']);
@@ -226,10 +231,26 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,de
     Route::patch('erros/solucao/{id}', [ErrosController::class, 'updateSolucaoErro']);
     Route::patch('erros/status/{id}', [ErrosController::class, 'updateStatusErro']);
     Route::delete('erros/delete/{id}', [ErrosController::class, 'deleteErro']);
-    Route::get('fornecedor/{id}', [FornecedorController::class, 'getFornecedor']);
+    
     Route::get('fornecedores', [FornecedorController::class, 'getAllFornecedores']);
+    Route::get('fornecedor/{id}', [FornecedorController::class, 'getFornecedor']);
     Route::post('fornecedor', [FornecedorController::class, 'createFornecedor']);
     Route::put('fornecedor/{id}', [FornecedorController::class, 'updateFornecedor']);
+
+    Route::get('estoques', [EstoqueController::class, 'getAllEstoque']);
+    Route::get('estoque/{id}', [EstoqueController::class, 'getMaterialEstoque']);
+    Route::post('estoque', [EstoqueController::class, 'addMaterialEstoque']);
+    Route::put('estoque/{id}', [EstoqueController::class, 'updateMaterialEstoque']);
+    Route::patch('estoque/quantidade/{id}', [EstoqueController::class, 'updateAddMaterialEstoque']);
+    Route::delete('estoque/delete/{id}', [EstoqueController::class, 'destroyMaterialEstoque']);
+    
+    Route::get('movimentacoes', [MovimentacaoEstoqueController::class, 'getAllMovimentacoes']);
+    Route::get('movimentacao/{id}', [MovimentacaoEstoqueController::class, 'getMovimentacao']);
+    Route::post('movimentacao', [MovimentacaoEstoqueController::class, 'createMovimentacao']);
+    Route::put('movimentacao/upsert', [MovimentacaoEstoqueController::class, 'upsert']);
+    Route::patch('movimentacao/documento/{id}', [MovimentacaoEstoqueController::class, 'uploadDocumento']);
+    Route::patch('movimentacao/pedido/{id}', [MovimentacaoEstoqueController::class, 'uploadNumeroPedido']);
+    Route::delete('movimentacao/{id}', [MovimentacaoEstoqueController::class, 'destroyMovimentacao']);
 });
 
 
@@ -253,5 +274,4 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,comercial,designer,pr
     Route::get('/calendar', [CalendarEventController::class, 'getAllCalendarEvents']);
     Route::get('/calendar/feriados', [CalendarEventController::class, 'getHolidaysBetweenCalendarEvents']);
     Route::get('/calendar/feriados-ano-mes', [CalendarEventController::class, 'getHolidaysByMonthAndYear']);
-
 });

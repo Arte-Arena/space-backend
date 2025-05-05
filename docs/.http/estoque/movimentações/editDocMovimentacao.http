@@ -1,0 +1,7 @@
+PATCH http://localhost:8000/api/movimentacao/documento/6
+Authorization: Bearer 68|sxYJvqDwYVPe4HHil4PFytKTVcH3Rx12PSiZf2eC98dfecb3
+Content-Type: application/json
+
+{
+  "documento": "NF-2025-0033"
+}
