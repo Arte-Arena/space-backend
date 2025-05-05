@@ -1,0 +1,18 @@
+POST http://localhost:8000/api/estoque
+Content-Type: application/json
+Authorization: Bearer 68|sxYJvqDwYVPe4HHil4PFytKTVcH3Rx12PSiZf2eC98dfecb3
+
+{
+  "nome": "Balde Azul",
+  "descricao": "Balde de plástico azul, capacidade 10L",
+  "variacoes": ["pequeno", "médio", "grande"],
+  "unidade_medida": "un",
+  "quantidade": 50,
+  "estoque_min": 10,
+  "estoque_max": 100,
+  "categoria": "Limpeza",
+  "fornecedores": [1, 2, 3],
+  "produto_id": 123,
+  "produto_table": "produtos"
+}
+

@@ -268,7 +268,9 @@ class ErrosController extends Controller
                 'success' => true,
                 'message' => 'Erro exclu do com sucesso.'
             ], 200);
+
         } catch (\Exception $e) {
+
             DB::rollBack();
 
             Log::error('Falha ao excluir o erro', [
@@ -278,7 +280,7 @@ class ErrosController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Falha ao excluir o erro.',
-                'error' => config('app.debug') ? $e->getMessage() : null
+                'error' => config('app.debug') ? $e->getMessage() : 'erro interno'
             ], 500);
         }
     }

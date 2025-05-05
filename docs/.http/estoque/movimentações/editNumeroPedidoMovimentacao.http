@@ -1,0 +1,8 @@
+PATCH http://localhost:8000/api/movimentacao/pedido/6
+Content-Type: application/json
+Authorization: Bearer 68|sxYJvqDwYVPe4HHil4PFytKTVcH3Rx12PSiZf2eC98dfecb3
+
+{
+  "numero_pedido": "NF-2025-0003"
+}
+
