@@ -11,6 +11,15 @@ class PedidosConsultaController extends Controller
 {
     public function consultarMultiplosPedidos(Request $request)
     {
+        $goApiKey = $request->header('X-GO-API-KEY');
+        $expectedApiKey = env('GO_API_ADMIN_KEY');
+        
+        if (!$goApiKey || $goApiKey !== $expectedApiKey) {
+            return response()->json([
+                'error' => 'Acesso não autorizado'
+            ], 401);
+        }
+        
         $request->validate([
             'orcamento_ids' => 'required|string',
         ]);
