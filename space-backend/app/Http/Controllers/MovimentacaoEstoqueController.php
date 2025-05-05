@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\MovimentacaoEstoque;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
@@ -182,7 +183,7 @@ class MovimentacaoEstoqueController extends Controller
         Log::info('Requisição uploadNumeroPedido', [
             'input' => $request->all(),
         ]);
-        
+
         $movimentacao = MovimentacaoEstoque::find($id);
 
         if (!$movimentacao) {
@@ -192,7 +193,7 @@ class MovimentacaoEstoqueController extends Controller
         $movimentacao->documento = $request->input('documento');
         $movimentacao->save();
 
-        if(!$movimentacao) return response()->json(['error' => 'Erro ao fazer mudança'], 500);
+        if (!$movimentacao) return response()->json(['error' => 'Erro ao fazer mudança'], 500);
 
         return response()->json(['message' => 'Movimentação atualizado com sucesso!'], 200);
     }
@@ -222,40 +223,30 @@ class MovimentacaoEstoqueController extends Controller
         return response()->json(['message' => 'Movimentação atualizado com sucesso!'], 200);
     }
 
-    public function destroy($id)
+    public function destroyMovimentacao($id)
     {
-        try {
-            DB::beginTransaction();
+        if (!$id) {
+            return response()->json(['error' => 'Movimentação not found'], 400);
+        }
 
-            $mov = MovimentacaoEstoque::findOrFail($id);
-            $mov->delete();
+        $mov = MovimentacaoEstoque::find($id);
 
-            Log::info([
-                'action'   => 'delete',
+        if (!$mov) {
+            return response()->json(['error' => 'Movimentação not found'], 400);
+        }
+
+        $deleted = MovimentacaoEstoque::destroy($id);
+
+        if ($deleted) {
+            Log::info('delete movimentacao', [
                 'model'    => 'MovimentacaoEstoque',
                 'model_id' => $id,
             ]);
-
-            DB::commit();
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Movimentação removida com sucesso.'
-            ], Response::HTTP_NO_CONTENT);
-            
-        } catch (\Exception $e) {
-
-            DB::rollBack();
-
-            Log::error('Falha ao remover movimentação', [
-                'exception' => $e->getMessage(),
-            ]);
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Falha ao remover movimentação.',
-                'error'   => config('app.debug') ? $e->getMessage() : null,
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return response(null, Response::HTTP_NO_CONTENT);
         }
+
+        return response()->json([
+            'error' => 'Movimentação não encontrada'
+        ], Response::HTTP_NOT_FOUND);
     }
 }

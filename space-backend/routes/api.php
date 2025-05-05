@@ -247,7 +247,7 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,de
     Route::put('movimentacao/upsert', [MovimentacaoEstoqueController::class, 'upsert']);
     Route::patch('movimentacao/documento/{id}', [MovimentacaoEstoqueController::class, 'uploadDocumento']);
     Route::patch('movimentacao/pedido/{id}', [MovimentacaoEstoqueController::class, 'uploadNumeroPedido']);
-    Route::delete('movimentacao/{id}', [MovimentacaoEstoqueController::class, 'destroy']);
+    Route::delete('movimentacao/{id}', [MovimentacaoEstoqueController::class, 'destroyMovimentacao']);
 });
 
 
