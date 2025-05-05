@@ -233,11 +233,12 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,de
     Route::delete('erros/delete/{id}', [ErrosController::class, 'deleteErro']);
     
     Route::get('fornecedores', [FornecedorController::class, 'getAllFornecedores']);
+    Route::get('search-fornecedores', [FornecedorController::class, 'searchFornecedoresPaginado']);
     Route::get('fornecedor/{id}', [FornecedorController::class, 'getFornecedor']);
     Route::post('fornecedor', [FornecedorController::class, 'createFornecedor']);
     Route::put('fornecedor/{id}', [FornecedorController::class, 'updateFornecedor']);
 
-    Route::get('estoques', [EstoqueController::class, 'getAllEstoque']);
+    Route::get('estoque', [EstoqueController::class, 'getAllEstoque']);
     Route::get('estoque/{id}', [EstoqueController::class, 'getMaterialEstoque']);
     Route::post('estoque', [EstoqueController::class, 'addMaterialEstoque']);
     Route::put('estoque/{id}', [EstoqueController::class, 'updateMaterialEstoque']);

@@ -4,40 +4,38 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Estoque;
+use App\Models\Produto;
+use App\Models\ProdutoBandeiraOficial;
+use App\Models\ProdutoPersonalizad;
 use Exception;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class EstoqueController extends Controller
 {
-    /**
-     * Listar todos os estoques com filtros e paginação
-     */
     public function getAllEstoque(Request $request)
     {
-        $query = Estoque::query();
-
-        // Itens por página
+        // 1. Definir itens por página
         $perPage = (int) $request->query('per_page', 15);
         if (!in_array($perPage, [15, 25, 50])) {
             $perPage = 15;
         }
 
-        // Paginação
-        if ($request->has('page')) {
-            $page = (int) $request->query('page', 1);
-            $query->offset(($page - 1) * $perPage)->limit($perPage);
-        }
+        // 2. Iniciar query
+        $query = Estoque::query();
 
-        // Filtro de busca
+        // 3. Filtro de busca de texto (nome OU categoria)
         if ($request->filled('q')) {
-            $q = $request->query('q');
-            $query->where('nome', 'like', "%{$q}%")
-                ->orWhere('categoria', 'like', "%{$q}%");
+            $termo = $request->query('q');
+            $query->where(function ($q) use ($termo) {
+                $q->where('nome', 'like', "%{$termo}%")
+                    ->orWhere('categoria', 'like', "%{$termo}%");
+            });
         }
 
-        // Filtro por intervalo de datas de criação
+        // 4. Filtro por intervalo de datas
         if ($request->filled('data_inicial') && $request->filled('data_final')) {
             $query->whereBetween('created_at', [
                 $request->query('data_inicial'),
@@ -45,13 +43,54 @@ class EstoqueController extends Controller
             ]);
         }
 
+        // 5. Ordenação antes da paginação
         $query->orderBy('created_at', 'asc')
             ->orderBy('nome', 'asc');
 
+        /** @var LengthAwarePaginator $estoques */
+        // 6. Paginando
         $estoques = $query->paginate($perPage);
 
+        // 7. Transformando coleção para incluir preço
+        $estoques->getCollection()->transform(function ($estoque) {
+            try {
+                switch ($estoque->produto_table) {
+                    case 'produtosPersonalizad':
+                    case 'produtosOrcamento':
+                        $modelo = ProdutoPersonalizad::class;
+                        break;
+                    case 'produtosBase':
+                        $modelo = Produto::class;
+                        break;
+                    case 'produtosBandeirasOficiais':
+                        $modelo = ProdutoBandeiraOficial::class;
+                        break;
+                    default:
+                        $modelo = null;
+                }
+
+                if ($modelo && $estoque->produto_id) {
+                    $produto = $modelo::find($estoque->produto_id);
+                    $estoque->preco_produto = $produto?->preco;
+                } else {
+                    $estoque->preco_produto = null;
+                }
+            } catch (\Throwable $e) {
+                Log::error("Erro ao buscar produto para estoque {$estoque->id}", [
+                    'table' => $estoque->produto_table,
+                    'produto_id' => $estoque->produto_id,
+                    'error' => $e->getMessage(),
+                ]);
+                $estoque->preco_produto = null;
+            }
+
+            return $estoque;
+        });
+
+        // 8. Retornar JSON
         return response()->json($estoques);
     }
+
 
     /**
      * Exibir um item de estoque pelo ID
@@ -218,7 +257,7 @@ class EstoqueController extends Controller
         try {
 
             DB::beginTransaction();
-            
+
             $estoque->save();
 
             Log::info([
@@ -237,7 +276,6 @@ class EstoqueController extends Controller
                 'data'    => $estoque,
                 'message' => 'Quantidade de estoque ajustada com sucesso.'
             ], Response::HTTP_OK);
-
         } catch (Exception $e) {
 
             DB::rollBack();
