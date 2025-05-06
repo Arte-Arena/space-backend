@@ -108,7 +108,9 @@ class FornecedorController extends Controller
             $fornecedor = Fornecedor::find($id);
 
             if (!$fornecedor) {
-                return response()->json(null, 404);
+                return response()->json([
+                    'message' => 'Não existe Fornecedor para esse ID: ' . $id
+                ], 404);
             }
 
             return response()->json($fornecedor);
@@ -222,6 +224,7 @@ class FornecedorController extends Controller
             "uf" => $request['uf'],
             "celular" => $request['celular'],
             "email" => $request['email'],
+            "produtos" => $request['produtos'],
         ];
 
         DB::beginTransaction();
