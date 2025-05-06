@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\MovimentacaoEstoque;
 use App\Models\PedidoArteFinal;
 use App\Models\PedidoStatus;
 use App\Models\PedidoTipo;
@@ -13,6 +14,7 @@ use App\Models\PedidosArteFinalConfeccaoCostura;
 use App\Models\PedidosArteFinalConfeccaoSublimacaoModel;
 use App\Models\PedidosArteFinalImpressao;
 use App\Models\RoleUser;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
@@ -731,14 +733,12 @@ class PedidoArteFinalController extends Controller
 
     private function subtrairProdutosDoEstoque(PedidoArteFinal $pedido)
     {
-        Log::info('entrou no metdodo "subtrairProdutosDoEstoque".', ['pedido_id' => $pedido->id]);
         $produtosArte = $pedido->lista_produtos;
-        
+
         if (!is_array($produtosArte)) {
             Log::warning('Lista de produtos da arte-final está vazia ou inválida.', ['pedido_id' => $pedido->id]);
             return;
         }
-        Log::info('Pegou a lista de produtos.', ['pedido_id' => $pedido->id]);
 
         foreach ($produtosArte as $produto) {
             if (!isset($produto['id'], $produto['nome'], $produto['type'])) {
@@ -749,12 +749,10 @@ class PedidoArteFinalController extends Controller
             $type = $produto['type'];
             $nomeArte = Str::lower($produto['nome']);
 
-            // Primeira tentativa: buscar por produto_id + type
             $estoque = \App\Models\Estoque::where('produto_id', $produto['id'])
                 ->where('produto_table', $type)
                 ->first();
 
-            // Fallback: buscar por nome parcial se não achou pelo ID
             if (!$estoque) {
                 $estoquesPossiveis = \App\Models\Estoque::where('produto_table', $type)->get();
 
@@ -781,6 +779,16 @@ class PedidoArteFinalController extends Controller
                 'produto' => $estoque->nome,
                 'nova_quantidade' => $estoque->quantidade,
                 'subtraido' => $qtd,
+            ]);
+
+            // 🔽 Criar movimentação de saída
+            MovimentacaoEstoque::create([
+                'estoque_id' => $estoque->id,
+                'data_movimentacao' => Carbon::now(),
+                'tipo_movimentacao' => 'saida',
+                'numero_pedido' => $pedido->numero_pedido,
+                'quantidade' => $qtd,
+                'observacoes' => 'Movimentação automática gerada a partir da impressão do pedido ' . $pedido->id,
             ]);
         }
     }
