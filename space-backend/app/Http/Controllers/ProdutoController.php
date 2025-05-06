@@ -7,6 +7,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Cache;
 use App\Models\Produto;
 use App\Models\ProdutoBandeiraOficial;
+use App\Models\ProdutoOrcamento;
 use App\Models\ProdutoPersonalizad;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\DB;
@@ -288,7 +289,7 @@ class ProdutoController extends Controller
         $pageSize = (int) $request->get('pageSize', 20);
         $page = (int) $request->get('page', 1);
         $searchTerm = $request->get('search', '');
-        
+
         $p1 = $this->getPagedProdutosPersonalizad($searchTerm, $pageSize, $page);
         $p2 = $this->getPagedProdutos($searchTerm, $pageSize, $page);
         $p3 = $this->getPagedBandeirasOficiais($searchTerm, $pageSize, $page);
@@ -388,6 +389,47 @@ class ProdutoController extends Controller
             'data'  => $data,
             'total' => $pg->total(),
         ];
+    }
+
+    public function getProdutoByType(Request $request, int $id, string $type)
+    {
+        if (!$id) {
+            return response()->json(['error' => 'ID de produto não informado'], 400);
+        }
+
+        if (!$type) {
+            return response()->json(['error' => 'tipo de produto não informado'], 400);
+        }
+
+        switch ($type) {
+            case 'produtosBase':
+                $modelClass = Produto::class;
+                break;
+            case 'produtosOrcamento':
+                $modelClass = ProdutoOrcamento::class;
+                break;
+            case 'produtosPersonalizad':
+                $modelClass = ProdutoPersonalizad::class;
+                break;
+            case 'produtosBandeirasOficiais':
+                $modelClass = ProdutoBandeiraOficial::class;
+                break;
+            default:
+                return response()->json(
+                    ['error' => "Tipo inválido: {$type}"],
+                    400
+                );
+        }
+
+        $produto = $modelClass::find($id);
+        if (! $produto) {
+            return response()->json(
+                ['error' => 'Produto não encontrado'],
+                404
+            );
+        }
+
+        return response()->json($produto);
     }
 }
 
