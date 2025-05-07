@@ -210,8 +210,8 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,de
     Route::patch('/producao/pedido-medida-change/{id}', [PedidoArteFinalController::class, 'trocarMedidaLinear']);
     Route::patch('/producao/pedido-obs-change/{id}', [PedidoArteFinalController::class, 'trocarObsArteFinal']);
     Route::patch('/producao/pedido-rolo-change/{id}', [PedidoArteFinalController::class, 'trocarRoloArteFinal']);
-    Route::patch('/producao/impressao/impressora-change/{id}', [PedidoArteFinalController::class, 'trocarImpressoraArteFinalImpressao']);
-    Route::patch('/producao/impressao/corte-change/{id}', [PedidoArteFinalController::class, 'trocarCorteArteFinalImpressao']);
+    Route::patch('/producao/impressao/impressora-change/{id}', [PedidosArteFinalImpressaoController::class, 'trocarImpressoraArteFinalImpressao']);
+    Route::patch('/producao/impressao/corte-change/{id}', [PedidosArteFinalImpressaoController::class, 'trocarCorteArteFinalImpressao']);
     Route::patch('/producao/confeccao/corte-conferencia/status-corte-change', [PedidosArteFinalConfeccaoCorteConferenciaController::class, 'trocarStatusArteFinalCorte']);
     Route::patch('/producao/confeccao/corte-conferencia/status-conferencia-change', [PedidosArteFinalConfeccaoCorteConferenciaController::class, 'trocarStatusArteFinalConferencia']);
     Route::get('/producao/pedido-arte-final/{arteFinalId}/verificar-uniformes', [PedidosArteFinalUniformesController::class, 'verificarUniformes']);
