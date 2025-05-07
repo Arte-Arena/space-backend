@@ -54,6 +54,53 @@ class FornecedorController extends Controller
         return response()->json($fornecedorPaginados);
     }
 
+    public function searchFornecedoresPaginado(Request $request)
+    {
+        $pageSize = (int) $request->get('pageSize', 20);
+        $page = (int) $request->get('page', 1);
+        $searchTerm = $request->get('search', '');
+        
+        $p1 = $this->getPagedFornecedores($searchTerm, $pageSize, $page);
+
+        $data = collect($p1['data'])
+            ->sortByDesc('created_at')
+            ->values()
+            ->all();
+
+        $totalItems = $p1['total'];
+        $totalPages = ceil($totalItems / $pageSize);
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $data,
+            'pagination' => [
+                'current_page' => $page,
+                'total_pages' => $totalPages,
+                'total_items' => $totalItems,
+            ],
+        ]);
+    }
+
+
+    private function getPagedFornecedores(string $searchTerm, int $pageSize, int $page)
+    {
+        $query = Fornecedor::select('*');
+
+        if ($searchTerm) {
+            $query->where('id', 'like', "%{$searchTerm}%")
+                ->orWhere('nome', 'like', "%{$searchTerm}%");
+        }
+
+        $pg = $query->orderByDesc('created_at')
+            ->paginate($pageSize, ['*'], 'page', $page);
+
+
+        return [
+            'data'  => $pg->items(),
+            'total' => $pg->total(),
+        ];
+    }
+
 
     public function getFornecedor(Request $request, $id)
     {
@@ -61,7 +108,9 @@ class FornecedorController extends Controller
             $fornecedor = Fornecedor::find($id);
 
             if (!$fornecedor) {
-                return response()->json(null, 404);
+                return response()->json([
+                    'message' => 'Não existe Fornecedor para esse ID: ' . $id
+                ], 404);
             }
 
             return response()->json($fornecedor);
@@ -175,6 +224,7 @@ class FornecedorController extends Controller
             "uf" => $request['uf'],
             "celular" => $request['celular'],
             "email" => $request['email'],
+            "produtos" => $request['produtos'],
         ];
 
         DB::beginTransaction();

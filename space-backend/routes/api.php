@@ -100,6 +100,8 @@ Route::middleware(['auth:sanctum', 'role:super-admin'])->group(function () {
     Route::get('/super-admin/get-backups', [BackupController::class, 'getBackups']);
     Route::put('/super-admin/upsert-config-prazos', [SuperAdminController::class, 'upsertConfigPrazos']);
     Route::patch('/orcamento/uniformes/medidas', [OrcamentosUniformesMedidasController::class, 'update']);
+    Route::put('/super-admin/upsert-config-estoque', [SuperAdminController::class, 'upsertConfigEstoque']);
+    Route::get('/super-admin/get-config-estoque', [SuperAdminController::class, 'getConfigEstoque']);
 });
 
 Route::middleware(['auth:sanctum', 'role:super-admin,admin'])->group(function () {
@@ -133,6 +135,7 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,de
     Route::get('/produto', [ProdutoController::class, 'getAllProdutos']);
     Route::get('produto/categories', [ProdutoController::class, 'getCategoryCounts']);
     Route::get('/produto/{id}', [ProdutoController::class, 'getProduto']);
+    Route::get('/produto-tipo/{id}/{type}', [ProdutoController::class, 'getProdutoByType']);
     Route::get('/produto-orcamento-query', [ProdutoController::class, 'getAllProdutosOrcamento']);
     Route::get('/produto-categoria', [ProdutoCategoriaController::class, 'getAllProdutosCategorias']);
     Route::get('/search-produtos-consolidados', [ProdutoController::class, 'searchProdutosConsolidadosPaginado']);
@@ -209,8 +212,8 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,de
     Route::patch('/producao/pedido-medida-change/{id}', [PedidoArteFinalController::class, 'trocarMedidaLinear']);
     Route::patch('/producao/pedido-obs-change/{id}', [PedidoArteFinalController::class, 'trocarObsArteFinal']);
     Route::patch('/producao/pedido-rolo-change/{id}', [PedidoArteFinalController::class, 'trocarRoloArteFinal']);
-    Route::patch('/producao/impressao/impressora-change/{id}', [PedidoArteFinalController::class, 'trocarImpressoraArteFinalImpressao']);
-    Route::patch('/producao/impressao/corte-change/{id}', [PedidoArteFinalController::class, 'trocarCorteArteFinalImpressao']);
+    Route::patch('/producao/impressao/impressora-change/{id}', [PedidosArteFinalImpressaoController::class, 'trocarImpressoraArteFinalImpressao']);
+    Route::patch('/producao/impressao/corte-change/{id}', [PedidosArteFinalImpressaoController::class, 'trocarCorteArteFinalImpressao']);
     Route::patch('/producao/confeccao/corte-conferencia/status-corte-change', [PedidosArteFinalConfeccaoCorteConferenciaController::class, 'trocarStatusArteFinalCorte']);
     Route::patch('/producao/confeccao/corte-conferencia/status-conferencia-change', [PedidosArteFinalConfeccaoCorteConferenciaController::class, 'trocarStatusArteFinalConferencia']);
     Route::get('/producao/pedido-arte-final/{arteFinalId}/verificar-uniformes', [PedidosArteFinalUniformesController::class, 'verificarUniformes']);
@@ -233,11 +236,12 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,de
     Route::delete('erros/delete/{id}', [ErrosController::class, 'deleteErro']);
     
     Route::get('fornecedores', [FornecedorController::class, 'getAllFornecedores']);
+    Route::get('search-fornecedores', [FornecedorController::class, 'searchFornecedoresPaginado']);
     Route::get('fornecedor/{id}', [FornecedorController::class, 'getFornecedor']);
     Route::post('fornecedor', [FornecedorController::class, 'createFornecedor']);
     Route::put('fornecedor/{id}', [FornecedorController::class, 'updateFornecedor']);
 
-    Route::get('estoques', [EstoqueController::class, 'getAllEstoque']);
+    Route::get('estoque', [EstoqueController::class, 'getAllEstoque']);
     Route::get('estoque/{id}', [EstoqueController::class, 'getMaterialEstoque']);
     Route::post('estoque', [EstoqueController::class, 'addMaterialEstoque']);
     Route::put('estoque/{id}', [EstoqueController::class, 'updateMaterialEstoque']);

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ConfigEstoque;
+use App\Models\MovimentacaoEstoque;
 use App\Models\PedidoArteFinal;
 use App\Models\PedidoStatus;
 use App\Models\PedidoTipo;
@@ -13,7 +15,9 @@ use App\Models\PedidosArteFinalConfeccaoCostura;
 use App\Models\PedidosArteFinalConfeccaoSublimacaoModel;
 use App\Models\PedidosArteFinalImpressao;
 use App\Models\RoleUser;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -168,7 +172,7 @@ class PedidoArteFinalController extends Controller
             '53' => 710154473,
             '29' => 707100035,
             '43' => 709683645,
-            '28' => 705062240,
+            '28' => 704446840,
             '1' => 704446840,
             '2' => 704446840,
             '3' => 704446840,
@@ -435,6 +439,7 @@ class PedidoArteFinalController extends Controller
         }
 
         $novaListaDeProdutos = array_map(function ($produto) {
+            $produto['type'] = $produto['type'] ?? 'produtosPersonalizad';
             $produto['medida_linear'] = 0;
             $produto['uid'] = $produto['id'] . rand(10, 99);
             $produto['material'] = " - ";
@@ -500,7 +505,7 @@ class PedidoArteFinalController extends Controller
             '53' => 710154473,
             '29' => 707100035,
             '43' => 709683645,
-            '28' => 705062240,
+            '28' => 704446840,
             '1' => 704446840,
             '2' => 704446840,
             '3' => 704446840,
@@ -661,47 +666,7 @@ class PedidoArteFinalController extends Controller
     }
 
     // Impressora (colocar no contrller de impressora)
-    public function trocarImpressoraArteFinalImpressao(Request $request, $id)
-    {
-        $pedido = PedidoArteFinal::find($id);
-        if (!$pedido) {
-            return response()->json(['error' => 'Pedido not found'], 500);
-        }
 
-        $pedidoImpressao = PedidosArteFinalImpressao::updateOrCreate(
-            ['pedido_arte_final_id' => $id],
-            [
-                'impressora' => $request['impressora'],
-            ]
-        );
-
-        if (!$pedidoImpressao) {
-            return response()->json(['error' => 'Erro ao atualizar impressão'], 500);
-        }
-
-        return response()->json(['message' => 'impressora da Impressão atualizada com sucesso!'], 200);
-    }
-
-    public function trocarCorteArteFinalImpressao(Request $request, $id)
-    {
-        $pedido = PedidoArteFinal::find($id);
-        if (!$pedido) {
-            return response()->json(['error' => 'Pedido not found'], 500);
-        }
-
-        $pedidoImpressao = PedidosArteFinalImpressao::updateOrCreate(
-            ['pedido_arte_final_id' => $id],
-            [
-                'tipo_corte' => $request['tipo_corte']
-            ]
-        );
-
-        if (!$pedidoImpressao) {
-            return response()->json(['error' => 'Erro ao atualizar impressão'], 500);
-        }
-
-        return response()->json(['message' => 'Corte da Impressão atualizada com sucesso!'], 200);
-    }
 
     private function inserirTiny($pedido)
     {
@@ -745,44 +710,6 @@ class PedidoArteFinalController extends Controller
         }
     }
 
-    // private function updateTiny($pedido, $idTiny)
-    // {
-    //     $apiUrl = 'https://api.tiny.com.br/api2/pedido.alterar.php';
-    //     $token = env('TINY_TOKEN');
-
-
-    //     $url = $apiUrl . '?token=' . urlencode($token) . '&id=' . urlencode($idTiny);
-    //     Log::info('Enviando atualização para Tiny:', [
-    //         'url' => $url,
-    //         'pedido' => $pedido
-    //     ]);
-
-    //     // Realiza a requisição HTTP POST para a API do Tiny
-    //     $response = Http::withHeaders([
-    //         'Content-Type' => 'application/json', // Alterado para JSON
-    //     ])->timeout(15)
-    //         ->post($url, $pedido);
-
-    //     $data = json_decode($response, true);
-
-    //     // Verifica a resposta da API
-    //     if ($data['retorno']['status'] !== 'Erro') {
-
-    //         $dataJson = $response->json();
-    //         Log::info('Resposta da API Tiny Pedidos:', $dataJson);
-
-    //         return [
-    //             'status' => 'sucesso',
-    //         ];
-    //     } else {
-    //         Log::error('Erro ao enviar pedido para a API do Tiny:', ['erro' => $response->body()]);
-    //         return [
-    //             'status' => 'erro',
-    //             'mensagem' => $response->body()
-    //         ];
-    //     }
-    // }
-
     public function trocarStatusArteFinal(Request $request, $id)
     {
         $pedido = PedidoArteFinal::find($id);
@@ -804,6 +731,69 @@ class PedidoArteFinalController extends Controller
 
         return response()->json(['message' => 'Pedido atualizado com sucesso!'], 200);
     }
+
+    private function subtrairProdutosDoEstoque(PedidoArteFinal $pedido)
+    {
+        $produtosArte = $pedido->lista_produtos;
+
+        if (!is_array($produtosArte)) {
+            Log::warning('Lista de produtos da arte-final está vazia ou inválida.', ['pedido_id' => $pedido->id]);
+            return;
+        }
+
+        foreach ($produtosArte as $produto) {
+            if (!isset($produto['id'], $produto['nome'], $produto['type'])) {
+                Log::warning('Produto inválido na lista (falta id, nome ou type).', ['produto' => $produto]);
+                continue;
+            }
+
+            $type = $produto['type'];
+            $nomeArte = Str::lower($produto['nome']);
+
+            $estoque = \App\Models\Estoque::where('produto_id', $produto['id'])
+                ->where('produto_table', $type)
+                ->first();
+
+            if (!$estoque) {
+                $estoquesPossiveis = \App\Models\Estoque::where('produto_table', $type)->get();
+
+                $estoque = $estoquesPossiveis->first(function ($item) use ($nomeArte) {
+                    return Str::contains($nomeArte, Str::lower($item->nome));
+                });
+            }
+
+            if (!$estoque) {
+                Log::info('Estoque não encontrado para produto da arte-final.', [
+                    'produto_nome' => $produto['nome'],
+                    'produto_id' => $produto['id'],
+                    'produto_type' => $produto['type'],
+                ]);
+                continue;
+            }
+
+            $qtd = isset($produto['quantidade']) ? (float) $produto['quantidade'] : 1;
+            $estoque->quantidade = max(0, $estoque->quantidade - $qtd);
+            $estoque->save();
+
+            Log::info('Estoque atualizado com sucesso.', [
+                'estoque_id' => $estoque->id,
+                'produto' => $estoque->nome,
+                'nova_quantidade' => $estoque->quantidade,
+                'subtraido' => $qtd,
+            ]);
+
+            // 🔽 Criar movimentação de saída
+            MovimentacaoEstoque::create([
+                'estoque_id' => $estoque->id,
+                'data_movimentacao' => Carbon::now(),
+                'tipo_movimentacao' => 'saida',
+                'numero_pedido' => $pedido->numero_pedido,
+                'quantidade' => $qtd,
+                'observacoes' => 'Movimentação automática gerada a partir da impressão do pedido ' . $pedido->id . ' /n ' . 'Produto: ' . $produto['nome'],
+            ]);
+        }
+    }
+
 
     public function trocarEstagioArteFinal(Request $request, $id)
     {
@@ -827,33 +817,43 @@ class PedidoArteFinalController extends Controller
         $pedido->pedido_status_id = $pedidoStatus->id;
         $pedido->save();
 
-        // cria ou atualiza o estagio de um pedido nas outras tabelas
         if ($estagio === 'I') {
-
             $pedidoStatus = PedidoStatus::where('fila', $estagio)
                 ->where('nome', 'like', '%Pendente%')
                 ->orderBy('id', 'asc')
-                ->first();
+                ->first()
+                ?? PedidoStatus::where('fila', $estagio)->orderBy('id', 'asc')->first();
 
-            if (!$pedidoStatus) {
-                $pedidoStatus = PedidoStatus::where('fila', $estagio)
-                    ->orderBy('id', 'asc')
-                    ->first();
-            }
-
-            $pedidoImpressao = PedidosArteFinalImpressao::updateOrCreate(
-                ['pedido_arte_final_id' => $id],
-                [
-                    'status' => $pedidoStatus->nome,
-                ]
-            );
+            // Verifica se já existe um registro de impressão
+            $pedidoImpressao = PedidosArteFinalImpressao::where('pedido_arte_final_id', $id)->first();
 
             if (!$pedidoImpressao) {
-                return response()->json(['error' => 'Erro ao atualizar impressão'], 500);
+                // Criação -> subtrai do estoque
+                PedidosArteFinalImpressao::create([
+                    'pedido_arte_final_id' => $id,
+                    'status' => $pedidoStatus->nome,
+                ]);
+
+                $config = ConfigEstoque::first();
+
+                if (
+                    $config &&
+                    isset($config->estoque['subtrairAutomaticamente']) &&
+                    $config->estoque['subtrairAutomaticamente'] === true
+                ) {
+                    $this->subtrairProdutosDoEstoque($pedido);
+                }
+
+                return response()->json(['message' => 'Impressão criada com sucesso e estoque atualizado!'], 200);
             }
 
-            return response()->json(['message' => 'Impressão criada ou atualizada com sucesso!'], 200);
+            // Já existe -> atualiza status
+            $pedidoImpressao->status = $pedidoStatus->nome;
+            $pedidoImpressao->save();
+
+            return response()->json(['message' => 'Status de Impressão atualizado!'], 200);
         }
+
 
         if ($estagio === 'S') {
 
