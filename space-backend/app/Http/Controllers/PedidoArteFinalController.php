@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ConfigEstoque;
 use App\Models\MovimentacaoEstoque;
 use App\Models\PedidoArteFinal;
 use App\Models\PedidoStatus;
@@ -833,8 +834,15 @@ class PedidoArteFinalController extends Controller
                     'status' => $pedidoStatus->nome,
                 ]);
 
-                // Chamada para lógica encapsulada
-                $this->subtrairProdutosDoEstoque($pedido);
+                $config = ConfigEstoque::first();
+
+                if (
+                    $config &&
+                    isset($config->estoque['subtrairAutomaticamente']) &&
+                    $config->estoque['subtrairAutomaticamente'] === true
+                ) {
+                    $this->subtrairProdutosDoEstoque($pedido);
+                }
 
                 return response()->json(['message' => 'Impressão criada com sucesso e estoque atualizado!'], 200);
             }

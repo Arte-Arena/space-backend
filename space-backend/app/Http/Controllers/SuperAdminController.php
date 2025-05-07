@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use App\Models\{User, Config, Role, Module, ConfigPrazos};
+use App\Models\{User, Config, ConfigEstoque, Role, Module, ConfigPrazos};
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 class SuperAdminController extends Controller
@@ -286,7 +287,7 @@ class SuperAdminController extends Controller
             'dias_antecipa_producao_confeccao_corte_conferencia' => $request->input('dias_antecipa_producao_confeccao_corte_conferencia'),
             'dias_antecipa_producao_producao_costura' => $request->input('dias_antecipa_producao_producao_costura'),
         ]);
-        
+
 
         $diasAntecipacaoArteFinal = $request->input('dias_antecipa_producao_arte_final');
         $diasAntecipacaoImpressao = $request->input('dias_antecipa_producao_impressao');
@@ -333,8 +334,41 @@ class SuperAdminController extends Controller
         );
 
         Log::info('Configurações de Prazo atualizadas com sucesso.');
-    
+
         return response()->json(['message' => 'Configurações de Prazo atualizadas com sucesso.'], 200);
     }
 
+    public function upsertConfigEstoque(Request $request)
+    {
+        $user = Auth::user();
+
+        if (!$user) {
+            return response()->json(['message' => 'Não autenticado'], 401);
+        }
+
+        $validated = $request->validate([
+            'estoque' => 'required|array',
+        ]);
+
+        $config = ConfigEstoque::updateOrCreate(
+            ['user_id' => $user->id],
+            ['estoque' => $validated['estoque']]
+        );
+
+        return response()->json([
+            'message' => 'Configurações salvas com sucesso.',
+            'data' => $config
+        ]);
+    }
+
+    public function getConfigEstoque()
+    {
+        $config = ConfigEstoque::where('user_id', Auth::user()->id)->first();
+
+        if (!$config) {
+            return response()->json(['message' => 'Configurações não encontradas.'], 404);
+        }
+
+        return response()->json($config);
+    }
 }

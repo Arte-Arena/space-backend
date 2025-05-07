@@ -100,6 +100,8 @@ Route::middleware(['auth:sanctum', 'role:super-admin'])->group(function () {
     Route::get('/super-admin/get-backups', [BackupController::class, 'getBackups']);
     Route::put('/super-admin/upsert-config-prazos', [SuperAdminController::class, 'upsertConfigPrazos']);
     Route::patch('/orcamento/uniformes/medidas', [OrcamentosUniformesMedidasController::class, 'update']);
+    Route::put('/super-admin/upsert-config-estoque', [SuperAdminController::class, 'upsertConfigEstoque']);
+    Route::get('/super-admin/get-config-estoque', [SuperAdminController::class, 'getConfigEstoque']);
 });
 
 Route::middleware(['auth:sanctum', 'role:super-admin,admin'])->group(function () {

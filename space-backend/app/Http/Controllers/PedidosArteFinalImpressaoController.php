@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ConfigEstoque;
 use App\Models\Estoque;
 use App\Models\MovimentacaoEstoque;
 use App\Models\PedidoArteFinal;
@@ -42,8 +43,15 @@ class PedidosArteFinalImpressaoController extends Controller
                 return response()->json(['error' => 'Erro ao atualizar impressão'], 500);
             }
 
-            // Chamada para lógica encapsulada
-            $this->subtrairProdutosDoEstoque($pedido);
+            $config = ConfigEstoque::first();
+
+            if (
+                $config &&
+                isset($config->estoque['subtrairAutomaticamente']) &&
+                $config->estoque['subtrairAutomaticamente'] === true
+            ) {
+                $this->subtrairProdutosDoEstoque($pedido);
+            }
         } else {
             // ✏️ Atualizar apenas status existente
             $pedidoImpressao->status = $request['status'];
@@ -72,7 +80,15 @@ class PedidosArteFinalImpressaoController extends Controller
                 return response()->json(['error' => 'Erro ao atualizar impressão'], 500);
             }
 
-            $this->subtrairProdutosDoEstoque($pedido);
+            $config = ConfigEstoque::first();
+
+            if (
+                $config &&
+                isset($config->estoque['subtrairAutomaticamente']) &&
+                $config->estoque['subtrairAutomaticamente'] === true
+            ) {
+                $this->subtrairProdutosDoEstoque($pedido);
+            }
         } else {
             $pedidoImpressao->impressora = $request['impressora'];
             $pedidoImpressao->save();
@@ -100,7 +116,13 @@ class PedidosArteFinalImpressaoController extends Controller
                 return response()->json(['error' => 'Erro ao atualizar impressão'], 500);
             }
 
-            $this->subtrairProdutosDoEstoque($pedido);
+            if (
+                $pedido->configEstoque &&
+                isset($pedido->configEstoque['subtrairAutomaticamente']) &&
+                $pedido->configEstoque['subtrairAutomaticamente'] === true
+            ) {
+                $this->subtrairProdutosDoEstoque($pedido);
+            }
         } else {
             $pedidoImpressao->tipo_corte = $request['tipo_corte'];
             $pedidoImpressao->save();
