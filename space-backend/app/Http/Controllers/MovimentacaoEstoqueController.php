@@ -44,7 +44,8 @@ class MovimentacaoEstoqueController extends Controller
             ]);
         }
 
-        $query->orderBy('data_movimentacao', 'desc');
+        $query->orderBy('created_at', 'desc')
+            ->orderBy('data_movimentacao', 'desc');
 
         $movimentacoes = $query->paginate($perPage);
 
@@ -53,7 +54,8 @@ class MovimentacaoEstoqueController extends Controller
 
     public function getMovimentacao($id)
     {
-        $mov = MovimentacaoEstoque::find($id);
+        $mov = MovimentacaoEstoque::with(['estoque', 'fornecedor'])->find($id);
+        
         if (!$mov) {
             return response()->json(['error' => 'Movimentação não encontrada.'], Response::HTTP_NOT_FOUND);
         }
