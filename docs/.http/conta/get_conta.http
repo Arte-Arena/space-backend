@@ -1,0 +1,6 @@
+GET http://localhost:8000/api/conta/5
+Content-Type: application/json
+Authorization: Bearer 68|sxYJvqDwYVPe4HHil4PFytKTVcH3Rx12PSiZf2eC98dfecb3
+
+
+  //conta id null para criar nova

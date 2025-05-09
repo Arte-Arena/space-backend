@@ -113,17 +113,13 @@ Route::middleware(['auth:sanctum', 'role:super-admin,admin'])->group(function ()
     Route::get('/contas-and-recorrentes', [ContaController::class, 'getAllContasAndRecorrentes']);
     // Route::get('/conta/status/{status}', [ContaController::class, 'listarPorStatus']);
     // Route::get('/conta/tipo/{tipo}', [ContaController::class, 'listarPorTipo']);
-    Route::get('/cliente', [ContaController::class, 'getAllContas']);
+
+    // as rotas de cliente estão usando o controller de contas
+    Route::get('/cliente', [ContaController::class, 'getAllContas']); 
     Route::get('/cliente/{id}', [ContaController::class, 'getConta']);
-    Route::put('/cliente', [ContaController::class, 'upsertConta']);
+    Route::put('/cliente', [ContaController::class, 'upsertConta']); 
     Route::delete('/cliente/{id}', [ContaController::class, 'deleteConta']);
     Route::get('/cliente-and-recorrentes', [ContaController::class, 'getAllContasAndRecorrentes']);
-
-    Route::get('/conta', [ContaController::class, 'getAllContas']);
-    Route::get('/conta/{id}', [ContaController::class, 'getConta']);
-    Route::put('/conta', [ContaController::class, 'upsertConta']);
-    Route::delete('/conta/{id}', [ContaController::class, 'deleteConta']);
-    Route::get('/contas-and-recorrentes', [ContaController::class, 'getAllContasAndRecorrentes']);
 });
 
 Route::middleware(['auth:sanctum', 'role:super-admin,admin,ti,lider,comercial,designer,backoffice,producao,producao-coordenador,producao-impressao,admin-coodenador,designer-coordenador'])->group(function () {

@@ -9,54 +9,61 @@ use Illuminate\Support\Facades\Auth;
 
 class ContaController extends Controller
 {
+    // revisar depois quando for levar pro frontend
     public function getAllContas()
     {
         $contas = Conta::all();
         return ContaResource::collection($contas);
     }
 
+
     public function getConta($id)
     {
-        $conta = Conta::find($id);
+        $conta = Conta::with(['orcamentoStatus'])->find($id);
+
         if ($conta) {
-            return new ContaResource($conta);
+            return $conta;
         }
 
         return response()->json(['message' => 'Conta não encontrada.'], 404);
     }
 
+
     public function upsertConta(Request $request)
     {
         $contaId = $request->input('conta_id');
         $contaUserId = Auth::id();
-        $contaTitulo = $request->input('conta_titulo');
-        $contaDescricao = $request->input('conta_descricao');
-        $contaValor = $request->input('conta_valor');
-        $contaDataVencimento = $request->input('conta_data_vencimento');
-        $contaStatus = $request->input('conta_status');
-        $contaTipo = $request->input('conta_tipo');
 
-        $conta = Conta::find($contaId);
+        $data = [
+            'user_id' => $contaUserId,
+            'titulo' => $request->input('titulo'),
+            'descricao' => $request->input('descricao'),
+            'valor' => $request->input('valor'),
+            'data_vencimento' => $request->input('data_vencimento'),
+            'status' => $request->input('status'),
+            'tipo' => $request->input('tipo'),
+            'parcelas' => $request->input('parcelas', []),
+            'data_pagamento' => $request->input('data_pagamento'),
+            'data_emissao' => $request->input('data_emissao'),
+            'forma_pagamento' => $request->input('forma_pagamento'),
+            'orcamento_staus_id' => $request->input('orcamento_staus_id'),
+            'estoque_id' => $request->input('estoque_id'),
+            'estoque_quantidade' => $request->input('estoque_quantidade'),
+            'recorrencia' => $request->input('recorrencia'),
+            'fixa' => filter_var($request->input('fixa'), FILTER_VALIDATE_BOOLEAN), // verifica se esta passando corretamente
+            'documento' => $request->input('documento'),
+            'observacoes' => $request->input('observacoes'),
+        ];
 
-        if (!$conta) {
-            $conta = Conta::create([
-                'user_id' => $contaUserId,
-                'titulo' => $contaTitulo,
-                'descricao' => $contaDescricao,
-                'valor' => $contaValor,
-                'data_vencimento' => $contaDataVencimento,
-                'status' => $contaStatus,
-                'tipo' => $contaTipo,
-            ]);
+        if ($contaId) {
+            $conta = Conta::find($contaId);
+            if (!$conta) {
+                return response()->json(['message' => 'Conta não encontrada.'], 404);
+            }
+
+            $conta->update($data);
         } else {
-            $conta->user_id = $contaUserId;
-            $conta->titulo = $contaTitulo;
-            $conta->descricao = $contaDescricao;
-            $conta->valor = $contaValor;
-            $conta->data_vencimento = $contaDataVencimento;
-            $conta->status = $contaStatus;
-            $conta->tipo = $contaTipo;
-            $conta->save();
+            $conta = Conta::create($data);
         }
 
         return response()->json(['message' => 'Conta atualizada ou criada com sucesso!', 'conta' => $conta], 200);

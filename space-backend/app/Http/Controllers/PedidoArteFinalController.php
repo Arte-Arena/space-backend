@@ -789,7 +789,7 @@ class PedidoArteFinalController extends Controller
                 'tipo_movimentacao' => 'saida',
                 'numero_pedido' => $pedido->numero_pedido,
                 'quantidade' => $qtd,
-                'observacoes' => 'Movimentação automática gerada a partir da impressão do pedido ' . $pedido->id . ' /n ' . 'Produto: ' . $produto['nome'],
+                'observacoes' => 'Movimentação automática gerada a partir da impressão do pedido ' . $pedido->id . "\n" . 'Produto: ' . $produto['nome'],
             ]);
         }
     }

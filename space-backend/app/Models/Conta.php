@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Conta extends Model
 {
-
     protected $fillable = [
         'user_id',
         'titulo',
@@ -15,10 +14,31 @@ class Conta extends Model
         'data_vencimento',
         'status',
         'tipo',
+        'parcelas',
+        'data_pagamento',
+        'data_emissao',
+        'forma_pagamento',
+        'orcamento_staus_id',
+        'estoque_id',
+        'estoque_quantidade',
+        'recorrencia',
+        'fixa',
+        'documento',
+        'observacoes',
+    ];
+
+    protected $casts = [
+        'parcelas' => 'array',
+        'fixa' => 'boolean',
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function orcamentoStatus()
+    {
+        return $this->belongsTo(OrcamentoStatus::class, 'orcamento_staus_id');
     }
 }
