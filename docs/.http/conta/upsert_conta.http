@@ -4,12 +4,12 @@ Authorization: Bearer 68|sxYJvqDwYVPe4HHil4PFytKTVcH3Rx12PSiZf2eC98dfecb3
 
 {
   "conta_id": 5,  
-  "conta_titulo": "Conta de Luz",
-  "conta_descricao": "Referente ao mês de abril",
-  "conta_valor": 250.75,
-  "conta_data_vencimento": "2025-05-15",
-  "conta_status": "pendente",
-  "conta_tipo": "a pagar",
+  "titulo": "Conta de Luz",
+  "descricao": "Referente ao mês de abril",
+  "valor": 250.75,
+  "data_vencimento": "2025-05-15",
+  "status": "pendente",
+  "tipo": "a pagar",
   "parcelas": [
     {"parcela": 1, "data": "15/04/2025", "status": "Não Pago"},
     {"parcela": 2, "data": "15/05/2025", "status": "Não Pago"},
