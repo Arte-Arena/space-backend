@@ -1,14 +1,31 @@
 PUT http://localhost:8000/api/conta/
 Content-Type: application/json
-Authorization: Bearer 15|yTGjJtH7W7wV0DHGGk9AtYFXOfkPA2uWxK48s1NT8a1ab648
+Authorization: Bearer 68|sxYJvqDwYVPe4HHil4PFytKTVcH3Rx12PSiZf2eC98dfecb3
 
 {
-  "conta_titulo": 4000,
-  "conta_descricao": 4000,
-  "conta_valor": 4000,
-  "conta_data_vencimento": "2024-12-25",
+  "conta_id": 5,  
+  "conta_titulo": "Conta de Luz",
+  "conta_descricao": "Referente ao mês de abril",
+  "conta_valor": 250.75,
+  "conta_data_vencimento": "2025-05-15",
   "conta_status": "pendente",
-  "conta_tipo": "a receber"
-
+  "conta_tipo": "a pagar",
+  "parcelas": [
+    {"parcela": 1, "data": "15/04/2025", "status": "Não Pago"},
+    {"parcela": 2, "data": "15/05/2025", "status": "Não Pago"},
+    {"parcela": 3, "data": "15/06/2025", "status": "Não Pago"}
+  ],
+  "data_pagamento": "2025-05-09",
+  "data_emissao": "2025-04-25",
+  "forma_pagamento": "boleto",
+  "orcamento_staus_id": 2,
+  "estoque_id": 5,
+  "estoque_quantidade": 5.90,
+  "recorrencia": "mensal",
+  "fixa": true,
+  "documento": "FAT-123456",
+  "observacoes": "Conta será paga com desconto."
 }
 
+
+  //conta id null para criar nova

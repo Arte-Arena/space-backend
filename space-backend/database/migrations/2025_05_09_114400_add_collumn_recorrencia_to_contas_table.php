@@ -17,8 +17,9 @@ return new class extends Migration
             $table->date('data_emissao')->nullable();   // emissão da conta
             $table->string('forma_pagamento')->nullable();
             $table->unsignedBigInteger('orcamento_staus_id')->nullable();
-            $table->unsignedBigInteger('movimentacao_estoque_id')->nullable();
-            $table->enum('recorrencia', ['única', 'mensal', 'anual'])->default('única');
+            $table->unsignedBigInteger('estoque_id')->nullable();
+            $table->decimal('estoque_quantidade', 10, 2)->nullable();
+            $table->string('recorrencia')->nullable(); // mensal trimestral ou numero de dias
             $table->boolean('fixa')->default(false); // se é uma conta fixa
             $table->string('documento')->nullable(); // nota, recibo
             $table->text('observacoes')->nullable();
@@ -36,7 +37,8 @@ return new class extends Migration
             $table->dropColumn('data_emissao');
             $table->dropColumn('forma_pagamento');
             $table->dropColumn('orcamento_staus_id');
-            $table->dropColumn('movimentacao_estoque_id');
+            $table->dropColumn('estoque_id');
+            $table->dropColumn('estoque_quantidade');
             $table->dropColumn('recorrencia');
             $table->dropColumn('fixa');
             $table->dropColumn('documento');

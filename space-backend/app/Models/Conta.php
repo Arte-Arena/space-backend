@@ -19,7 +19,8 @@ class Conta extends Model
         'data_emissao',
         'forma_pagamento',
         'orcamento_staus_id',
-        'movimentacao_estoque_id',
+        'estoque_id',
+        'estoque_quantidade',
         'recorrencia',
         'fixa',
         'documento',
@@ -39,10 +40,5 @@ class Conta extends Model
     public function orcamentoStatus()
     {
         return $this->belongsTo(OrcamentoStatus::class, 'orcamento_staus_id');
-    }
-
-    public function movimentacaoEstoque()
-    {
-        return $this->belongsTo(MovimentacaoEstoque::class, 'movimentacao_estoque_id');
     }
 }

@@ -19,13 +19,15 @@ class ContaController extends Controller
 
     public function getConta($id)
     {
-        $conta = Conta::find($id);
+        $conta = Conta::with(['orcamentoStatus'])->find($id);
+
         if ($conta) {
-            return new ContaResource($conta);
+            return $conta;
         }
 
         return response()->json(['message' => 'Conta não encontrada.'], 404);
     }
+
 
     public function upsertConta(Request $request)
     {
@@ -34,20 +36,21 @@ class ContaController extends Controller
 
         $data = [
             'user_id' => $contaUserId,
-            'titulo' => $request->input('conta_titulo'),
-            'descricao' => $request->input('conta_descricao'),
-            'valor' => $request->input('conta_valor'),
-            'data_vencimento' => $request->input('conta_data_vencimento'),
-            'status' => $request->input('conta_status'),
-            'tipo' => $request->input('conta_tipo'),
-            'parcelas' => $request->input('parcelas', []), // array
+            'titulo' => $request->input('titulo'),
+            'descricao' => $request->input('descricao'),
+            'valor' => $request->input('valor'),
+            'data_vencimento' => $request->input('data_vencimento'),
+            'status' => $request->input('status'),
+            'tipo' => $request->input('tipo'),
+            'parcelas' => $request->input('parcelas', []),
             'data_pagamento' => $request->input('data_pagamento'),
             'data_emissao' => $request->input('data_emissao'),
             'forma_pagamento' => $request->input('forma_pagamento'),
             'orcamento_staus_id' => $request->input('orcamento_staus_id'),
-            'movimentacao_estoque_id' => $request->input('movimentacao_estoque_id'),
+            'estoque_id' => $request->input('estoque_id'),
+            'estoque_quantidade' => $request->input('estoque_quantidade'),
             'recorrencia' => $request->input('recorrencia'),
-            'fixa' => filter_var($request->input('fixa'), FILTER_VALIDATE_BOOLEAN),// verifica se esta passando corretamente
+            'fixa' => filter_var($request->input('fixa'), FILTER_VALIDATE_BOOLEAN), // verifica se esta passando corretamente
             'documento' => $request->input('documento'),
             'observacoes' => $request->input('observacoes'),
         ];
